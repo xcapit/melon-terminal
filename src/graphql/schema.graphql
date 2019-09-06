@@ -1,0 +1,13 @@
+type Query {
+  hello: String
+  balance: Float
+}
+
+type Subscription {
+  counter: Int
+}
+
+type Schema {
+  query: Query
+  subscription: Subscription
+}

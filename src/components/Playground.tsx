@@ -1,11 +1,18 @@
 import React, { useMemo } from 'react';
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 // @ts-ignore
 import GraphiQL from 'graphiql';
 import 'graphiql/graphiql.css';
 import { useApolloClient } from '@apollo/react-hooks';
 import { GraphQLRequest, execute } from 'apollo-link';
 import { parse } from 'graphql';
+
+const GlobalStyles = createGlobalStyle`
+  body {
+    padding: 0;
+    margin: 0;
+  }
+`;
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -31,8 +38,11 @@ export const Playground = () => {
   const fetcher = useFetcher();
 
   return (
-    <Wrapper>
-      <GraphiQL fetcher={fetcher} />
-    </Wrapper>
+    <>
+      <GlobalStyles />
+      <Wrapper>
+        <GraphiQL fetcher={fetcher} />
+      </Wrapper>
+    </>
   );
 };

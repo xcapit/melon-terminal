@@ -1,6 +1,7 @@
 type Query {
-  hello: String
-  balance: Float
+  network: String
+  accounts: [String]
+  balances: [Float]
 }
 
 type Subscription {

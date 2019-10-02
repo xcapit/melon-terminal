@@ -38,26 +38,25 @@ type Executor = typeof execute | typeof subscribe;
 export const createSchemaLink = (options: SchemaLinkOptions) => {
   return new ApolloLink(request => {
     return new Observable<FetchResult>(observer => {
-      const executor: Executor = isSubscription(request.query)
-        ? subscribe
-        : execute;
-
-      const context =
-        typeof options.context === 'function'
-          ? options.context(request)
-          : options.context;
-
-      const result = (executor as any)(
-        options.schema,
-        request.query,
-        options.root,
-        context,
-        request.variables,
-        request.operationName,
-      );
-
       (async () => {
         try {
+          const executor: Executor = isSubscription(request.query)
+            ? subscribe
+            : execute;
+
+          const context = await (typeof options.context === 'function'
+            ? options.context(request)
+            : options.context);
+
+          const result = (executor as any)(
+            options.schema,
+            request.query,
+            options.root,
+            context,
+            request.variables,
+            request.operationName,
+          );
+
           const iterable = ensureIterable(await result) as AsyncIterable<any>;
           await forAwaitEach(iterable, (value: any) => observer.next(value));
           observer.complete();

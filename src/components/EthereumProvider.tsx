@@ -13,6 +13,9 @@ export type EthereumProvider = any;
 export enum EthereumProviderTypeEnum {
   'FRAME' = 'frame',
   'INJECTED' = 'injected',
+  'DIRECT' = 'direct',
+  'KOVAN' = 'https://kovan.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660',
+  'MAINNET' = 'https://mainnet.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660',
 };
 
 export interface EthereumProviderSelection {
@@ -26,22 +29,17 @@ export interface EthereumProviderSelectorProps {
 }
 
 export const EthereumProviderSelector: React.FC<EthereumProviderSelectorProps> = ({ type, setType }) => {
+  const keys = Object.keys(EthereumProviderTypeEnum) as any as (keyof EthereumProviderTypeEnum)[];
+
   return (
     <Wrapper>
       <h2>Select the provider to use for connecting to the ethereum blockchain.</h2>
       <div>
-        <button
-          onClick={() => setType(EthereumProviderTypeEnum.INJECTED)}
-          disabled={type === EthereumProviderTypeEnum.INJECTED}
-        >
-          Injected
-        </button>
-        <button
-          onClick={() => setType(EthereumProviderTypeEnum.FRAME)}
-          disabled={type === EthereumProviderTypeEnum.FRAME}
-        >
-          Frame
-        </button>
+        {keys.map(key => (
+          <button onClick={() => setType((EthereumProviderTypeEnum as any)[key as any] as any)} disabled={type === key}>
+            {key}
+          </button>
+        ))}
       </div>
     </Wrapper>
   );
@@ -49,7 +47,7 @@ export const EthereumProviderSelector: React.FC<EthereumProviderSelectorProps> =
 
 export const useEthereumProvider = () => {
   const [type, setType] = useState<EthereumProviderTypeEnum>(EthereumProviderTypeEnum.INJECTED);
-  const provider = useMemo<EthereumProvider>(() => createProvider([type], {
+  const provider = useMemo<EthereumProvider>(() => createProvider(type, {
     name: 'avantgarde-experiment',
   }), [type]);
 

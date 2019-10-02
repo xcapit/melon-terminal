@@ -1,10 +1,33 @@
 import React, { useState, useMemo } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 // @ts-ignore
 import createProvider from 'eth-provider';
 
 const Wrapper = styled.div`
   margin: 20px;
+`;
+
+const Button = styled.button`
+  color: black;
+  border: none;
+  outline: none;
+  padding: 10px;
+  margin: 10px;
+  cursor: pointer;
+
+  &:first-child {
+    margin-left: 0;
+  }
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  ${(props) => props.disabled && css`
+    cursor: default;
+    font-weight: bold;
+    background-color: green;
+  `}
 `;
 
 // TODO: Fix this type once there is a common provider type.
@@ -13,7 +36,6 @@ export type EthereumProvider = any;
 export enum EthereumProviderTypeEnum {
   'FRAME' = 'frame',
   'INJECTED' = 'injected',
-  'DIRECT' = 'direct',
   'KOVAN' = 'https://kovan.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660',
   'MAINNET' = 'https://mainnet.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660',
 };
@@ -35,11 +57,15 @@ export const EthereumProviderSelector: React.FC<EthereumProviderSelectorProps> =
     <Wrapper>
       <h2>Select the provider to use for connecting to the ethereum blockchain.</h2>
       <div>
-        {keys.map(key => (
-          <button onClick={() => setType((EthereumProviderTypeEnum as any)[key as any] as any)} disabled={type === key}>
-            {key}
-          </button>
-        ))}
+        {keys.map(key => {
+          const value = (EthereumProviderTypeEnum as any)[key as any] as any;
+
+          return (
+            <Button onClick={() => setType(value)} disabled={type === value}>
+              {key}
+            </Button>
+          );
+        })}
       </div>
     </Wrapper>
   );

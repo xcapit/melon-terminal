@@ -16,6 +16,14 @@ export const Query = {
     const client = context.client;
     return client.eth.net.getNetworkType();
   },
+  block: async (_: any, __: any, context: Context) => {
+    if (!context.client) {
+      return null;
+    }
+
+    const client = context.client;
+    return client.eth.getBlockNumber();
+  },
   accounts: async (_: any, __: any, context: Context) => {
     if (!context.client) {
       return null;

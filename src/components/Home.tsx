@@ -20,6 +20,7 @@ const query = gql`
     balances
     accounts
     network
+    block
   }
 `;
 
@@ -27,6 +28,7 @@ interface QueryData {
   balances: number[];
   accounts: string[];
   network: string;
+  block: number;
 }
 
 export const Home = () => {
@@ -37,6 +39,11 @@ export const Home = () => {
       <Item>
         <Title>Network</Title>
         <div>{data && data.network}</div>
+      </Item>
+
+      <Item>
+        <Title>Block number</Title>
+        <div>{data && data.block}</div>
       </Item>
 
       <Item>

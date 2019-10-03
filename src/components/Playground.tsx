@@ -1,8 +1,9 @@
+import 'graphiql/graphiql.css';
+
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 // @ts-ignore
 import GraphiQL from 'graphiql';
-import 'graphiql/graphiql.css';
 import { useApolloClient } from '@apollo/react-hooks';
 import { GraphQLRequest, execute } from 'apollo-link';
 import { parse } from 'graphql';

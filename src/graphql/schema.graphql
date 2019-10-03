@@ -1,8 +1,13 @@
 type Query {
-  network: String
-  block: Int
-  accounts: [String]
-  balances: [Float]
+  network: String!
+  block: Int!
+  accounts: [Account]!
+}
+
+type Account {
+  id: ID!
+  address: String
+  balance: Float
 }
 
 type Subscription {

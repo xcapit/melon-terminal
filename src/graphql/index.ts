@@ -1,16 +1,16 @@
+import Web3 from 'web3';
+import { useMemo } from 'react';
 import { createAsyncIterator, forAwaitEach, isAsyncIterable } from 'iterall';
-import { getMainDefinition } from 'apollo-utilities';
-import {
-  ApolloLink,
-  FetchResult,
-  Observable,
-} from 'apollo-link';
 import { loader } from 'graphql.macro';
 import { execute, subscribe, GraphQLSchema, DocumentNode } from 'graphql';
 import { makeExecutableSchema } from 'graphql-tools';
+import { getMainDefinition } from 'apollo-utilities';
+import { ApolloLink, FetchResult, Observable } from 'apollo-link';
+import { ApolloClient } from 'apollo-client';
+import { InMemoryCache } from 'apollo-cache-inmemory';
 import * as resolvers from './resolvers';
 
-export interface SchemaLinkOptions<TRoot = any, TContext = any> {
+interface SchemaLinkOptions<TRoot = any, TContext = any> {
   schema: GraphQLSchema;
   root?: TRoot;
   context?: TContext;
@@ -35,7 +35,7 @@ const ensureIterable = (data: any) => {
 
 type Executor = typeof execute | typeof subscribe;
 
-export const createSchemaLink = (options: SchemaLinkOptions) => {
+const createSchemaLink = (options: SchemaLinkOptions) => {
   return new ApolloLink(request => {
     return new Observable<FetchResult>(observer => {
       (async () => {
@@ -68,7 +68,32 @@ export const createSchemaLink = (options: SchemaLinkOptions) => {
   });
 };
 
-export const createSchema = () => makeExecutableSchema({
+const createSchema = () => makeExecutableSchema({
   resolvers,
   typeDefs: schema,
 });
+
+export const useApollo = (connection?: Web3) => {
+  const schema = useMemo(() => createSchema(), []);
+  const apollo = useMemo(() => {
+    if (!connection) {
+      return;
+    }
+
+    const link = createSchemaLink({
+      schema,
+      context: { web3: connection },
+    });
+
+    const cache = new InMemoryCache({
+      // TODO: Add fragment matcher.
+    });
+
+    return new ApolloClient({
+      link,
+      cache,
+    });
+  }, [schema, connection]);
+
+  return apollo;
+};

@@ -17,16 +17,23 @@ const Title = styled.h2`
 
 const query = gql`
   query BalanceQuery {
-    balances
-    accounts
     network
     block
+    accounts {
+      id
+      address
+      balance
+    }
   }
 `;
 
 interface QueryData {
   balances: number[];
-  accounts: string[];
+  accounts: {
+    id: string;
+    address: string;
+    balance: number;
+  }[];
   network: string;
   block: number;
 }
@@ -50,16 +57,7 @@ export const Home = () => {
         <Title>Accounts</Title>
         <ul>
           {data && data.accounts && data.accounts.map((account) => (
-            <li key={account}>{account}</li>
-          ))}
-        </ul>
-      </Item>
-
-      <Item>
-        <Title>Balances</Title>
-        <ul>
-          {data && data.balances && data.balances.map((balance, index) => (
-            <li key={index}>{balance}</li>
+            <li key={account.id}>{account.address}: {account.balance} ETH</li>
           ))}
         </ul>
       </Item>

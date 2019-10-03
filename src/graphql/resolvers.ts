@@ -1,52 +1,37 @@
-import * as Rx from 'rxjs';
 import Web3 from 'web3';
+import * as Rx from 'rxjs';
 import { fromWei } from "web3-utils";
 import { toAsyncIterator } from './utils/toAsyncIterator';
 
 export interface Context {
-  client: Web3,
+  web3: Web3,
 }
 
 export const Query = {
   network: async (_: any, __: any, context: Context) => {
-    if (!context.client) {
-      return null;
-    }
-
-    const client = context.client;
-    return client.eth.net.getNetworkType();
+    return context.web3.eth.net.getNetworkType();
   },
   block: async (_: any, __: any, context: Context) => {
-    if (!context.client) {
-      return null;
-    }
-
-    const client = context.client;
-    return client.eth.getBlockNumber();
+    return context.web3.eth.getBlockNumber();
   },
   accounts: async (_: any, __: any, context: Context) => {
-    if (!context.client) {
-      return null;
+    try {
+      const accounts = await context.web3.eth.getAccounts();
+      return accounts;
     }
-
-    const client = context.client;
-    const account = await client.eth.getAccounts();
-    return account;
+    catch (e) {
+      return [];
+    }
   },
-  balances: async (_: any, __: any, context: Context) => {
-    if (!context.client) {
-      return null;
-    }
+};
 
-    const client = context.client;
-    const accounts = await client.eth.getAccounts();
-    const balances = await Promise.all((accounts || []).map(async (address) => {
-      const balance = await client.eth.getBalance(address);
-      return parseFloat(fromWei(balance));
-    }));
-
-    return balances;
-  }
+export const Account = {
+  id: (address: string) => address,
+  address: (address: string) => address,
+  balance: async (address: any, __: any, context: Context) => {
+    const balance = await context.web3.eth.getBalance(address);
+    return parseFloat(fromWei(balance));
+  },
 };
 
 export const Subscription = {

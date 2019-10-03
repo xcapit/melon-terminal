@@ -31,12 +31,12 @@ const Button = styled.button`
 
 export interface ConnectionProviderSelectorProps {
   current: ConnectionProvider;
-  set: React.Dispatch<React.SetStateAction<ConnectionProviderTypeEnum>>
+  set: React.Dispatch<React.SetStateAction<ConnectionProviderTypeEnum | undefined>>
 }
 
 export const ConnectionSelector: React.FC<ConnectionProviderSelectorProps> = ({ current, set }) => {
   const keys = Object.keys(ConnectionProviderTypeEnum) as any as (keyof ConnectionProviderTypeEnum)[];
-  
+
   return (
     <Wrapper>
       <h2>Select the provider to use for connecting to the ethereum blockchain.</h2>

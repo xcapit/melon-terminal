@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Web3 from 'web3';
 import * as Rx from 'rxjs';
-import { mapTo, map, delayWhen, delay, retryWhen, tap, skip } from 'rxjs/operators';
+import { mapTo, map, delayWhen, delay, retryWhen, tap, skip, filter } from 'rxjs/operators';
 import { useObservable } from 'rxjs-hooks';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { useApollo } from '../../graphql';
@@ -50,11 +50,12 @@ const createProvider = (type: ConnectionProviderTypeEnum) => {
 };
 
 export const useConnection = () => {
-  const [type, set] = useState<ConnectionProviderTypeEnum>(ConnectionProviderTypeEnum.INJECTED);
-  const connection = useObservable<Web3 | undefined, [ConnectionProviderTypeEnum]>((input$) => {
+  const [type, set] = useState<ConnectionProviderTypeEnum | undefined>(undefined);
+  const connection = useObservable<Web3 | undefined, [ConnectionProviderTypeEnum | undefined]>((input$) => {
     const reset$ = input$.pipe(mapTo(undefined), skip(1));
     const connection$ = input$.pipe(
-      map(([type]) => createProvider(type)),
+      filter(([type]) => !!type),
+      map(([type]) => createProvider(type as ConnectionProviderTypeEnum)),
       map((provider) => new Web3(provider, undefined, {
         transactionConfirmationBlocks: 1,
       })),

@@ -34,6 +34,7 @@ const createProvider = (type: ConnectionProviderTypeEnum) => {
 
     case ConnectionProviderTypeEnum.INJECTED: {
       if ((window as any).ethereum) {
+        (window as any).ethereum.enable();
         return (window as any).ethereum as ConnectionProvider;
       }
 

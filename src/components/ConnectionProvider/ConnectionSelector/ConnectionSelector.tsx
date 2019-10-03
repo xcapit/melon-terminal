@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { ConnectionProvider, ConnectionProviderTypeEnum } from '../ConnectionProvider';
+import { Maybe } from '../../../types';
 
 const Wrapper = styled.div`
   margin: 20px;
@@ -31,7 +32,7 @@ const Button = styled.button`
 
 export interface ConnectionProviderSelectorProps {
   current: ConnectionProvider;
-  set: React.Dispatch<React.SetStateAction<ConnectionProviderTypeEnum | undefined>>
+  set: React.Dispatch<React.SetStateAction<Maybe<ConnectionProviderTypeEnum>>>
 }
 
 export const ConnectionSelector: React.FC<ConnectionProviderSelectorProps> = ({ current, set }) => {

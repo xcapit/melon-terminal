@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, createContext } from 'react';
 import Web3 from 'web3';
 import * as Rx from 'rxjs';
-import { mapTo, map, delayWhen, delay, retryWhen, tap, skip, filter } from 'rxjs/operators';
+import { mapTo, map, delayWhen, delay, retryWhen, tap, skip, filter, switchMap } from 'rxjs/operators';
 import { useObservable } from 'rxjs-hooks';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { useApollo } from '../../graphql';
 import { ConnectionSelector } from './ConnectionSelector/ConnectionSelector';
 import { HttpProvider } from 'web3-providers';
+import { createHttpLink } from "apollo-link-http";
+import { NormalizedCacheObject, InMemoryCache } from 'apollo-cache-inmemory';
+import ApolloClient from 'apollo-client';
+import { Maybe } from '../../types';
 
 // TODO: Fix this type.
 export type ConnectionProvider = any;
@@ -49,13 +53,14 @@ const createProvider = (type: ConnectionProviderTypeEnum) => {
   throw new Error('Invalid provider type.');
 };
 
-export const useConnection = () => {
-  const [type, set] = useState<ConnectionProviderTypeEnum | undefined>(undefined);
-  const connection = useObservable<Web3 | undefined, [ConnectionProviderTypeEnum | undefined]>((input$) => {
+const useConnection = () => {
+  const [type, set] = useState<Maybe<ConnectionProviderTypeEnum>>(undefined);
+  const connection = useObservable<Maybe<Web3>, [Maybe<ConnectionProviderTypeEnum>]>((input$) => {
     const reset$ = input$.pipe(mapTo(undefined), skip(1));
     const connection$ = input$.pipe(
-      filter(([type]) => !!type),
-      map(([type]) => createProvider(type as ConnectionProviderTypeEnum)),
+      map(([type]) => type),
+      filter((type): type is ConnectionProviderTypeEnum => !!type),
+      map((type) => createProvider(type)),
       map((provider) => new Web3(provider, undefined, {
         transactionConfirmationBlocks: 1,
       })),
@@ -69,17 +74,50 @@ export const useConnection = () => {
     return Rx.merge(reset$, connection$);
   }, undefined, [type]);
 
+  const network = useObservable<Maybe<string>, [Maybe<Web3>]>((input$) => input$.pipe(
+    map(([connection]) => connection),
+    filter((connection): connection is Web3 => !!connection),
+    switchMap(connection => connection.eth.net.getNetworkType())
+  ), undefined, [connection]);
+
   const apollo = useApollo(connection);
-  return [apollo, type, set] as [typeof apollo, typeof type, typeof set];
+  return [apollo, network, type, set] as [typeof apollo, typeof network, typeof type, typeof set];
+};
+
+export const TheGraphContext = createContext<Maybe<ApolloClient<NormalizedCacheObject>>>(undefined);
+const useTheGraph = (network: Maybe<string>) => {
+  const urls = {
+    main: 'https://api.thegraph.com/subgraphs/name/melonproject/melon',
+    kovan: 'https://api.thegraph.com/subgraphs/name/iherger/melon-ash-kovan',
+  } as { [key: string]: string }
+
+  if (!network || !urls[network]) {
+    return;
+  }
+
+  const link = createHttpLink({
+    uri: urls[network],
+  });
+
+  const cache = new InMemoryCache();
+  return new ApolloClient({
+    link,
+    cache,
+  });
 };
 
 export const ConnectionProvider: React.FC = (props) => {
-  const [apollo, provider, set] = useConnection();
+  const [apollo, network, provider, set] = useConnection();
+  const graph = useTheGraph(network);
 
   return (
     <>
       <ConnectionSelector current={provider} set={set} />
-      {apollo && (<ApolloProvider client={apollo}>{props.children}</ApolloProvider>)}
+      {apollo && (
+        <ApolloProvider client={apollo}>
+          <TheGraphContext.Provider value={graph}>{props.children}</TheGraphContext.Provider>
+        </ApolloProvider>)
+      }
     </>
   );
 };

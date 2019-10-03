@@ -9,6 +9,7 @@ import { ApolloLink, FetchResult, Observable } from 'apollo-link';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import * as resolvers from './resolvers';
+import { Maybe } from '../types';
 
 interface SchemaLinkOptions<TRoot = any, TContext = any> {
   schema: GraphQLSchema;
@@ -73,7 +74,7 @@ const createSchema = () => makeExecutableSchema({
   typeDefs: schema,
 });
 
-export const useApollo = (connection?: Web3) => {
+export const useApollo = (connection: Maybe<Web3>) => {
   const schema = useMemo(() => createSchema(), []);
   const apollo = useMemo(() => {
     if (!connection) {
@@ -85,10 +86,7 @@ export const useApollo = (connection?: Web3) => {
       context: { web3: connection },
     });
 
-    const cache = new InMemoryCache({
-      // TODO: Add fragment matcher.
-    });
-
+    const cache = new InMemoryCache();
     return new ApolloClient({
       link,
       cache,

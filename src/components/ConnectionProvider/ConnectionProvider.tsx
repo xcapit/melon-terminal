@@ -123,7 +123,7 @@ const createErrorLink = () => {
 
         const stacktrace = extensions && extensions.exception && extensions.exception.stacktrace;
         if (stacktrace && stacktrace.length) {
-          stacktrace.forEach(line => {
+          stacktrace.forEach((line: string) => {
             console.error(line);
           });
         }

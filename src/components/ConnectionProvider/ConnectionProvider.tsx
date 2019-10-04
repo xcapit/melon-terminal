@@ -1,16 +1,18 @@
 import React, { useState, createContext, useMemo, useEffect } from 'react';
-import Web3 from 'web3';
 import ApolloClient from 'apollo-client';
 import * as Rx from 'rxjs';
 import * as R from 'ramda';
+import { Eth } from 'web3-eth';
 import { mapTo, map, skip, filter, switchMap, expand, distinctUntilChanged, combineLatest, shareReplay } from 'rxjs/operators';
 import { useObservable } from 'rxjs-hooks';
 import { ApolloProvider } from '@apollo/react-hooks';
-import { createSchema, createSchemaLink } from '../../graphql';
-import { ConnectionSelector } from './ConnectionSelector/ConnectionSelector';
+import { ApolloLink } from 'apollo-link';
 import { HttpProvider } from 'web3-providers';
+import { onError } from 'apollo-link-error';
 import { createHttpLink } from "apollo-link-http";
 import { NormalizedCacheObject, InMemoryCache } from 'apollo-cache-inmemory';
+import { ConnectionSelector } from './ConnectionSelector/ConnectionSelector';
+import { createSchemaLink, createSchema, createQueryContext } from '../../gql';
 import { Maybe } from '../../types';
 
 // TODO: Fix this type.
@@ -19,85 +21,68 @@ export type ConnectionProvider = any;
 export enum ConnectionProviderTypeEnum {
   'FRAME' = 'FRAME',
   'INJECTED' = 'INJECTED',
-  'KOVAN' = 'KOVAN',
-  'MAINNET' = 'MAINNET',
+  'CUSTOM' = 'CUSTOM',
 };
 
 export interface Connection {
-  client: Web3;
+  eth: Eth;
   network?: number;
   accounts?: string[];
 }
 
 interface ConnectionProviderResource extends Rx.Unsubscribable {
-  client: Web3;
+  eth: Eth;
 }
 
 export const TheGraphContext = createContext<Maybe<ApolloClient<NormalizedCacheObject>>>(undefined);
 
-const checkConnection = async (client: Web3) => {
+const checkConnection = async (eth: Eth) => {
   const [network, accounts] = await Promise.all([
-    client.eth.net.getId().catch((e) => console.log(e) as any || undefined),
-    client.eth.getAccounts().catch(() => undefined),
+    eth.net.getId().catch((e) => console.log(e) as any || undefined),
+    eth.getAccounts().catch(() => undefined),
   ]);
 
-  return { client, network, accounts } as Connection;
+  return { eth, network, accounts } as Connection;
 };
 
 const createConnection = (type: ConnectionProviderTypeEnum): Rx.Observable<Connection> => {
   switch (type) {
     case ConnectionProviderTypeEnum.FRAME: {
-      const client$ = Rx.using(() => {
+      const eth$ = Rx.using(() => {
         const provider = new HttpProvider('http://localhost:1248');
-        const client = new Web3(provider, undefined, {
+        const eth = new Eth(provider, undefined, {
           transactionConfirmationBlocks: 1,
         });
 
         return {
-          client,
+          eth,
           unsubscribe: () => provider.disconnect(),
         };
-      }, (resource) => Rx.of((resource as ConnectionProviderResource).client));
+      }, (resource) => Rx.of((resource as ConnectionProviderResource).eth));
 
       // TODO: Check with frame.sh maintainers to see if there is an event that
       // we can subscribe to instead of polling.
-      return client$.pipe(
-        switchMap(client => checkConnection(client)),
-        expand((connection) => Rx.timer(1000).pipe(switchMap(() => checkConnection(connection.client)))),
+      return eth$.pipe(
+        switchMap(eth => checkConnection(eth)),
+        expand((connection) => Rx.timer(1000).pipe(switchMap(() => checkConnection(connection.eth)))),
         distinctUntilChanged((a, b) => R.equals(a, b)),
       );
     }
 
-    case ConnectionProviderTypeEnum.KOVAN: {
-      const client$ = Rx.using(() => {
-        const provider = new HttpProvider('https://kovan.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660');
-        const client = new Web3(provider, undefined, {
-          transactionConfirmationBlocks: 1,
-        });
-
-        return {
-          client,
-          unsubscribe: () => provider.disconnect(),
-        };
-      }, (resource) => Rx.of((resource as ConnectionProviderResource).client));
-
-      return client$.pipe(switchMap(client => checkConnection(client)));
-    }
-
-    case ConnectionProviderTypeEnum.MAINNET: {
-      const client$ = Rx.using(() => {
+    case ConnectionProviderTypeEnum.CUSTOM: {
+      const eth$ = Rx.using(() => {
         const provider = new HttpProvider('https://mainnet.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660');
-        const client = new Web3(provider, undefined, {
+        const eth = new Eth(provider, undefined, {
           transactionConfirmationBlocks: 1,
         });
 
         return {
-          client,
+          eth,
           unsubscribe: () => provider.disconnect(),
         };
-      }, (resource) => Rx.of((resource as ConnectionProviderResource).client));
+      }, (resource) => Rx.of((resource as ConnectionProviderResource).eth));
 
-      return client$.pipe(switchMap(client => checkConnection(client)));
+      return eth$.pipe(switchMap(eth => checkConnection(eth)));
     }
 
     case ConnectionProviderTypeEnum.INJECTED: {
@@ -107,20 +92,20 @@ const createConnection = (type: ConnectionProviderTypeEnum): Rx.Observable<Conne
       }
 
       ethereum.autoRefreshOnNetworkChange = false;
-      const client = new Web3(ethereum, undefined, {
+      const eth = new Eth(ethereum, undefined, {
         transactionConfirmationBlocks: 1,
       });
 
       const enable$ = Rx.defer(() => ethereum.enable() as Promise<string[]>).pipe(shareReplay(1));
       const networkChange$ = Rx.fromEvent<string>(ethereum, 'networkChanged').pipe(map(value => parseInt(value, 10)));
-      const network$ = Rx.concat(Rx.defer(() => client.eth.net.getId()), networkChange$);
+      const network$ = Rx.concat(Rx.defer(() => eth.net.getId()), networkChange$);
       const accountsChanged$ = Rx.fromEvent<string[]>(ethereum, 'accountsChanged');
       const accounts$ = Rx.concat(enable$, accountsChanged$);
 
       return enable$.pipe(
-        mapTo(client),
+        mapTo(eth),
         combineLatest(network$, accounts$),
-        map(([client, network, accounts]) => ({ client, network, accounts })),
+        map(([eth, network, accounts]) => ({ eth, network, accounts })),
       );
     }
   }
@@ -128,26 +113,66 @@ const createConnection = (type: ConnectionProviderTypeEnum): Rx.Observable<Conne
   throw new Error('Invalid provider type.');
 }
 
+const createErrorLink = () => {
+  return onError(({ graphQLErrors, networkError }) => {
+    if (graphQLErrors) {
+      graphQLErrors.forEach(({ message, locations, path, extensions }) => {
+        const fields = path && path.join('.');
+
+        console.error('[GQL ERROR]: Message: %s, Path: %s, Locations: %o', message, fields, locations);
+
+        const stacktrace = extensions && extensions.exception && extensions.exception.stacktrace;
+        if (stacktrace && stacktrace.length) {
+          stacktrace.forEach(line => {
+            console.error(line);
+          });
+        }
+      });
+    }
+
+    if (networkError) {
+      console.error('[GQL NETWORK ERROR]: %o', networkError);
+    }
+  });
+};
+
 const useLocalApollo = (connection: Maybe<Connection>) => {
-  const client = connection && connection.client;
+  const eth = connection && connection.eth;
   const network = connection && connection.network;
   const accounts = connection && connection.accounts;
 
   const schema = useMemo(() => createSchema(), []);
-  // eslint-disable-next-line
   const apollo = useMemo(() => {
-    if (!(client && network)) {
+    if (!(eth && network)) {
       return;
     }
 
-    const context = {
-      web3: client,
-    };
+    const context = createQueryContext(eth, network);
+    const data = createSchemaLink({ schema, context });
+    const error = createErrorLink();
+    const link = ApolloLink.from([error, data]);
+    const cache = new InMemoryCache({
+      addTypename: true,
+    });
 
-    const link = createSchemaLink({ schema, context });
-    const cache = new InMemoryCache();
-    return new ApolloClient({ link, cache });
-  }, [client, network, schema]);
+    return new ApolloClient({
+      link,
+      cache,
+      defaultOptions: {
+        watchQuery: {
+          errorPolicy: 'all',
+          fetchPolicy: 'network-only',
+        },
+        query: {
+          errorPolicy: 'all',
+          fetchPolicy: 'network-only',
+        },
+        mutate: {
+          errorPolicy: 'all',
+        },
+      },
+    });
+  }, [eth, network, schema]);
 
   useEffect(() => {
     apollo && apollo.resetStore();
@@ -159,16 +184,12 @@ const useLocalApollo = (connection: Maybe<Connection>) => {
 const useTheGraphApollo = (connection: Maybe<Connection>) => {
   const network = connection && connection.network;
   const apollo = useMemo(() => {
-    const urls = {
-      1: 'https://api.thegraph.com/subgraphs/name/melonproject/melon',
-      42: 'https://api.thegraph.com/subgraphs/name/iherger/melon-ash-kovan',
-    } as { [key: number]: string };
-
-    if (!(network && urls[network])) {
+    if (!(network && network === 1)) {
       return;
     }
 
-    const link = createHttpLink({ uri: urls[network] });
+    const uri = 'https://api.thegraph.com/subgraphs/name/melonproject/melon';
+    const link = createHttpLink({ uri });
     const cache = new InMemoryCache();
     return new ApolloClient({ link, cache });
   }, [network]);
@@ -194,17 +215,20 @@ const useConnection = () => {
 
 export const ConnectionProvider: React.FC = (props) => {
   const [connection, provider, set] = useConnection();
-  const local = useLocalApollo(connection);
-  const graph = useTheGraphApollo(connection);
+  const localClient = useLocalApollo(connection);
+  const graphClient = useTheGraphApollo(connection);
 
   return (
     <>
-      <ConnectionSelector current={provider} set={set} />
-      {local && (
-        <ApolloProvider client={local}>
-          <TheGraphContext.Provider value={graph}>{props.children}</TheGraphContext.Provider>
-        </ApolloProvider>)
-      }
+      {!localClient && (
+        <ConnectionSelector current={provider} set={set} />
+      )}
+
+      {localClient && (
+        <ApolloProvider client={localClient}>
+          <TheGraphContext.Provider value={graphClient}>{props.children}</TheGraphContext.Provider>
+        </ApolloProvider>
+      )}
     </>
   );
 };

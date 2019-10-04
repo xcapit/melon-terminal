@@ -1,18 +1,32 @@
+import { Eth } from 'web3-eth';
 import { createAsyncIterator, forAwaitEach, isAsyncIterable } from 'iterall';
-import { loader } from 'graphql.macro';
 import { execute, subscribe, GraphQLSchema, DocumentNode } from 'graphql';
-import { makeExecutableSchema } from 'graphql-tools';
 import { getMainDefinition } from 'apollo-utilities';
 import { ApolloLink, FetchResult, Observable } from 'apollo-link';
+import { makeExecutableSchema } from 'graphql-tools';
 import * as resolvers from './resolvers';
+// @ts-ignore
+import schema from './schema.graphql';
+
+export interface Context {
+  eth: Eth,
+}
+
+export const createQueryContext = (eth: Eth, network: number) => {
+  return { eth, network };
+};
+
+export const createSchema = () => makeExecutableSchema({
+  typeDefs: schema,
+  resolvers,
+  inheritResolversFromInterfaces: true,
+});
 
 interface SchemaLinkOptions<TRoot = any, TContext = any> {
   schema: GraphQLSchema;
   root?: TRoot;
   context?: TContext;
 }
-
-const schema = loader('./schema.graphql');
 
 const isSubscription = (query: DocumentNode) => {
   const main = getMainDefinition(query);
@@ -63,8 +77,3 @@ export const createSchemaLink = (options: SchemaLinkOptions) => {
     });
   });
 };
-
-export const createSchema = () => makeExecutableSchema({
-  resolvers,
-  typeDefs: schema,
-});

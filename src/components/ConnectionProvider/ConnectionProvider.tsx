@@ -38,7 +38,7 @@ export const TheGraphContext = createContext<Maybe<ApolloClient<NormalizedCacheO
 
 const checkConnection = async (eth: Eth) => {
   const [network, accounts] = await Promise.all([
-    eth.net.getId().catch((e) => console.log(e) as any || undefined),
+    eth.net.getId().catch(() => undefined),
     eth.getAccounts().catch(() => undefined),
   ]);
 

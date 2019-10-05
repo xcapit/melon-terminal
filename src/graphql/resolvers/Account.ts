@@ -1,5 +1,5 @@
 import { fromWei } from "web3-utils";
-import { Resolver } from "../";
+import { Resolver } from "..";
 
 export const id: Resolver<string> = (address) => address;
 export const address: Resolver<string> = (address) => address;

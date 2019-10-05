@@ -15,3 +15,11 @@ export const manager: Resolver<string> = (address, args, context) => {
 export const routes: Resolver<string> = (address, args, context) => {
   return context.loaders.fundRoutes(address);
 };
+
+export const creator: Resolver<string> = (address, args, context) => {
+  return context.loaders.fundCreator(address);
+};
+
+export const creationTime: Resolver<string> = (address, args, context) => {
+  return context.loaders.fundCreationTime(address);
+};

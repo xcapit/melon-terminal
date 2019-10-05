@@ -5,14 +5,13 @@ import * as R from 'ramda';
 import { Eth } from 'web3-eth';
 import { mapTo, map, skip, filter, switchMap, expand, distinctUntilChanged, combineLatest, shareReplay } from 'rxjs/operators';
 import { useObservable } from 'rxjs-hooks';
-import { ApolloProvider } from '@apollo/react-hooks';
 import { ApolloLink } from 'apollo-link';
 import { HttpProvider } from 'web3-providers';
 import { onError } from 'apollo-link-error';
 import { createHttpLink } from "apollo-link-http";
 import { NormalizedCacheObject, InMemoryCache } from 'apollo-cache-inmemory';
 import { ConnectionSelector } from './ConnectionSelector/ConnectionSelector';
-import { createSchemaLink, createSchema, createQueryContext } from '../../gql';
+import { createSchemaLink, createSchema, createQueryContext } from '../../graphql';
 import { Maybe } from '../../types';
 
 // TODO: Fix this type.
@@ -35,6 +34,7 @@ interface ConnectionProviderResource extends Rx.Unsubscribable {
 }
 
 export const TheGraphContext = createContext<Maybe<ApolloClient<NormalizedCacheObject>>>(undefined);
+export const OnChainContext = createContext<Maybe<ApolloClient<NormalizedCacheObject>>>(undefined);
 
 const checkConnection = async (eth: Eth) => {
   const [network, accounts] = await Promise.all([
@@ -118,7 +118,6 @@ const createErrorLink = () => {
     if (graphQLErrors) {
       graphQLErrors.forEach(({ message, locations, path, extensions }) => {
         const fields = path && path.join('.');
-
         console.error('[GQL ERROR]: Message: %s, Path: %s, Locations: %o', message, fields, locations);
 
         const stacktrace = extensions && extensions.exception && extensions.exception.stacktrace;
@@ -136,7 +135,7 @@ const createErrorLink = () => {
   });
 };
 
-const useLocalApollo = (connection: Maybe<Connection>) => {
+const useOnChainApollo = (connection: Maybe<Connection>) => {
   const eth = connection && connection.eth;
   const network = connection && connection.network;
   const accounts = connection && connection.accounts;
@@ -215,19 +214,19 @@ const useConnection = () => {
 
 export const ConnectionProvider: React.FC = (props) => {
   const [connection, provider, set] = useConnection();
-  const localClient = useLocalApollo(connection);
-  const graphClient = useTheGraphApollo(connection);
+  const onChainClient = useOnChainApollo(connection);
+  const theGraphClient = useTheGraphApollo(connection);
 
   return (
     <>
-      {!localClient && (
+      {!onChainClient && (
         <ConnectionSelector current={provider} set={set} />
       )}
 
-      {localClient && (
-        <ApolloProvider client={localClient}>
-          <TheGraphContext.Provider value={graphClient}>{props.children}</TheGraphContext.Provider>
-        </ApolloProvider>
+      {onChainClient && (
+        <OnChainContext.Provider value={onChainClient}>
+          <TheGraphContext.Provider value={theGraphClient}>{props.children}</TheGraphContext.Provider>
+        </OnChainContext.Provider>
       )}
     </>
   );

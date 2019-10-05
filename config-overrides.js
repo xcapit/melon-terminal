@@ -20,13 +20,6 @@ module.exports = function override(config, env) {
     new webpack.ContextReplacementPlugin(/graphql-language-service-parser[\\/]dist$/, new RegExp(`^\\./.*\\.js$`))
   );
 
-  // Remove typechecks during development.
-  if (process.env.NODE_ENV === 'development') {
-    config.plugins = config.plugins.filter(plugin => {
-      return plugin.constructor.name !== 'ForkTsCheckerWebpackPlugin';
-    });
-  }
-
   const rulesFlat = flatten(config.module.rules.map((rule) => rule.oneOf || rule));
   const fileLoader = rulesFlat.find((rule) => rule.loader && rule.loader.indexOf("file-loader") !== -1);
 

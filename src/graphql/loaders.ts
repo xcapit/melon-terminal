@@ -1,4 +1,4 @@
-import { getFundName, getLastFundId, getFundRoutes, getFundManager } from '@melonproject/melonjs'
+import { getFundName, getLastFundId, getFundRoutes, getFundManager, getFundCreator, getFundCreationTime } from '@melonproject/melonjs'
 import { loadCached } from './utils/loadCached';
 import { Context } from ".";
 
@@ -8,6 +8,8 @@ export interface Loaders {
   fundRoutes: ReturnType<typeof fundRoutes>;
   fundName: ReturnType<typeof fundName>;
   fundManager: ReturnType<typeof fundManager>;
+  fundCreator: ReturnType<typeof fundCreator>;
+  fundCreationTime: ReturnType<typeof fundCreationTime>;
 };
 
 export const accounts = (context: Context) => loadCached(context, 'accounts', (() => {
@@ -38,6 +40,20 @@ export const fundName = (context: Context) => loadCached(context, 'fundName', (a
 
 export const fundManager = (context: Context) => loadCached(context, 'fundManager', (async (address: string) => {
   return getFundManager({
+    environment: context.environment,
+    block: context.block,
+  }, address);
+}));
+
+export const fundCreator = (context: Context) => loadCached(context, 'fundCreator', (async (address: string) => {
+  return getFundCreator({
+    environment: context.environment,
+    block: context.block,
+  }, address);
+}));
+
+export const fundCreationTime = (context: Context) => loadCached(context, 'fundCreationTime', (async (address: string) => {
+  return getFundCreationTime({
     environment: context.environment,
     block: context.block,
   }, address);

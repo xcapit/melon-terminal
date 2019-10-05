@@ -4,7 +4,7 @@ import { useOnChainQuery } from '../../../../hooks/apolloQuery';
 
 const query = gql`
   query FundDetailsQuery($address: String!) {
-    fund(address: "0x616b40319009bc0b4a169e3df149374ec1511f9a") {
+    fund(address: $address) {
       id
       address
       name
@@ -27,14 +27,12 @@ const query = gql`
 
 export interface FundDetailsProps {
   address: string;
-};
+}
 
 export const FundDetails: React.FC<FundDetailsProps> = ({ address }) => {
   const { data } = useOnChainQuery(query, {
     variables: { address },
   });
 
-  return (
-    <div>{data && data.fund && data.fund.name}</div>
-  );
+  return <div>{data && data.fund && data.fund.name}</div>;
 };

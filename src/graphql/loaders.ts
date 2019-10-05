@@ -9,6 +9,11 @@ import {
 import { loadCached } from './utils/loadCached';
 import { Context } from '.';
 
+const commonConfig = (context: Context) => ({
+  environment: context.environment,
+  block: context.block,
+});
+
 export const accounts = (context: Context) =>
   loadCached(context, 'accounts', () => {
     const eth = context.environment.eth;
@@ -17,63 +22,30 @@ export const accounts = (context: Context) =>
 
 export const totalFunds = (context: Context) =>
   loadCached(context, 'totalFunds', () => {
-    return getLastFundId({
-      environment: context.environment,
-      block: context.block,
-    });
+    return getLastFundId(commonConfig(context));
   });
 
 export const fundRoutes = (context: Context) =>
   loadCached(context, 'fundRoutes', async (address: string) => {
-    return getFundRoutes(
-      {
-        environment: context.environment,
-        block: context.block,
-      },
-      address
-    );
+    return getFundRoutes(commonConfig(context), address);
   });
 
 export const fundName = (context: Context) =>
   loadCached(context, 'fundName', async (address: string) => {
-    return getFundName(
-      {
-        environment: context.environment,
-        block: context.block,
-      },
-      address
-    );
+    return getFundName(commonConfig(context), address);
   });
 
 export const fundManager = (context: Context) =>
   loadCached(context, 'fundManager', async (address: string) => {
-    return getFundManager(
-      {
-        environment: context.environment,
-        block: context.block,
-      },
-      address
-    );
+    return getFundManager(commonConfig(context), address);
   });
 
 export const fundCreator = (context: Context) =>
   loadCached(context, 'fundCreator', async (address: string) => {
-    return getFundCreator(
-      {
-        environment: context.environment,
-        block: context.block,
-      },
-      address
-    );
+    return getFundCreator(commonConfig(context), address);
   });
 
 export const fundCreationTime = (context: Context) =>
   loadCached(context, 'fundCreationTime', async (address: string) => {
-    return getFundCreationTime(
-      {
-        environment: context.environment,
-        block: context.block,
-      },
-      address
-    );
+    return getFundCreationTime(commonConfig(context), address);
   });

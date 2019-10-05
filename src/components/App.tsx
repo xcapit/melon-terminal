@@ -30,7 +30,7 @@ const AppComponent = () => {
                   <Playground context={OnChainContext} />
                 </Route>
                 <Route path="/playground/thegraph">
-                  <Playground context={OnChainContext} />
+                  <Playground context={TheGraphContext} />
                 </Route>
                 <Route>
                   <NoMatch />

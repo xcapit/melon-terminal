@@ -1039,10 +1039,10 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@melonproject/melonjs@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@melonproject/melonjs/-/melonjs-0.0.1.tgz#4c358aed727c2c3361b0b178f786932ab800b375"
-  integrity sha512-b/bwDYuw2zJawZxYDbr+sLXIhLntQf0s6IqziC4D07uqRRhm1VYYK1w1wLzp/pGB0+P2JFg7Li3jTajjpUa6SA==
+"@melonproject/melonjs@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@melonproject/melonjs/-/melonjs-0.0.3.tgz#3ceeed6edc9f443ee6bc1f1aa83498b9f630ef7a"
+  integrity sha512-D45SFFvEhIp4A/O7MDcRkoQ8/66hirkhRzfhQ98K88FRTxFdSeR2lxmPSADNfjtqXD7V+jRcL+mbKGFC2DN+og==
   dependencies:
     bignumber.js "^9.0.0"
     eth-provider "^0.2.5"

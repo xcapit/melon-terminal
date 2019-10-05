@@ -2,7 +2,7 @@ type Query {
   network: String!
   block: Int!
   accounts: [Account]!
-  funds(limit: Int = 20, offset: Int = 0): FundConnection!
+  fund(address: String): Fund
 }
 
 type Account {
@@ -11,10 +11,23 @@ type Account {
   balance: Float
 }
 
+type FundRoutes {
+  version: String
+  accounting: String
+  participation: String
+  shares: String
+  trading: String
+  vault: String
+  feeManager: String
+  policyManager: String
+}
+
 type Fund {
   id: ID!
   address: String!
   name: String!
+  manager: String!
+  routes: FundRoutes!
 }
 
 #############################################################################

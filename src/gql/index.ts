@@ -13,7 +13,7 @@ import schema from './schema.graphql';
 import { isSubscription } from './utils/isSubscription';
 import { ensureIterable } from './utils/ensureInterable';
 
-export type Resolver<TParent = any, TArgs = any, TResult = any> = (parent: TParent, args: TArgs, context: Context) => TResult;
+export type Resolver<TParent = any, TArgs = any> = (parent: TParent, args: TArgs, context: Context) => any;
 export type ContextCreator = (cache: LRU<string, any>, request: Operation) => Promise<Context> | Context;
 
 export interface Context {
@@ -62,7 +62,7 @@ export const createSchemaLink = <TRoot = any>(options: SchemaLinkOptions<TRoot, 
   // This LRU Cache gives us a cross-request cache bucket for calls on the
   // blockchain. Cache keys should be prefixed with the current block
   // number from the context object.
-  const cache = new LRU<string, any>(100);
+  const cache = new LRU<string, any>(500);
 
   const handleRequest = async (request: Operation, observer: any) => {
     try {

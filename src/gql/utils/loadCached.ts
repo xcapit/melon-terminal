@@ -1,3 +1,4 @@
+import md5 from 'md5';
 import { Context } from "..";
 
 export const loadCached = <T extends (...args: any[]) => any>(
@@ -10,13 +11,16 @@ export const loadCached = <T extends (...args: any[]) => any>(
   // given cache key before forwarding the query.
   return (...args: Parameters<T>): ReturnType<T> => {
     const key = typeof cacheKey === 'function' ? cacheKey(...args) : cacheKey;
-    const prefixedKey = `${context.block}:${key}`;
-    if (context.cache.has(prefixedKey)) {
-      return context.cache.get(prefixedKey)!;
+    const suffix = typeof cacheKey !== 'function' && args && args.length ? `:${md5(JSON.stringify(args))}` : '';
+    const prefix = `${context.block}:`
+
+    const lookup = prefix + key + suffix;
+    if (context.cache.has(lookup)) {
+      return context.cache.get(lookup)!;
     }
 
     const promise = loadFn(...args);
-    context.cache.set(prefixedKey, promise);
+    context.cache.set(lookup, promise);
     return promise;
   };
 };

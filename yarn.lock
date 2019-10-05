@@ -1039,14 +1039,13 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@melonproject/melonjs@^0.0.0":
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/@melonproject/melonjs/-/melonjs-0.0.0.tgz#6efc6864d5f74dcb4c69af789ff9e43b3d218637"
-  integrity sha512-7GOoKPK2qI2Bwo+foOZFGtB5ckREfqw9DXHz6BWlKrQlFxKYQpBZ6W9U9gHI/OhMd8vq+VsaZEla/ORSZ70N3Q==
+"@melonproject/melonjs@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@melonproject/melonjs/-/melonjs-0.0.1.tgz#4c358aed727c2c3361b0b178f786932ab800b375"
+  integrity sha512-b/bwDYuw2zJawZxYDbr+sLXIhLntQf0s6IqziC4D07uqRRhm1VYYK1w1wLzp/pGB0+P2JFg7Li3jTajjpUa6SA==
   dependencies:
     bignumber.js "^9.0.0"
     eth-provider "^0.2.5"
-    md5 "^2.2.1"
     web3 "^2.0.0-alpha.1"
     web3-core "^2.0.0-alpha.1"
     web3-eth "^2.0.0-alpha.1"
@@ -1248,6 +1247,13 @@
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@types/lru-cache/-/lru-cache-5.1.0.tgz#57f228f2b80c046b4a1bd5cac031f81f207f4f03"
   integrity sha512-RaE0B+14ToE4l6UqdarKPnXwVDuigfFv+5j9Dze/Nqr23yyuqdNvzcZi3xB+3Agvi5R4EOgAksfv3lXX4vBt9w==
+
+"@types/md5@^2.1.33":
+  version "2.1.33"
+  resolved "https://registry.yarnpkg.com/@types/md5/-/md5-2.1.33.tgz#8c8dba30df4ad0e92296424f08c4898dd808e8df"
+  integrity sha512-8+X960EtKLoSblhauxLKy3zzotagjoj3Jt1Tx9oaxUdZEPIBl+mkrUz6PNKpzJgkrKSN9YgkWTA29c0KnLshmA==
+  dependencies:
+    "@types/node" "*"
 
 "@types/node@*", "@types/node@12.7.4", "@types/node@>=6", "@types/node@^12.6.1":
   version "12.7.4"

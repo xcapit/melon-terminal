@@ -1,20 +1,25 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { hot } from 'react-hot-loader';
 import { Reset } from 'styled-reset';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { ConnectionProvider } from './ConnectionProvider/ConnectionProvider';
-import { Home } from './Home';
-import { Playground } from './Playground';
+
+const Playground = React.lazy(() => import('./Playground'));
+const Home = React.lazy(() => import('./Home'));
 
 const AppComponent = () => {
   return (
     <>
       <Reset />
       <Router>
-        <ConnectionProvider>
-          <Route path="/" exact={true} component={Home} />
-          <Route path="/playground" component={Playground} />
-        </ConnectionProvider>
+        <Suspense fallback={<div>Loading...</div>}>
+          <ConnectionProvider>
+            <Switch>
+              <Route path="/" exact={true} component={Home} />
+              <Route path="/playground" component={Playground} />
+            </Switch>
+          </ConnectionProvider>
+        </Suspense>
       </Router>
     </>
   );

@@ -38,3 +38,5 @@ export const Playground = () => {
     </Wrapper>
   );
 };
+
+export default Playground;

@@ -13,7 +13,12 @@ module.exports = function override(config, env) {
     'react-dom': '@hot-loader/react-dom',
   };
 
-  config.plugins.push(new webpack.IgnorePlugin(/^scrypt$/))
+  config.plugins.push(
+    new webpack.IgnorePlugin(/^scrypt$/),
+    new webpack.ContextReplacementPlugin(/graphql-language-service-interface[\\/]dist$/, new RegExp(`^\\./.*\\.js$`)),
+    new webpack.ContextReplacementPlugin(/graphql-language-service-utils[\\/]dist$/, new RegExp(`^\\./.*\\.js$`)),
+    new webpack.ContextReplacementPlugin(/graphql-language-service-parser[\\/]dist$/, new RegExp(`^\\./.*\\.js$`))
+  );
 
   // Remove typechecks during development.
   if (process.env.NODE_ENV === 'development') {

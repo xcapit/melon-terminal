@@ -20,11 +20,21 @@ const AppComponent = () => {
           <Suspense fallback={<Throbber />}>
             <ConnectionProvider>
               <Switch>
-                <Route path="/" exact={true} component={Home} />
-                <Route path="/fund/:address" component={Fund} />
-                <Route path="/playground/onchain" render={props => <Playground {...props} context={OnChainContext} />} />
-                <Route path="/playground/thegraph" render={props => <Playground {...props} context={TheGraphContext} />} />
-                <Route component={NoMatch} />
+                <Route path="/" exact={true}>
+                  <Home />
+                </Route>
+                <Route path="/fund/:address">
+                  <Fund />
+                </Route>
+                <Route path="/playground/onchain">
+                  <Playground context={OnChainContext} />
+                </Route>
+                <Route path="/playground/thegraph">
+                  <Playground context={OnChainContext} />
+                </Route>
+                <Route>
+                  <NoMatch />
+                </Route>
               </Switch>
             </ConnectionProvider>
           </Suspense>

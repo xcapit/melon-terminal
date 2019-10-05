@@ -1,4 +1,4 @@
-import { createAsyncIterator, isAsyncIterable } from "iterall";
+import { createAsyncIterator, isAsyncIterable } from 'iterall';
 
 export const ensureIterable = (data: any) => {
   if (isAsyncIterable(data)) {

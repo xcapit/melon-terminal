@@ -4,11 +4,11 @@ import { Maybe } from '../../../types';
 
 export interface ConnectionProviderSelectorProps {
   current: ConnectionProvider;
-  set: React.Dispatch<React.SetStateAction<Maybe<ConnectionProviderTypeEnum>>>
+  set: React.Dispatch<React.SetStateAction<Maybe<ConnectionProviderTypeEnum>>>;
 }
 
 export const ConnectionSelector: React.FC<ConnectionProviderSelectorProps> = ({ current, set }) => {
-  const keys = Object.keys(ConnectionProviderTypeEnum) as any as (keyof ConnectionProviderTypeEnum)[];
+  const keys = (Object.keys(ConnectionProviderTypeEnum) as any) as (keyof ConnectionProviderTypeEnum)[];
 
   return (
     <div>

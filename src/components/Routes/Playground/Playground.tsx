@@ -19,16 +19,22 @@ export type RawRequest = GraphQLRequest & {
 };
 
 const useFetcher = (client: Maybe<ApolloClient<NormalizedCacheObject>>) => {
-  const fetcher = useMemo(() => (request: RawRequest) => client ? execute(client.link, {
-    ...request,
-    query: parse(request.query),
-  }) : null, [client]);
+  const fetcher = useMemo(
+    () => (request: RawRequest) =>
+      client
+        ? execute(client.link, {
+            ...request,
+            query: parse(request.query),
+          })
+        : null,
+    [client]
+  );
 
   return fetcher;
 };
 
 export interface PlaygroundProps {
-  context: Context<Maybe<ApolloClient<NormalizedCacheObject>>>
+  context: Context<Maybe<ApolloClient<NormalizedCacheObject>>>;
 }
 
 export const Playground: React.FC<PlaygroundProps> = ({ context }) => {

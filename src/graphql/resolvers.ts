@@ -4,8 +4,4 @@ import * as Fund from './resolvers/Fund';
 
 export { GraphQLDateTime as DateTime } from 'graphql-iso-date';
 
-export {
-  Query,
-  Account,
-  Fund,
-};
+export { Query, Account, Fund };

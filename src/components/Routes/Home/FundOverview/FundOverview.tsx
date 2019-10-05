@@ -3,8 +3,8 @@ import BigNumber from 'bignumber.js';
 import gql from 'graphql-tag';
 import { useHistory } from 'react-router';
 import { useTable } from 'react-table';
-import { useTheGraphQuery } from '../../../../hooks/apolloQuery';
 import { fromWei } from 'web3-utils';
+import { useTheGraphQuery } from '../../../../hooks/apolloQuery';
 
 const columns = [
   {
@@ -64,7 +64,7 @@ export const FundOverview: React.FC = () => {
         {rows.map(
           row =>
             prepareRow(row) || (
-              <tr {...row.getRowProps({ onClick: () => history && history.push(`/fund/${row.original.id}`) })}>
+              <tr {...row.getRowProps({ onClick: () => history.push(`/fund/${row.original.id}`) })}>
                 {row.cells.map(cell => (
                   <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
                 ))}

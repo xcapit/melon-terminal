@@ -1,4 +1,4 @@
-import { Resolver } from "..";
+import { Resolver } from '..';
 
 export const network: Resolver = (parent, args, context) => {
   return context.network;

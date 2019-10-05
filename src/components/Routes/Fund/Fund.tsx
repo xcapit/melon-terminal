@@ -1,15 +1,14 @@
 import React from 'react';
+import { useParams } from 'react-router';
 import { FundDetails } from './FundDetails/FundDetails';
-import { RouteComponentProps } from 'react-router';
 
-export interface FundProps {
+export interface FundRouteParams {
   address: string;
-};
+}
 
-export const Fund: React.FC<RouteComponentProps<FundProps>> = (props) => {
-  return (
-    <FundDetails address={props.match.params.address} />
-  );
+export const Fund: React.FC = () => {
+  const params = useParams<FundRouteParams>();
+  return <FundDetails address={params.address} />;
 };
 
 export default Fund;

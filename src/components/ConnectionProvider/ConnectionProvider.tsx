@@ -3,12 +3,22 @@ import ApolloClient from 'apollo-client';
 import * as Rx from 'rxjs';
 import * as R from 'ramda';
 import { Eth } from 'web3-eth';
-import { mapTo, map, skip, filter, switchMap, expand, distinctUntilChanged, combineLatest, shareReplay } from 'rxjs/operators';
+import {
+  mapTo,
+  map,
+  skip,
+  filter,
+  switchMap,
+  expand,
+  distinctUntilChanged,
+  combineLatest,
+  shareReplay,
+} from 'rxjs/operators';
 import { useObservable } from 'rxjs-hooks';
 import { ApolloLink } from 'apollo-link';
 import { HttpProvider } from 'web3-providers';
 import { onError } from 'apollo-link-error';
-import { createHttpLink } from "apollo-link-http";
+import { createHttpLink } from 'apollo-link-http';
 import { NormalizedCacheObject, InMemoryCache } from 'apollo-cache-inmemory';
 import { ConnectionSelector } from './ConnectionSelector/ConnectionSelector';
 import { createSchemaLink, createSchema, createQueryContext } from '../../graphql';
@@ -21,7 +31,7 @@ export enum ConnectionProviderTypeEnum {
   'FRAME' = 'FRAME',
   'INJECTED' = 'INJECTED',
   'CUSTOM' = 'CUSTOM',
-};
+}
 
 export interface Connection {
   eth: Eth;
@@ -48,39 +58,45 @@ const checkConnection = async (eth: Eth) => {
 const createConnection = (type: ConnectionProviderTypeEnum): Rx.Observable<Connection> => {
   switch (type) {
     case ConnectionProviderTypeEnum.FRAME: {
-      const eth$ = Rx.using(() => {
-        const provider = new HttpProvider('http://localhost:1248');
-        const eth = new Eth(provider, undefined, {
-          transactionConfirmationBlocks: 1,
-        });
+      const eth$ = Rx.using(
+        () => {
+          const provider = new HttpProvider('http://localhost:1248');
+          const eth = new Eth(provider, undefined, {
+            transactionConfirmationBlocks: 1,
+          });
 
-        return {
-          eth,
-          unsubscribe: () => provider.disconnect(),
-        };
-      }, (resource) => Rx.of((resource as ConnectionProviderResource).eth));
+          return {
+            eth,
+            unsubscribe: () => provider.disconnect(),
+          };
+        },
+        resource => Rx.of((resource as ConnectionProviderResource).eth)
+      );
 
       // TODO: Check with frame.sh maintainers to see if there is an event that
       // we can subscribe to instead of polling.
       return eth$.pipe(
         switchMap(eth => checkConnection(eth)),
-        expand((connection) => Rx.timer(1000).pipe(switchMap(() => checkConnection(connection.eth)))),
-        distinctUntilChanged((a, b) => R.equals(a, b)),
+        expand(connection => Rx.timer(1000).pipe(switchMap(() => checkConnection(connection.eth)))),
+        distinctUntilChanged((a, b) => R.equals(a, b))
       );
     }
 
     case ConnectionProviderTypeEnum.CUSTOM: {
-      const eth$ = Rx.using(() => {
-        const provider = new HttpProvider('https://mainnet.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660');
-        const eth = new Eth(provider, undefined, {
-          transactionConfirmationBlocks: 1,
-        });
+      const eth$ = Rx.using(
+        () => {
+          const provider = new HttpProvider('https://mainnet.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660');
+          const eth = new Eth(provider, undefined, {
+            transactionConfirmationBlocks: 1,
+          });
 
-        return {
-          eth,
-          unsubscribe: () => provider.disconnect(),
-        };
-      }, (resource) => Rx.of((resource as ConnectionProviderResource).eth));
+          return {
+            eth,
+            unsubscribe: () => provider.disconnect(),
+          };
+        },
+        resource => Rx.of((resource as ConnectionProviderResource).eth)
+      );
 
       return eth$.pipe(switchMap(eth => checkConnection(eth)));
     }
@@ -105,13 +121,13 @@ const createConnection = (type: ConnectionProviderTypeEnum): Rx.Observable<Conne
       return enable$.pipe(
         mapTo(eth),
         combineLatest(network$, accounts$),
-        map(([eth, network, accounts]) => ({ eth, network, accounts })),
+        map(([eth, network, accounts]) => ({ eth, network, accounts }))
       );
     }
   }
 
   throw new Error('Invalid provider type.');
-}
+};
 
 const createErrorLink = () => {
   return onError(({ graphQLErrors, networkError }) => {
@@ -178,7 +194,7 @@ const useOnChainApollo = (connection: Maybe<Connection>) => {
   }, [apollo, network, accounts]);
 
   return apollo;
-}
+};
 
 const useTheGraphApollo = (connection: Maybe<Connection>) => {
   const network = connection && connection.network;
@@ -198,30 +214,35 @@ const useTheGraphApollo = (connection: Maybe<Connection>) => {
 
 const useConnection = () => {
   const [type, set] = useState<Maybe<ConnectionProviderTypeEnum>>(undefined);
-  const connection = useObservable<Maybe<Connection>, [Maybe<ConnectionProviderTypeEnum>]>((input$) => {
-    const reset$ = input$.pipe(mapTo(undefined), skip(1));
-    const connection$ = input$.pipe(
-      map(([type]) => type),
-      filter((type): type is ConnectionProviderTypeEnum => !!type),
-      switchMap((type) => createConnection(type)),
-    );
+  const connection = useObservable<Maybe<Connection>, [Maybe<ConnectionProviderTypeEnum>]>(
+    input$ => {
+      const reset$ = input$.pipe(
+        mapTo(undefined),
+        skip(1)
+      );
+      const connection$ = input$.pipe(
+        map(([type]) => type),
+        filter((type): type is ConnectionProviderTypeEnum => !!type),
+        switchMap(type => createConnection(type))
+      );
 
-    return Rx.merge(reset$, connection$);
-  }, undefined, [type]);
+      return Rx.merge(reset$, connection$);
+    },
+    undefined,
+    [type]
+  );
 
   return [connection, type, set] as [typeof connection, typeof type, typeof set];
 };
 
-export const ConnectionProvider: React.FC = (props) => {
+export const ConnectionProvider: React.FC = props => {
   const [connection, provider, set] = useConnection();
   const onChainClient = useOnChainApollo(connection);
   const theGraphClient = useTheGraphApollo(connection);
 
   return (
     <>
-      {!onChainClient && (
-        <ConnectionSelector current={provider} set={set} />
-      )}
+      {!onChainClient && <ConnectionSelector current={provider} set={set} />}
 
       {onChainClient && (
         <OnChainContext.Provider value={onChainClient}>

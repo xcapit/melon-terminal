@@ -39,7 +39,7 @@ export const toAsyncIterator = (observable$: Rx.Observable<any>) => {
           },
           () => {
             promise.resolve && promise.resolve({ value: undefined, done: true });
-          },
+          }
         );
       }
 

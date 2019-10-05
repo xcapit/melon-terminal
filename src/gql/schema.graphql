@@ -2,19 +2,29 @@ type Query {
   network: String!
   block: Int!
   accounts: [Account]!
+  funds(limit: Int = 20, offset: Int = 0): FundConnection!
 }
 
 type Account {
   id: ID!
-  address: String
+  address: String!
   balance: Float
 }
 
-type Subscription {
-  counter: Int
+type Fund {
+  id: ID!
+  address: String!
+  name: String!
+}
+
+#############################################################################
+#### CONNECTION TYPES #######################################################
+#############################################################################
+type FundConnection {
+  total: Int!
+  items: [Fund!]!
 }
 
 type Schema {
   query: Query
-  subscription: Subscription
 }

@@ -1,4 +1,4 @@
-import React, { useState, createContext, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, createContext } from 'react';
 import ApolloClient from 'apollo-client';
 import * as Rx from 'rxjs';
 import * as R from 'ramda';
@@ -19,8 +19,7 @@ import { ApolloLink } from 'apollo-link';
 import { HttpProvider } from 'web3-providers';
 import { onError } from 'apollo-link-error';
 import { createHttpLink } from 'apollo-link-http';
-import { NormalizedCacheObject, InMemoryCache } from 'apollo-cache-inmemory';
-import { ConnectionSelector } from './ConnectionSelector/ConnectionSelector';
+import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { createSchemaLink, createSchema, createQueryContext } from '../../graphql';
 import { Maybe } from '../../types';
 
@@ -43,8 +42,15 @@ interface ConnectionProviderResource extends Rx.Unsubscribable {
   eth: Eth;
 }
 
-export const TheGraphContext = createContext<Maybe<ApolloClient<NormalizedCacheObject>>>(undefined);
+export interface ConnectionContextValue {
+  set: React.Dispatch<React.SetStateAction<Maybe<ConnectionProviderTypeEnum>>>;
+  provider: Maybe<ConnectionProviderTypeEnum>;
+  connection: Maybe<Connection>;
+}
+
+export const ConnectionContext = createContext<ConnectionContextValue>({} as ConnectionContextValue);
 export const OnChainContext = createContext<Maybe<ApolloClient<NormalizedCacheObject>>>(undefined);
+export const TheGraphContext = createContext<Maybe<ApolloClient<NormalizedCacheObject>>>(undefined);
 
 const checkConnection = async (eth: Eth) => {
   const [network, accounts] = await Promise.all([
@@ -241,14 +247,10 @@ export const ConnectionProvider: React.FC = props => {
   const theGraphClient = useTheGraphApollo(connection);
 
   return (
-    <>
-      {!onChainClient && <ConnectionSelector current={provider} set={set} />}
-
-      {onChainClient && (
-        <OnChainContext.Provider value={onChainClient}>
-          <TheGraphContext.Provider value={theGraphClient}>{props.children}</TheGraphContext.Provider>
-        </OnChainContext.Provider>
-      )}
-    </>
+    <ConnectionContext.Provider value={{ connection, provider, set }}>
+      <OnChainContext.Provider value={onChainClient}>
+        <TheGraphContext.Provider value={theGraphClient}>{props.children}</TheGraphContext.Provider>
+      </OnChainContext.Provider>
+    </ConnectionContext.Provider>
   );
 };

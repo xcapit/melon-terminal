@@ -1,6 +1,6 @@
 import React from 'react';
-import { ConnectionProvider, ConnectionProviderTypeEnum } from '../ConnectionProvider';
-import { Maybe } from '../../../types';
+import { ConnectionProvider, ConnectionProviderTypeEnum } from '../../../Contexts/Connection';
+import { Maybe } from '../../../../types';
 
 export interface ConnectionProviderSelectorProps {
   current: ConnectionProvider;

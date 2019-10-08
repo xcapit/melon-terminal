@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const addHotLoader = require('react-app-rewire-hot-loader');
 const {
   override,
   addBabelPlugin,
@@ -8,13 +9,24 @@ const {
   addWebpackModuleRule,
   addWebpackAlias,
 } = require('customize-cra');
-const addHotLoader = require('react-app-rewire-hot-loader');
+
+const getPathAliases = () => {
+  const { paths, baseUrl } = require('./paths.json').compilerOptions;
+  const aliases = Object.keys(paths).reduce((carry, current) => {
+    const key = current.replace('/*', '');
+    const value = path.resolve(baseUrl, paths[current][0].replace('/*', '').replace('*', ''));
+    return { ...carry, [key]: value };
+  }, {});
+
+  return aliases;
+};
 
 module.exports = override(
   addHotLoader,
   disableEsLint(),
   addBabelPlugin(['styled-components', { ssr: false, displayName: true }]),
   addWebpackAlias({
+    ...getPathAliases(),
     'react-dom': '@hot-loader/react-dom',
   }),
   addWebpackPlugin(new webpack.IgnorePlugin(/^scrypt$/)),

@@ -1,11 +1,11 @@
 import styled from 'styled-components';
-import { Logo as BaseLogo } from '../../Common/Logo/Logo';
+import { Logo as BaseLogo } from '~/components/Common/Logo/Logo';
 
 export const HeaderPosition = styled.div`
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 100;
+  z-index: 200;
 `;
 
 export const Header = styled.div`

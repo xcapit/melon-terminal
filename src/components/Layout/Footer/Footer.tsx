@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import { ConnectionContext } from '../../Contexts/Connection';
-import * as S from './Footer.styles';
 import { Link } from 'react-router-dom';
+import { ConnectionContext } from '~/components/Contexts/Connection';
+import * as S from './Footer.styles';
 
 export const Footer: React.FC = () => {
   const connection = useContext(ConnectionContext);

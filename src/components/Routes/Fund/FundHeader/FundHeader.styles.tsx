@@ -39,10 +39,6 @@ export const FundHeaderItemTitle = styled.div`
   }
 `;
 
-// .fund-headline__spinner {
-//   margin: 0 auto;
-// }
-
 export const FundHeaderHeadline = styled.div`
   flex: 0 0 100%;
   padding-right: ${props => props.theme.spaceUnits.s};

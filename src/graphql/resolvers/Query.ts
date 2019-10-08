@@ -1,4 +1,4 @@
-import { Resolver } from '..';
+import { Resolver } from '~/graphql/setup';
 
 export const network: Resolver = (parent, args, context) => {
   if (context.network === 1) {

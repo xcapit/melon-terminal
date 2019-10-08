@@ -3,34 +3,30 @@ import 'graphiql/graphiql.css';
 // @ts-ignore
 import GraphiQL from 'graphiql';
 import React, { useMemo, useContext, Context } from 'react';
-import styled from 'styled-components';
 import ApolloClient from 'apollo-client';
 import { GraphQLRequest, execute } from 'apollo-link';
 import { parse } from 'graphql';
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { Maybe } from '../../../types';
-
-const Wrapper = styled.div`
-  height: calc(100vh - 33px);
-`;
+import { Maybe } from '~/types';
+import * as S from './Playground.styles';
 
 export type RawRequest = GraphQLRequest & {
   query: string;
 };
 
-const useFetcher = (client: Maybe<ApolloClient<NormalizedCacheObject>>) => {
-  const fetcher = useMemo(
-    () => (request: RawRequest) =>
-      client
-        ? execute(client.link, {
-            ...request,
-            query: parse(request.query),
-          })
-        : null,
-    [client]
-  );
+const createFetcher = (client: Maybe<ApolloClient<NormalizedCacheObject>>) => (request: RawRequest) => {
+  if (!client) {
+    return null;
+  }
 
-  return fetcher;
+  return execute(client.link, {
+    ...request,
+    query: parse(request.query),
+  });
+};
+
+const useFetcher = (client: Maybe<ApolloClient<NormalizedCacheObject>>) => {
+  return useMemo(() => createFetcher(client), [client]);
 };
 
 export interface PlaygroundProps {
@@ -42,9 +38,9 @@ export const Playground: React.FC<PlaygroundProps> = ({ context }) => {
   const fetcher = useFetcher(client);
 
   return client ? (
-    <Wrapper>
+    <S.Playground>
       <GraphiQL fetcher={fetcher} />
-    </Wrapper>
+    </S.Playground>
   ) : null;
 };
 

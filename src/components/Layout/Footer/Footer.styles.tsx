@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const FooterPosition = styled.div`
   position: relative;
-  z-index: 5;
+  z-index: 200;
 `;
 
 export const Footer = styled.div`

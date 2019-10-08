@@ -3,7 +3,7 @@ import { Switch, Route, useRouteMatch } from 'react-router';
 import * as S from './Fund.styles';
 import { FundHeader } from './FundHeader/FundHeader';
 
-const NoMatch = React.lazy(() => import('../NoMatch/NoMatch'));
+const NoMatch = React.lazy(() => import('~/components/Routes/NoMatch/NoMatch'));
 const FundRedeem = React.lazy(() => import('./FundRoutes/FundRedeem/FundRedeem'));
 const FundInvest = React.lazy(() => import('./FundRoutes/FundInvest/FundInvest'));
 const FundDetails = React.lazy(() => import('./FundRoutes/FundDetails/FundDetails'));

@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { ConnectionContext } from '../components/Contexts/Connection';
+import { ConnectionContext } from '~/components/Contexts/Connection';
 
 export const useEtherscanLink = (address: string) => {
   const { connection } = useContext(ConnectionContext);

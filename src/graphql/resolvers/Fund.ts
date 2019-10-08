@@ -1,4 +1,4 @@
-import { Resolver } from '..';
+import { Resolver } from '~/graphql/setup';
 
 export const id: Resolver<string> = address => address;
 export const address: Resolver<string> = address => address;

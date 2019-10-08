@@ -3,9 +3,9 @@ import React from 'react';
 import * as R from 'ramda';
 import gql from 'graphql-tag';
 import { Link } from 'react-router-dom';
-import * as S from './Header.styles';
-import { useOnChainQuery } from '../../../hooks/useQuery';
 import { useLocation } from 'react-router';
+import { useOnChainQuery } from '~/hooks/useQuery';
+import * as S from './Header.styles';
 
 const HeaderQuery = gql`
   query HeaderQuery {

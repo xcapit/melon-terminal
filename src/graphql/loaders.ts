@@ -7,8 +7,8 @@ import {
   getFundCreationTime,
   getFundCalculations,
 } from '@melonproject/melonjs';
-import { loadCached } from './utils/loadCached';
-import { Context } from '.';
+import { loadCached } from '~/graphql/utils/loadCached';
+import { Context } from '~/graphql/setup';
 
 const commonConfig = (context: Context) => ({
   environment: context.environment,

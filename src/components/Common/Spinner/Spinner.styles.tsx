@@ -1,6 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
-import { Logo as BaseLogo } from '../Logo/Logo';
-import { SpinnerProps } from './Spinner';
+import { Logo as BaseLogo } from '~/components/Common/Logo/Logo';
+import { SpinnerProps } from '~/components/Common/Spinner/Spinner';
 
 const rotate = keyframes`
   from {
@@ -91,12 +91,13 @@ export const SpinnerPositioning = styled.div<SpinnerProps>`
         left: 0;
         right: 0;
         height: 100%;
+        z-index: 100;
 
         ${Spinner} {
           position: absolute;
           top: 50%;
           left: 50%;
-          margin-left: -${size.spinner}px;
+          margin-left: -${size.spinner / 2}px;
           margin-top: -${size.spinner / 2}px;
         }
       `;

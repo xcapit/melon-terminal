@@ -20,8 +20,8 @@ import { HttpProvider } from 'web3-providers';
 import { onError } from 'apollo-link-error';
 import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { createSchemaLink, createSchema, createQueryContext } from '../../graphql';
-import { Maybe } from '../../types';
+import { createSchemaLink, createSchema, createQueryContext } from '~/graphql/setup';
+import { Maybe } from '~/types';
 
 // TODO: Fix this type.
 export type ConnectionProvider = any;

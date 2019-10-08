@@ -2,6 +2,7 @@ import React, { Suspense, useContext } from 'react';
 import ErrorBoundary, { FallbackProps } from 'react-error-boundary';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router';
 import { ConnectionProvider, TheGraphContext, OnChainContext, ConnectionContext } from './Contexts/Connection';
 import { Spinner } from './Common/Spinner/Spinner';
 import { Layout } from './Layout/Layout';
@@ -14,36 +15,46 @@ const Playground = React.lazy(() => import('./Routes/Playground/Playground'));
 const NoMatch = React.lazy(() => import('./Routes/NoMatch/NoMatch'));
 
 const AppRouter = () => {
-  const { connection } = useContext(ConnectionContext);
+  const history = useHistory();
+  const location = useLocation();
+  const { connection, provider } = useContext(ConnectionContext);
 
-  // TODO: Add redirect logic for /connect.
+  if (!provider && location.pathname !== '/connect') {
+    history.replace({
+      pathname: '/connect',
+      state: {
+        redirect: location,
+      },
+    });
+
+    return null;
+  }
+
+  if (!connection && location.pathname !== '/connect') {
+    return <Spinner positioning="overlay" size="large" />;
+  }
+
   return (
-    <>
-      {connection ? (
-        <Switch>
-          <Route path="/" exact={true}>
-            <Home />
-          </Route>
-          <Route path="/connect" exact={true}>
-            <Connect />
-          </Route>
-          <Route path="/fund/:address">
-            <Fund />
-          </Route>
-          <Route path="/playground/onchain" exact={true}>
-            <Playground context={OnChainContext} />
-          </Route>
-          <Route path="/playground/thegraph" exact={true}>
-            <Playground context={TheGraphContext} />
-          </Route>
-          <Route>
-            <NoMatch />
-          </Route>
-        </Switch>
-      ) : (
+    <Switch>
+      <Route path="/" exact={true}>
+        <Home />
+      </Route>
+      <Route path="/connect" exact={true}>
         <Connect />
-      )}
-    </>
+      </Route>
+      <Route path="/fund/:address">
+        <Fund />
+      </Route>
+      <Route path="/playground/onchain" exact={true}>
+        <Playground context={OnChainContext} />
+      </Route>
+      <Route path="/playground/thegraph" exact={true}>
+        <Playground context={TheGraphContext} />
+      </Route>
+      <Route>
+        <NoMatch />
+      </Route>
+    </Switch>
   );
 };
 

@@ -1,10 +1,10 @@
 import { default as ActualBigNumber } from 'bignumber.js';
 import { GraphQLScalarType } from 'graphql';
 import { Kind } from 'graphql/language';
-import * as Query from './resolvers/Query';
-import * as Account from './resolvers/Account';
-import * as Fund from './resolvers/Fund';
-import * as Block from './resolvers/Block';
+import * as Query from '~/graphql/resolvers/Query';
+import * as Account from '~/graphql/resolvers/Account';
+import * as Fund from '~/graphql/resolvers/Fund';
+import * as Block from '~/graphql/resolvers/Block';
 
 const DateTime = new GraphQLScalarType({
   name: 'DateTime',

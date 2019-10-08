@@ -1,81 +1,45 @@
 import React from 'react';
 import BigNumber from 'bignumber.js';
-import gql from 'graphql-tag';
+import { format } from 'date-fns';
 import { useHistory } from 'react-router';
-import { useTable } from 'react-table';
 import { fromWei } from 'web3-utils';
-import { useTheGraphQuery } from '../../../../hooks/useQuery';
-import { Spinner } from '../../../Common/Spinner/Spinner';
-
-const columns = [
-  {
-    Header: 'Name',
-    accessor: 'name',
-  },
-  {
-    Header: 'Share price',
-    accessor: (row: any) => new BigNumber(`${fromWei(row.sharePrice, 'ether')}`).toFixed(4),
-  },
-  {
-    Header: 'AUM',
-    accessor: (row: any) => new BigNumber(`${fromWei(row.gav, 'ether')}`).toFixed(4),
-  },
-  {
-    Header: 'Inception date',
-    accessor: (row: any) => new Date(row.createdAt * 1000),
-  },
-];
-
-const rankingQuery = gql`
-  query FundRankingQuery {
-    funds(orderBy: name) {
-      id
-      name
-      gav
-      sharePrice
-      totalSupply
-      isShutdown
-      createdAt
-      version {
-        id
-        name
-      }
-    }
-  }
-`;
+import { Spinner } from '~/components/Common/Spinner/Spinner';
+import NoMatch from '~/components/Routes/NoMatch/NoMatch';
+import { useFundOverviewQuery } from './FundOverview.query';
+import * as S from './FundOverview.styles';
 
 export const FundOverview: React.FC = () => {
   const history = useHistory();
-  const { data: { funds } = { funds: [] }, loading } = useTheGraphQuery<any>(rankingQuery);
-  const { getTableProps, headerGroups, rows, prepareRow } = useTable<any>({ columns, data: funds } as any);
-
-  if (loading) {
+  const overviewQuery = useFundOverviewQuery();
+  if (overviewQuery.loading) {
     return <Spinner positioning="centered" size="large" />;
   }
 
+  const overviewData = overviewQuery && overviewQuery.data && overviewQuery.data.funds;
+  if (!overviewData) {
+    return <NoMatch />;
+  }
+
   return (
-    <table {...getTableProps()}>
+    <S.Table>
       <thead>
-        {headerGroups.map(headerGroup => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-            ))}
-          </tr>
-        ))}
+        <tr>
+          <th>Name</th>
+          <th>Share price</th>
+          <th>Assets under management</th>
+          <th>Inception date</th>
+        </tr>
       </thead>
       <tbody>
-        {rows.map(
-          row =>
-            prepareRow(row) || (
-              <tr {...row.getRowProps({ onClick: () => history.push(`/fund/${row.original.id}`) })}>
-                {row.cells.map(cell => (
-                  <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                ))}
-              </tr>
-            )
-        )}
+        {overviewData.map(fund => (
+          <S.BodyRow onClick={() => history.push(`/fund/${fund.id}`)}>
+            <S.BodyCell>{fund.name}</S.BodyCell>
+            <S.BodyCell>{new BigNumber(fromWei(fund.sharePrice)).toFixed(4)}</S.BodyCell>
+            <S.BodyCell>{new BigNumber(fromWei(fund.totalSupply)).toFixed(4)}</S.BodyCell>
+            <S.BodyCell>{fund.createdAt && format(new Date(fund.createdAt * 1000), 'yyyy-MM-dd hh:mm a')}</S.BodyCell>
+          </S.BodyRow>
+        ))}
       </tbody>
-    </table>
+    </S.Table>
   );
 };

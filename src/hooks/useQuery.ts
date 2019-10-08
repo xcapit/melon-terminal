@@ -4,8 +4,8 @@ import { OperationVariables, QueryResult } from '@apollo/react-common';
 import { DocumentNode } from 'graphql';
 import ApolloClient from 'apollo-client';
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { Maybe } from '../types';
-import { OnChainContext, TheGraphContext } from '../components/Contexts/Connection';
+import { OnChainContext, TheGraphContext } from '~/components/Contexts/Connection';
+import { Maybe } from '~/types';
 
 export type QueryHookOptions<TData = any, TVariables = OperationVariables> = BaseQueryHookOptions<TData, TVariables>;
 

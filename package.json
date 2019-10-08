@@ -41,7 +41,6 @@
     "react-hot-loader": "^4.12.12",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.0.1",
-    "react-table": "^7.0.0-beta.8",
     "rxjs": "^6.5.3",
     "rxjs-hooks": "^0.5.1",
     "styled-components": "^5.0.0-beta.9",

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation, useHistory } from 'react-router';
-import { ConnectionProvider, ConnectionProviderTypeEnum } from '../../../Contexts/Connection';
-import { Maybe } from '../../../../types';
+import { ConnectionProvider, ConnectionProviderTypeEnum } from '~/components/Contexts/Connection';
+import { Maybe } from '~/types';
 
 export interface ConnectionProviderSelectorProps {
   current: ConnectionProvider;
@@ -23,7 +23,9 @@ export const ConnectionSelector: React.FC<ConnectionProviderSelectorProps> = ({ 
             set(value);
 
             if (location.state && location.state.redirect) {
-              history.push(location.state.redirect);
+              history.replace(location.state.redirect);
+            } else {
+              history.push('/');
             }
           };
 

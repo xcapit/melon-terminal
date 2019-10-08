@@ -72,7 +72,7 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
         </S.FundHeaderItem>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Creation date</S.FundHeaderItemTitle>
-          {format(fund.creationTime, 'yyyy-MM-dd hh:mm a')}
+          {fund.creationTime && format(fund.creationTime, 'yyyy-MM-dd hh:mm a')}
         </S.FundHeaderItem>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Total number of shares</S.FundHeaderItemTitle>

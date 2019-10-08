@@ -1,36 +1,36 @@
 const path = require('path');
-const hot = require('react-app-rewire-hot-loader');
 const webpack = require('webpack');
+const {
+  override,
+  addBabelPlugin,
+  disableEsLint,
+  addWebpackPlugin,
+  addWebpackModuleRule,
+  addWebpackAlias,
+} = require('customize-cra');
+const addHotLoader = require('react-app-rewire-hot-loader');
 
-const flatten = (array) => array.reduce((a, b) =>
-  a.concat(Array.isArray(b) ? flatten(b) : b), []);
-
-module.exports = function override(config, env) {
-  config = hot(config, env);
-
-  config.resolve.alias = {
-    ...config.resolve.alias,
+module.exports = override(
+  addHotLoader,
+  disableEsLint(),
+  addBabelPlugin(['styled-components', { ssr: false, displayName: true }]),
+  addWebpackAlias({
     'react-dom': '@hot-loader/react-dom',
-  };
-
-  config.plugins.push(
-    new webpack.IgnorePlugin(/^scrypt$/),
-    new webpack.ContextReplacementPlugin(/graphql-language-service-interface[\\/]dist$/, new RegExp(`^\\./.*\\.js$`)),
-    new webpack.ContextReplacementPlugin(/graphql-language-service-utils[\\/]dist$/, new RegExp(`^\\./.*\\.js$`)),
+  }),
+  addWebpackPlugin(new webpack.IgnorePlugin(/^scrypt$/)),
+  addWebpackPlugin(
+    new webpack.ContextReplacementPlugin(/graphql-language-service-interface[\\/]dist$/, new RegExp(`^\\./.*\\.js$`))
+  ),
+  addWebpackPlugin(
+    new webpack.ContextReplacementPlugin(/graphql-language-service-utils[\\/]dist$/, new RegExp(`^\\./.*\\.js$`))
+  ),
+  addWebpackPlugin(
     new webpack.ContextReplacementPlugin(/graphql-language-service-parser[\\/]dist$/, new RegExp(`^\\./.*\\.js$`))
-  );
-
-  const rulesFlat = flatten(config.module.rules.map((rule) => rule.oneOf || rule));
-  const fileLoader = rulesFlat.find((rule) => rule.loader && rule.loader.indexOf("file-loader") !== -1);
-
-  // Load graphql files with graphql-tag instead of the file-loader.
-  fileLoader && fileLoader.exclude.push(/\.(graphql|gql)$/);
-  config.module.rules.push({
+  ),
+  addWebpackModuleRule({
     test: /\.(graphql|gql)$/,
-    // Only target files from the renderer.
     include: path.resolve(__dirname, 'src'),
+    exclude: /node_modules/,
     loader: 'graphql-tag/loader',
-  });
-
-  return config;
-};
+  })
+);

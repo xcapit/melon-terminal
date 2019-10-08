@@ -5,6 +5,7 @@ import { useHistory } from 'react-router';
 import { useTable } from 'react-table';
 import { fromWei } from 'web3-utils';
 import { useTheGraphQuery } from '../../../../hooks/useQuery';
+import { Spinner } from '../../../Common/Spinner/Spinner';
 
 const columns = [
   {
@@ -45,9 +46,12 @@ const rankingQuery = gql`
 
 export const FundOverview: React.FC = () => {
   const history = useHistory();
-  const { data } = useTheGraphQuery<any>(rankingQuery);
-  const funds = data && data.funds ? data.funds : [];
+  const { data: { funds } = { funds: [] }, loading } = useTheGraphQuery<any>(rankingQuery);
   const { getTableProps, headerGroups, rows, prepareRow } = useTable<any>({ columns, data: funds } as any);
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <table {...getTableProps()}>

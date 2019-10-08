@@ -40,7 +40,7 @@ export interface FundHeaderProps {
 
 export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
   const etherscanLink = useEtherscanLink(address);
-  const { data: { fund } = {} as FundHeaderQueryResult, loading } = useOnChainQuery<FundHeaderQueryResult>(
+  const { data: { fund } = { fund: {} } as FundHeaderQueryResult, loading } = useOnChainQuery<FundHeaderQueryResult>(
     FundHeaderQuery,
     {
       variables: { address },

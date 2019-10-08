@@ -7,7 +7,6 @@
     { "src": "^/favicon.png", "dest": "/favicon.png" },
     { "src": "^/manifest.json", "dest": "/manifest.json" },
     { "src": "^/robots.txt", "dest": "/robots.txt" },
-    { "src": "^/robots.txt", "dest": "/robots.txt" },
     { "src": "^/(.*)", "dest": "/index.html" }
   ]
 }

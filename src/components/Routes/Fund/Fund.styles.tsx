@@ -9,6 +9,7 @@ export const FundHeader = styled.div`
 export const FundBody = styled.div`
   display: flex;
   flex-direction: column;
+  position: relative;
 
   @media (${props => props.theme.mediaQueries.l}) {
     flex: 1;

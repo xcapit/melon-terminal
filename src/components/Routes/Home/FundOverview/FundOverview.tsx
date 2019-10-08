@@ -50,7 +50,7 @@ export const FundOverview: React.FC = () => {
   const { getTableProps, headerGroups, rows, prepareRow } = useTable<any>({ columns, data: funds } as any);
 
   if (loading) {
-    return <Spinner />;
+    return <Spinner positioning="centered" size="large" />;
   }
 
   return (

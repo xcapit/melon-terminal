@@ -53,7 +53,7 @@ const AppComponent = () => (
       <Router>
         <Layout>
           <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <Suspense fallback={<Spinner size="large" overlay={true} />}>
+            <Suspense fallback={<Spinner size="large" positioning="overlay" />}>
               <AppRouter />
             </Suspense>
           </ErrorBoundary>

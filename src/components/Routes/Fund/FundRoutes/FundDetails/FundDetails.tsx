@@ -6,7 +6,7 @@ export interface FundDetailsProps {
 }
 
 export const FundDetails: React.FC<FundDetailsProps> = ({ address }) => {
-  return <Spinner />;
+  return <Spinner positioning="centered" size="large" />;
 };
 
 export default FundDetails;

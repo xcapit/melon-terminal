@@ -2,22 +2,15 @@ import React from 'react';
 import * as S from './Spinner.styles';
 
 export interface SpinnerProps {
-  className?: string;
-  overlay?: boolean;
+  positioning?: 'overlay' | 'centered';
   icon?: boolean;
   text?: string;
   size?: 'default' | 'small' | 'large' | 'inflated';
 }
 
-export const Spinner: React.FC<SpinnerProps> = ({
-  icon = true,
-  text = false,
-  overlay = false,
-  size = 'default',
-  className,
-}) => (
-  <S.SpinnerPositioning overlay={overlay}>
-    <S.Spinner size={size} className={className}>
+export const Spinner: React.FC<SpinnerProps> = ({ icon = true, text = false, size = 'default', positioning }) => (
+  <S.SpinnerPositioning positioning={positioning} size={size}>
+    <S.Spinner size={size}>
       <S.Wrapper>
         {icon && <S.Logo name="without-border" />}
         <S.Loader />

@@ -40,82 +40,76 @@ export const Wrapper = styled.div`
 
 export const Logo = styled(BaseLogo)``;
 
+const sizes = {
+  default: {
+    spinner: 100,
+    border: 2,
+  },
+  large: {
+    spinner: 200,
+    border: 8,
+  },
+  small: {
+    spinner: 50,
+    border: 1,
+  },
+  inflated: {
+    spinner: 50,
+    border: 4,
+  },
+};
+
 export const Spinner = styled.div<SpinnerProps>`
   ${props => {
-    if (props.size === 'default') {
-      return css`
-        ${Wrapper}, ${Loader}, ${Logo} {
-          width: 100px;
-          height: 100px;
-        }
+    const size = sizes[props.size || 'default'];
 
-        ${Loader} {
-          border-width: 2px;
-        }
-      `;
-    }
+    return css`
+      ${Wrapper}, ${Loader}, ${Logo} {
+        width: ${size.spinner}px;
+        height: ${size.spinner}px;
+      }
 
-    if (props.size === 'large') {
-      return css`
-        ${Wrapper}, ${Loader}, ${Logo} {
-          width: 200px;
-          height: 200px;
-        }
-
-        ${Loader} {
-          border-width: 8px;
-        }
-      `;
-    }
-
-    if (props.size === 'small') {
-      return css`
-        ${Wrapper}, ${Loader}, ${Logo} {
-          width: 50px;
-          height: 50px;
-        }
-
-        ${Loader} {
-          border-width: 1px;
-        }
-      `;
-    }
-
-    if (props.size === 'inflated') {
-      return css`
-        ${Wrapper}, ${Loader}, ${Logo} {
-          width: 50px;
-          height: 50px;
-        }
-
-        ${Loader} {
-          border-width: 4px;
-        }
-      `;
-    }
+      ${Loader} {
+        border-width: ${size.border}px;
+      }
+    `;
   }}
 `;
 
 export const SpinnerPositioning = styled.div<SpinnerProps>`
   position: relative;
 
-  ${props =>
-    props.overlay &&
-    css`
-      background-color: ${props => props.theme.mainColors.secondary};
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 100%;
+  ${props => {
+    const size = sizes[props.size || 'default'];
 
-      ${Spinner} {
+    if (props.positioning === 'overlay') {
+      return css`
+        background-color: ${props => props.theme.mainColors.secondary};
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 100%;
+
+        ${Spinner} {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          margin-left: -${size.spinner}px;
+          margin-top: -${size.spinner / 2}px;
+        }
+      `;
+    }
+
+    if (props.positioning === 'centered') {
+      return css`
         position: absolute;
         top: 50%;
         left: 50%;
-        margin-left: -100px;
-        margin-top: -100px;
-      }
-    `}
+        margin-left: -${size.spinner / 2}px;
+        margin-top: -${size.spinner / 2}px;
+      `;
+    }
+  }}
 `;

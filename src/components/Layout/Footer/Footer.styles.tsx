@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 
-export const FooterPosition = styled.div``;
+export const FooterPosition = styled.div`
+  position: relative;
+  z-index: 5;
+`;
 
 export const Footer = styled.div`
   display: flex;

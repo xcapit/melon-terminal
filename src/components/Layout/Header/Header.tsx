@@ -4,7 +4,7 @@ import * as R from 'ramda';
 import gql from 'graphql-tag';
 import { Link } from 'react-router-dom';
 import * as S from './Header.styles';
-import { useOnChainQuery } from '../../../hooks/apolloQuery';
+import { useOnChainQuery } from '../../../hooks/useQuery';
 import { useLocation } from 'react-router';
 
 const HeaderQuery = gql`

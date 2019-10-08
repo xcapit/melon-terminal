@@ -12,6 +12,7 @@ type Query {
   account: Account
   accounts: [Account]!
   fund(address: String): Fund
+  totalFunds: BigNumber
 }
 
 type Block {
@@ -46,14 +47,13 @@ type Fund {
   creator: String!
   creationTime: DateTime!
   routes: FundRoutes!
-}
-
-#############################################################################
-#### CONNECTION TYPES #######################################################
-#############################################################################
-type FundConnection {
-  total: Int!
-  items: [Fund!]!
+  sharePrice: BigNumber
+  totalSupply: BigNumber
+  nav: BigNumber
+  gav: BigNumber
+  managementFeeRate: BigNumber
+  performanceFeeRate: BigNumber
+  performanceFeePeriod: BigNumber
 }
 
 type Schema {

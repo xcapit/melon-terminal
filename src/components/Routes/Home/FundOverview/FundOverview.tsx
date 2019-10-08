@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import { useHistory } from 'react-router';
 import { useTable } from 'react-table';
 import { fromWei } from 'web3-utils';
-import { useTheGraphQuery } from '../../../../hooks/apolloQuery';
+import { useTheGraphQuery } from '../../../../hooks/useQuery';
 
 const columns = [
   {

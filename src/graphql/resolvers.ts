@@ -6,10 +6,32 @@ import * as Account from './resolvers/Account';
 import * as Fund from './resolvers/Fund';
 import * as Block from './resolvers/Block';
 
-export { Query, Account, Fund, Block };
-export { GraphQLDateTime as DateTime } from 'graphql-iso-date';
+const DateTime = new GraphQLScalarType({
+  name: 'DateTime',
+  serialize: value => {
+    if (value instanceof Date) {
+      return value;
+    }
 
-export const BigNumber = new GraphQLScalarType({
+    return new Date(value);
+  },
+  parseValue: value => {
+    if (value instanceof Date) {
+      return value;
+    }
+
+    return new Date(value);
+  },
+  parseLiteral(ast) {
+    if (ast.kind === Kind.INT || ast.kind === Kind.STRING) {
+      return new Date(ast.value);
+    }
+
+    return null;
+  },
+});
+
+const BigNumber = new GraphQLScalarType({
   name: 'BigNumber',
   serialize: value => {
     if (ActualBigNumber.isBigNumber(value)) {
@@ -33,3 +55,5 @@ export const BigNumber = new GraphQLScalarType({
     return null;
   },
 });
+
+export { Query, Account, Fund, Block, DateTime, BigNumber };

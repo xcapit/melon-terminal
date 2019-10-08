@@ -5,6 +5,7 @@ import {
   getFundManager,
   getFundCreator,
   getFundCreationTime,
+  getFundCalculations,
 } from '@melonproject/melonjs';
 import { loadCached } from './utils/loadCached';
 import { Context } from '.';
@@ -54,4 +55,11 @@ export const fundCreator = (context: Context) =>
 export const fundCreationTime = (context: Context) =>
   loadCached(context, 'fundCreationTime', async (address: string) => {
     return getFundCreationTime(commonConfig(context), address);
+  });
+
+export const fundCalculations = (context: Context) =>
+  loadCached(context, 'fundCalculations', async (address: string) => {
+    const loadRoutes = context.loaders.fundRoutes as ReturnType<typeof fundRoutes>;
+    const routes = await loadRoutes(address);
+    return routes.accounting && getFundCalculations(commonConfig(context), routes.accounting);
   });

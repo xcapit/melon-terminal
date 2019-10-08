@@ -22,3 +22,18 @@ export const creator: Resolver<string> = (address, args, context) => {
 export const creationTime: Resolver<string> = (address, args, context) => {
   return context.loaders.fundCreationTime(address);
 };
+
+export const sharePrice: Resolver<string> = async (address, args, context) => {
+  const result = await context.loaders.fundCalculations(address);
+  return result && result.sharePrice;
+};
+
+export const gav: Resolver<string> = async (address, args, context) => {
+  const result = await context.loaders.fundCalculations(address);
+  return result && result.gav;
+};
+
+export const nav: Resolver<string> = async (address, args, context) => {
+  const result = await context.loaders.fundCalculations(address);
+  return result && result.nav;
+};

@@ -63,9 +63,68 @@ const Global = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  body, html {
+  html {
+    min-height: 100%;
+  }
+  
+  body {
+    position: relative;
+    font-family: 'Source Serif Pro', serif;
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 0;
     min-height: 100%;
     background-color: ${theme.mainColors.primary};
+  }
+  
+
+  h2 {
+    font-size: ${theme.fontSizes.l};
+    position: relative;
+  }
+  
+  h2::after {
+    content: ' ';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    border-top: 1px solid rgba(34, 36, 38, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  h1, h3 {
+    font-size: ${theme.fontSizes.xl};
+    font-weight: bold;
+    position: relative;
+  }
+  
+  h3::after,
+  h1::after {
+    content: ' ';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    border-top: 1px solid rgba(34, 36, 38, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  h4 {
+    font-size: ${theme.fontSizes.l};
+    margin-bottom: ${theme.spaceUnits.xs};
+  }
+  
+  a {
+    text-decoration-style: dotted;
+    color: ${theme.otherColors.black};
+  }
+  
+  hr {
+    border: 0;
+    height: 0;
+    border-top: 1px solid ${theme.mainColors.border}
+    margin: ${theme.spaceUnits.s} 0;
   }
 `;
 

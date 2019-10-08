@@ -29,3 +29,7 @@ export const fund: Resolver = async (parent, args, context) => {
   const exists = !!(await context.loaders.fundName(args.address));
   return exists && args.address;
 };
+
+export const totalFunds: Resolver = (parent, args, context) => {
+  return context.loaders.totalFunds();
+};

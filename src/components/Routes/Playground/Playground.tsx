@@ -11,7 +11,7 @@ import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { Maybe } from '../../../types';
 
 const Wrapper = styled.div`
-  height: 100vh;
+  height: calc(100vh - 33px);
 `;
 
 export type RawRequest = GraphQLRequest & {

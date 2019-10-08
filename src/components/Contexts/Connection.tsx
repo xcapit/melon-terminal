@@ -157,6 +157,22 @@ const createErrorLink = () => {
   });
 };
 
+const createDummyClient = () =>
+  new ApolloClient({
+    link: new ApolloLink(() => null),
+    cache: new InMemoryCache(),
+    defaultOptions: {
+      watchQuery: {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'ignore',
+      },
+      query: {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'all',
+      },
+    },
+  });
+
 const useOnChainApollo = (connection: Maybe<Connection>) => {
   const eth = connection && connection.eth;
   const network = connection && connection.network;
@@ -165,7 +181,7 @@ const useOnChainApollo = (connection: Maybe<Connection>) => {
   const schema = useMemo(() => createSchema(), []);
   const apollo = useMemo(() => {
     if (!(eth && network)) {
-      return;
+      return createDummyClient();
     }
 
     const context = createQueryContext(eth, network);
@@ -206,7 +222,7 @@ const useTheGraphApollo = (connection: Maybe<Connection>) => {
   const network = connection && connection.network;
   const apollo = useMemo(() => {
     if (!(network && network === 1)) {
-      return;
+      return createDummyClient();
     }
 
     const uri = 'https://api.thegraph.com/subgraphs/name/melonproject/melon';

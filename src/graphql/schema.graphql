@@ -1,16 +1,30 @@
 scalar DateTime
+scalar BigNumber
+
+enum NetworkEnum {
+  MAINNET
+  KOVAN
+}
 
 type Query {
-  network: String!
-  block: Int!
+  network: NetworkEnum
+  block: Block
+  account: Account
   accounts: [Account]!
   fund(address: String): Fund
+}
+
+type Block {
+  id: ID!
+  hash: String!
+  number: BigNumber!
+  timestamp: DateTime!
 }
 
 type Account {
   id: ID!
   address: String!
-  balance: Float
+  balance: BigNumber
 }
 
 type FundRoutes {

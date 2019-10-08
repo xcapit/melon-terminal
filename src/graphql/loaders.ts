@@ -14,6 +14,12 @@ const commonConfig = (context: Context) => ({
   block: context.block,
 });
 
+export const block = (context: Context) =>
+  loadCached(context, 'block', async (number: number) => {
+    const eth = context.environment.eth;
+    return eth.getBlock(number);
+  });
+
 export const accounts = (context: Context) =>
   loadCached(context, 'accounts', () => {
     const eth = context.environment.eth;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation, useHistory } from 'react-router';
 import { ConnectionProvider, ConnectionProviderTypeEnum } from '../../../Contexts/Connection';
 import { Maybe } from '../../../../types';
 
@@ -8,6 +9,8 @@ export interface ConnectionProviderSelectorProps {
 }
 
 export const ConnectionSelector: React.FC<ConnectionProviderSelectorProps> = ({ current, set }) => {
+  const history = useHistory();
+  const location = useLocation();
   const keys = (Object.keys(ConnectionProviderTypeEnum) as any) as (keyof ConnectionProviderTypeEnum)[];
 
   return (
@@ -16,9 +19,16 @@ export const ConnectionSelector: React.FC<ConnectionProviderSelectorProps> = ({ 
       <div>
         {keys.map(key => {
           const value = (ConnectionProviderTypeEnum as any)[key as any] as any;
+          const click = () => {
+            set(value);
+
+            if (location.state && location.state.redirect) {
+              history.push(location.state.redirect);
+            }
+          };
 
           return (
-            <button key={key} onClick={() => set(value)} disabled={current === value}>
+            <button key={key} onClick={click} disabled={current === value}>
               {key}
             </button>
           );

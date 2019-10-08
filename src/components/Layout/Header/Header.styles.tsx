@@ -5,7 +5,7 @@ export const HeaderPosition = styled.div`
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 2;
+  z-index: 100;
 `;
 
 export const Header = styled.div`
@@ -15,10 +15,6 @@ export const Header = styled.div`
   line-height: 1;
   display: flex;
   flex-wrap: nowrap;
-  position: fixed;
-  width: 100%;
-  top: 0px;
-  z-index: 2;
 
   @media (${props => props.theme.mediaQueries.m}) {
     justify-content: space-between;
@@ -88,5 +84,7 @@ export const AccountAddress = styled(AccountInfoItem)`
 `;
 
 export const AccountNetwork = styled(AccountInfoItem)``;
+
+export const AccountBalance = styled(AccountInfoItem)``;
 
 export const AccountStatus = styled(AccountInfoItem)``;

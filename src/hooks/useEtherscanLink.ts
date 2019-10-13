@@ -1,14 +1,11 @@
 import { useContext } from 'react';
-import { ConnectionContext } from '~/components/Contexts/Connection';
 
 export const useEtherscanLink = (address: string) => {
-  const { connection } = useContext(ConnectionContext);
-
-  if (connection && connection.network === 1) {
+  if (process.env.NETWORK === 'MAINNET') {
     return `https://etherscan.io/address/${address}`;
   }
 
-  if (connection && connection.network === 42) {
+  if (process.env.NETWORK === 'KOVAN') {
     return `https://kovan.etherscan.io/address/${address}`;
   }
 

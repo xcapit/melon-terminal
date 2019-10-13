@@ -3,30 +3,23 @@ import ApolloClient from 'apollo-client';
 import * as Rx from 'rxjs';
 import * as R from 'ramda';
 import { Eth } from 'web3-eth';
-import {
-  mapTo,
-  map,
-  skip,
-  filter,
-  switchMap,
-  expand,
-  distinctUntilChanged,
-  combineLatest,
-  shareReplay,
-} from 'rxjs/operators';
-import { useObservable } from 'rxjs-hooks';
+import { mapTo, map, switchMap, expand, distinctUntilChanged, combineLatest, shareReplay, tap } from 'rxjs/operators';
 import { ApolloLink } from 'apollo-link';
 import { HttpProvider } from 'web3-providers';
 import { onError } from 'apollo-link-error';
 import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { createSchemaLink, createSchema, createQueryContext } from '~/graphql/setup';
-import { Maybe } from '~/types';
+import { ApolloProvider } from '@apollo/react-hooks';
+
+const ethereum = (window as any).ethereum;
+ethereum.autoRefreshOnNetworkChange = false;
 
 // TODO: Fix this type.
 export type ConnectionProvider = any;
 
 export enum ConnectionProviderTypeEnum {
+  'DEFAULT' = 'DEFAULT',
   'FRAME' = 'FRAME',
   'INJECTED' = 'INJECTED',
   'CUSTOM' = 'CUSTOM',
@@ -38,19 +31,33 @@ export interface Connection {
   accounts?: string[];
 }
 
-interface ConnectionProviderResource extends Rx.Unsubscribable {
+export interface ConnectionProviderResource extends Rx.Unsubscribable {
   eth: Eth;
 }
 
-export interface ConnectionContextValue {
-  set: React.Dispatch<React.SetStateAction<Maybe<ConnectionProviderTypeEnum>>>;
-  provider: Maybe<ConnectionProviderTypeEnum>;
-  connection: Maybe<Connection>;
+export interface ApolloProviderContext {
+  client: ApolloClient<NormalizedCacheObject>;
 }
 
-export const ConnectionContext = createContext<ConnectionContextValue>({} as ConnectionContextValue);
-export const OnChainContext = createContext<Maybe<ApolloClient<NormalizedCacheObject>>>(undefined);
-export const TheGraphContext = createContext<Maybe<ApolloClient<NormalizedCacheObject>>>(undefined);
+export interface OnChainContextValue extends ApolloProviderContext {
+  set: React.Dispatch<React.SetStateAction<ConnectionProviderTypeEnum>>;
+  provider: ConnectionProviderTypeEnum;
+}
+
+export interface TheGraphContextValue extends ApolloProviderContext {
+  // Nothing to add here.
+}
+
+export const OnChainContext = createContext<OnChainContextValue>({} as OnChainContextValue);
+export const TheGraphContext = createContext<TheGraphContextValue>(
+  (() => {
+    const uri = `https://api.thegraph.com/subgraphs/name/${process.env.SUBGRAPH}`;
+    const link = createHttpLink({ uri });
+    const cache = new InMemoryCache();
+    const client = new ApolloClient({ link, cache });
+    return { client };
+  })()
+);
 
 const checkConnection = async (eth: Eth) => {
   const [network, accounts] = await Promise.all([
@@ -108,7 +115,6 @@ const createConnection = (type: ConnectionProviderTypeEnum): Rx.Observable<Conne
     }
 
     case ConnectionProviderTypeEnum.INJECTED: {
-      const ethereum = (window as any).ethereum;
       if (typeof ethereum === 'undefined') {
         return Rx.EMPTY;
       }
@@ -132,7 +138,26 @@ const createConnection = (type: ConnectionProviderTypeEnum): Rx.Observable<Conne
     }
   }
 
-  throw new Error('Invalid provider type.');
+  const eth$ = Rx.using(
+    () => {
+      const provider = new HttpProvider('https://mainnet.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660');
+      const eth = new Eth(provider, undefined, {
+        transactionConfirmationBlocks: 1,
+      });
+
+      return {
+        eth,
+        unsubscribe: () => provider.disconnect(),
+      };
+    },
+    resource => Rx.of((resource as ConnectionProviderResource).eth)
+  );
+
+  return eth$.pipe(
+    switchMap(eth => checkConnection(eth)),
+    expand(connection => Rx.timer(1000).pipe(switchMap(() => checkConnection(connection.eth)))),
+    distinctUntilChanged((a, b) => R.equals(a, b))
+  );
 };
 
 const createErrorLink = () => {
@@ -157,34 +182,10 @@ const createErrorLink = () => {
   });
 };
 
-const createDummyClient = () =>
-  new ApolloClient({
-    link: new ApolloLink(() => null),
-    cache: new InMemoryCache(),
-    defaultOptions: {
-      watchQuery: {
-        fetchPolicy: 'no-cache',
-        errorPolicy: 'ignore',
-      },
-      query: {
-        fetchPolicy: 'no-cache',
-        errorPolicy: 'all',
-      },
-    },
-  });
-
-const useOnChainApollo = (connection: Maybe<Connection>) => {
-  const eth = connection && connection.eth;
-  const network = connection && connection.network;
-  const accounts = connection && connection.accounts;
-
+const useOnChainApollo = (connection: Rx.Observable<Connection>) => {
   const schema = useMemo(() => createSchema(), []);
   const apollo = useMemo(() => {
-    if (!(eth && network)) {
-      return createDummyClient();
-    }
-
-    const context = createQueryContext(eth, network);
+    const context = createQueryContext(connection);
     const data = createSchemaLink({ schema, context });
     const error = createErrorLink();
     const link = ApolloLink.from([error, data]);
@@ -209,64 +210,64 @@ const useOnChainApollo = (connection: Maybe<Connection>) => {
         },
       },
     });
-  }, [eth, network, schema]);
+  }, [connection]);
 
   useEffect(() => {
-    apollo && apollo.resetStore();
-  }, [apollo, network, accounts]);
-
-  return apollo;
-};
-
-const useTheGraphApollo = (connection: Maybe<Connection>) => {
-  const network = connection && connection.network;
-  const apollo = useMemo(() => {
-    if (!(network && network === 1)) {
-      return createDummyClient();
-    }
-
-    const uri = 'https://api.thegraph.com/subgraphs/name/melonproject/melon';
-    const link = createHttpLink({ uri });
-    const cache = new InMemoryCache();
-    return new ApolloClient({ link, cache });
-  }, [network]);
+    const reset = () => apollo.resetStore();
+    const subscription = connection.subscribe(reset, reset, reset);
+    return () => subscription.unsubscribe();
+  }, [connection, apollo]);
 
   return apollo;
 };
 
 const useConnection = () => {
-  const [type, set] = useState<Maybe<ConnectionProviderTypeEnum>>(undefined);
-  const connection = useObservable<Maybe<Connection>, [Maybe<ConnectionProviderTypeEnum>]>(
-    input$ => {
-      const reset$ = input$.pipe(
-        mapTo(undefined),
-        skip(1)
-      );
-      const connection$ = input$.pipe(
-        map(([type]) => type),
-        filter((type): type is ConnectionProviderTypeEnum => !!type),
-        switchMap(type => createConnection(type))
-      );
-
-      return Rx.merge(reset$, connection$);
-    },
-    undefined,
-    [type]
+  const [type, set] = useState<ConnectionProviderTypeEnum>(ConnectionProviderTypeEnum.DEFAULT);
+  const subject = useMemo(() => new Rx.Subject<ConnectionProviderTypeEnum>(), undefined);
+  const connection = useMemo(
+    () =>
+      subject.pipe(
+        switchMap(type => createConnection(type)),
+        shareReplay(1)
+      ),
+    [subject]
   );
+
+  useEffect(() => subject.next(type), [subject, type]);
 
   return [connection, type, set] as [typeof connection, typeof type, typeof set];
 };
 
 export const ConnectionProvider: React.FC = props => {
   const [connection, provider, set] = useConnection();
-  const onChainClient = useOnChainApollo(connection);
-  const theGraphClient = useTheGraphApollo(connection);
+  const client = useOnChainApollo(connection);
 
   return (
-    <ConnectionContext.Provider value={{ connection, provider, set }}>
-      <OnChainContext.Provider value={onChainClient}>
-        <TheGraphContext.Provider value={theGraphClient}>{props.children}</TheGraphContext.Provider>
-      </OnChainContext.Provider>
-    </ConnectionContext.Provider>
+    <OnChainContext.Provider value={{ client, provider, set }}>
+      <ApolloProvider client={client}>{props.children}</ApolloProvider>
+    </OnChainContext.Provider>
   );
+};
+
+export const RequireSecureConnection: React.FC = props => {
+  // const history = useHistory();
+  // const location = useLocation();
+  // const { connection, provider } = useContext(OnChainContext);
+
+  // // if (!provider && location.pathname !== '/connect') {
+  // //   history.replace({
+  // //     pathname: '/connect',
+  // //     state: {
+  // //       redirect: location,
+  // //     },
+  // //   });
+
+  // //   return null;
+  // // }
+
+  // if (!connection && location.pathname !== '/connect') {
+  //   return <Spinner positioning="overlay" size="large" />;
+  // }
+
+  return <>{props.children}</>;
 };

@@ -32,7 +32,7 @@ export const FundOverview: React.FC = () => {
       </thead>
       <tbody>
         {overviewData.map(fund => (
-          <S.BodyRow onClick={() => history.push(`/fund/${fund.id}`)}>
+          <S.BodyRow key={fund.id} onClick={() => history.push(`/fund/${fund.id}`)}>
             <S.BodyCell>{fund.name}</S.BodyCell>
             <S.BodyCell>{new BigNumber(fromWei(fund.sharePrice)).toFixed(4)}</S.BodyCell>
             <S.BodyCell>{new BigNumber(fromWei(fund.totalSupply)).toFixed(4)}</S.BodyCell>

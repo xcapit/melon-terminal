@@ -1,7 +1,6 @@
 import React from 'react';
 import format from 'date-fns/format';
 import * as S from './FundHeader.styles';
-import NoMatch from '~/components/Routes/NoMatch/NoMatch';
 import { useEtherscanLink } from '~/hooks/useEtherscanLink';
 import { Spinner } from '~/components/Common/Spinner/Spinner';
 import { useFundHeaderQuery } from './FundHeader.query';
@@ -19,7 +18,7 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
 
   const fundData = fundQuery && fundQuery.data && fundQuery.data.fund;
   if (!fundData) {
-    return <NoMatch />;
+    return null;
   }
 
   return (

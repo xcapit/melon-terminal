@@ -1,5 +1,5 @@
+import * as Rx from 'rxjs';
 import LRU from 'lru-cache';
-import { Eth } from 'web3-eth';
 import { forAwaitEach } from 'iterall';
 import { execute, subscribe, GraphQLSchema, ExecutionArgs } from 'graphql';
 import { ApolloLink, FetchResult, Observable, Operation } from 'apollo-link';
@@ -9,6 +9,7 @@ import * as loaderCreators from '~/graphql/loaders';
 import * as resolvers from '~/graphql/resolvers';
 import { isSubscription } from '~/graphql/utils/isSubscription';
 import { ensureIterable } from '~/graphql/utils/ensureInterable';
+import { Connection } from '~/components/Contexts/Connection';
 
 // @ts-ignore
 import schema from '~/graphql/schema.graphql';
@@ -34,18 +35,16 @@ interface SchemaLinkOptions<TRoot = any, TContext = any> {
   root?: TRoot;
 }
 
-export const createQueryContext = (eth: Eth, network: number): ContextCreator => async cache => {
-  const block = await eth.getBlockNumber();
-
-  // TODO: Solve the deployment loading better.
-  const environment = (() => {
-    const deployment = require('@melonproject/melonjs/deployments/mainnet.json');
-    return { eth, deployment };
-  })();
+export const createQueryContext = (observable: Rx.Observable<Connection>): ContextCreator => async cache => {
+  const { eth, network } = await new Promise<Connection>((resolve, reject) => {
+    observable.subscribe(resolve, reject);
+  });
 
   // Create a reference to the loaders object so we can create the loader
   // functions with the pre-initialized context object.
   const loaders = {} as Loaders;
+  const block = await eth.getBlockNumber();
+  const environment = { eth, deployment: process.env.DEPLOYMENT };
   const context = { network, block, loaders, environment, cache } as Context;
 
   Object.keys(loaderCreators).forEach(key => {

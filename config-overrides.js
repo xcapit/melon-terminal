@@ -1,3 +1,5 @@
+require('dotenv-defaults').config();
+
 const path = require('path');
 const webpack = require('webpack');
 const addHotLoader = require('react-app-rewire-hot-loader');
@@ -21,14 +23,31 @@ const getPathAliases = () => {
   return aliases;
 };
 
+const getMelonDeployment = () => {
+  const network = process.env.NETWORK.toLowerCase();
+  const deployment = process.env.DEPLOYMENT || `@melonproject/melonjs/deployments/${network}.json`;
+
+  try {
+    return require(deployment)
+  }
+  catch (e) {
+    throw new Error(`Failed to load deployment from ${deployment}.`);
+  }
+};
+
 module.exports = override(
   addHotLoader,
   disableEsLint(),
   addBabelPlugin(['styled-components', { ssr: false, displayName: true }]),
+  addWebpackAlias(getPathAliases()),
   addWebpackAlias({
-    ...getPathAliases(),
     'react-dom': '@hot-loader/react-dom',
   }),
+  addWebpackPlugin(new webpack.DefinePlugin({
+    'process.env.NETWORK': JSON.stringify(process.env.NETWORK),
+    'process.env.SUBGRAPH': JSON.stringify(process.env.SUBGRAPH),
+    'process.env.DEPLOYMENT': JSON.stringify(getMelonDeployment()),
+  })),
   addWebpackPlugin(new webpack.IgnorePlugin(/^scrypt$/)),
   addWebpackPlugin(
     new webpack.ContextReplacementPlugin(/graphql-language-service-interface[\\/]dist$/, new RegExp(`^\\./.*\\.js$`))
@@ -44,5 +63,5 @@ module.exports = override(
     include: path.resolve(__dirname, 'src'),
     exclude: /node_modules/,
     loader: 'graphql-tag/loader',
-  })
+  }),
 );

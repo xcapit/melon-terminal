@@ -5,7 +5,7 @@ import { Maybe } from '~/types';
 
 export interface ConnectionProviderSelectorProps {
   current: ConnectionProvider;
-  set: React.Dispatch<React.SetStateAction<Maybe<ConnectionProviderTypeEnum>>>;
+  set: React.Dispatch<React.SetStateAction<ConnectionProviderTypeEnum>>;
 }
 
 export const ConnectionSelector: React.FC<ConnectionProviderSelectorProps> = ({ current, set }) => {

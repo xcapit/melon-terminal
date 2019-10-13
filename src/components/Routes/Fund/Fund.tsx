@@ -1,5 +1,6 @@
 import React from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router';
+import { RequireSecureConnection } from '~/components/Contexts/Connection';
 import * as S from './Fund.styles';
 import { FundHeader } from './FundHeader/FundHeader';
 
@@ -26,10 +27,14 @@ export const Fund: React.FC = () => {
             <FundDetails address={match.params.address} />
           </Route>
           <Route path={`${match.path}/invest`} exact={true}>
-            <FundInvest address={match.params.address} />
+            <RequireSecureConnection>
+              <FundInvest address={match.params.address} />
+            </RequireSecureConnection>
           </Route>
           <Route path={`${match.path}/redeem`} exact={true}>
-            <FundRedeem address={match.params.address} />
+            <RequireSecureConnection>
+              <FundRedeem address={match.params.address} />
+            </RequireSecureConnection>
           </Route>
           <Route>
             <NoMatch />

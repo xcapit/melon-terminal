@@ -14,6 +14,7 @@ import { Connection } from '~/components/Contexts/Connection';
 // @ts-ignore
 import schema from '~/graphql/schema.graphql';
 import { map, publishReplay, take } from 'rxjs/operators';
+import { NetworkEnum } from '~/types';
 
 export type Resolver<TParent = any, TArgs = any> = (parent: TParent, args: TArgs, context: Context) => any;
 export type ContextCreator = (request: Operation) => Promise<Context> | Context;
@@ -24,7 +25,7 @@ export type Loaders = {
 
 export interface Context {
   environment: Environment;
-  network: number;
+  network: NetworkEnum;
   block: number;
   accounts: string[];
   loaders: Loaders;

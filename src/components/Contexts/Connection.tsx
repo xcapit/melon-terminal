@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect, createContext } from 'react';
-import LRUCache from 'lru-cache';
 import ApolloClient from 'apollo-client';
 import * as Rx from 'rxjs';
 import * as R from 'ramda';
@@ -10,8 +9,10 @@ import { HttpProvider } from 'web3-providers';
 import { onError } from 'apollo-link-error';
 import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { createSchemaLink, createSchema, createQueryContext } from '~/graphql/setup';
 import { ApolloProvider } from '@apollo/react-hooks';
+import { createSchemaLink, createSchema, createQueryContext } from '~/graphql/setup';
+import { NetworkEnum } from '~/types';
+import { networkFromId } from '~/utils/networkFromId';
 
 // TODO: Fix this type.
 export type ConnectionProvider = any;
@@ -25,7 +26,7 @@ export enum ConnectionProviderTypeEnum {
 
 export interface Connection {
   eth: Eth;
-  network?: number;
+  network?: NetworkEnum;
   accounts?: string[];
 }
 
@@ -59,11 +60,12 @@ export const TheGraphContext = createContext<TheGraphContextValue>(
 );
 
 export const checkConnection = async (eth: Eth) => {
-  const [network, accounts] = await Promise.all([
+  const [id, accounts] = await Promise.all([
     eth.net.getId().catch(() => undefined),
     eth.getAccounts().catch(() => undefined),
   ]);
 
+  const network = id && networkFromId(id);
   return { eth, network, accounts } as Connection;
 };
 
@@ -153,14 +155,12 @@ const useOnChainApollo = (connection: Rx.Observable<Connection>) => {
 export const ConnectionProvider: React.FC = React.memo(props => {
   const [provider, setProvider] = useState(ConnectionProviderTypeEnum.DEFAULT);
   const connections = useMemo(() => new Rx.BehaviorSubject<Rx.Observable<Connection>>(createDefaultConnection()), []);
-  const connection = useMemo(
-    () =>
-      connections.pipe(
-        switchMap(connection => connection),
-        shareReplay(1)
-      ),
-    [connections]
-  );
+  const connection = useMemo(() => {
+    return connections.pipe(
+      switchMap(connection => connection),
+      shareReplay(1)
+    );
+  }, [connections]);
 
   const set = (provider: ConnectionProviderTypeEnum, connection: Rx.Observable<Connection>) => {
     setProvider(provider);

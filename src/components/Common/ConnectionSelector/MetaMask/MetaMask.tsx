@@ -4,6 +4,7 @@ import { mapTo, map, combineLatest, share } from 'rxjs/operators';
 import { Eth } from 'web3-eth';
 import { Connection } from '~/components/Contexts/Connection';
 import { ConnectionMethodProps } from '~/components/Common/ConnectionSelector/ConnectionSelector';
+import { networkFromId } from '~/utils/networkFromId';
 
 const connect = (): Rx.Observable<Connection> => {
   const ethereum = (window as any).ethereum;
@@ -18,7 +19,8 @@ const connect = (): Rx.Observable<Connection> => {
 
   const enable$ = Rx.defer(() => ethereum.enable() as Promise<string[]>).pipe(share());
   const networkChange$ = Rx.fromEvent<string>(ethereum, 'networkChanged').pipe(map(value => parseInt(value, 10)));
-  const network$ = Rx.concat(Rx.defer(() => eth.net.getId()), networkChange$);
+  const network$ = Rx.concat(Rx.defer(() => eth.net.getId()).pipe(map(id => id && networkFromId(id))), networkChange$);
+
   const accountsChanged$ = Rx.fromEvent<string[]>(ethereum, 'accountsChanged');
   const accounts$ = Rx.concat(enable$, accountsChanged$);
 
@@ -30,14 +32,10 @@ const connect = (): Rx.Observable<Connection> => {
 };
 
 export const MetaMask: React.FC<ConnectionMethodProps> = ({ set, active }) => {
-  const handleClick = () => {
-    set(connect());
-  };
-
   return (
     <div>
       <h2>Metamask</h2>
-      {!active && <button onClick={handleClick}>Connect</button>}
+      {!active && <button onClick={() => set(connect())}>Connect</button>}
     </div>
   );
 };

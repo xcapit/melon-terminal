@@ -5,8 +5,8 @@ import { useLocation, useHistory } from 'react-router';
 import { ConnectionProviderTypeEnum, OnChainContext, Connection } from '~/components/Contexts/Connection';
 import { MetaMask } from './MetaMask/MetaMask';
 import { CustomRpc } from './CustomRpc/CustomRpc';
-import * as S from './ConnectionSelector.styles';
 import { Frame } from './Frame/Frame';
+import * as S from './ConnectionSelector.styles';
 
 export interface ConnectionMethodProps {
   active: boolean;

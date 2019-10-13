@@ -1,19 +1,11 @@
 import { Resolver } from '~/graphql/setup';
 
-export const network: Resolver = (parent, args, context) => {
-  if (context.network === 1) {
-    return 'MAINNET';
-  }
-
-  if (context.network === 42) {
-    return 'KOVAN';
-  }
-
-  return null;
-};
-
 export const block: Resolver = (parent, args, context) => {
   return context.loaders.block(context.block);
+};
+
+export const network: Resolver = (parent, args, context) => {
+  return context.network;
 };
 
 export const accounts: Resolver = (parent, args, context) => {

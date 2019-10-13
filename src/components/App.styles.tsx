@@ -126,7 +126,7 @@ const Global = createGlobalStyle`
   hr {
     border: 0;
     height: 0;
-    border-top: 1px solid ${theme.mainColors.border}
+    border-top: 1px solid ${theme.mainColors.border};
     margin: ${theme.spaceUnits.s} 0;
   }
 `;

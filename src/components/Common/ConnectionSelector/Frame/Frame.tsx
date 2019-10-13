@@ -33,14 +33,10 @@ const connect = (): Rx.Observable<Connection> => {
 };
 
 export const Frame: React.FC<ConnectionMethodProps> = ({ set, active }) => {
-  const handleClick = () => {
-    set(connect());
-  };
-
   return (
     <div>
       <h2>Frame</h2>
-      {!active && <button onClick={handleClick}>Connect</button>}
+      {!active && <button onClick={() => set(connect())}>Connect</button>}
     </div>
   );
 };

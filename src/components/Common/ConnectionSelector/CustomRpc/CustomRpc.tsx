@@ -32,15 +32,12 @@ const connect = (endpoint: string): Rx.Observable<Connection> => {
 
 export const CustomRpc: React.FC<ConnectionMethodProps> = ({ set, active }) => {
   const [endpoint, setEndpoint] = useState('https://mainnet.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660');
-  const handleClick = () => {
-    set(connect(endpoint));
-  };
 
   return (
     <div>
       <h2>Custom endpoint</h2>
       <input type="text" onChange={e => setEndpoint(e.target.value)} value={endpoint} />
-      {!active && <button onClick={handleClick}>Connect</button>}
+      {!active && <button onClick={() => set(connect(endpoint))}>Connect</button>}
     </div>
   );
 };

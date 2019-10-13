@@ -17,12 +17,11 @@ export const block: Resolver = (parent, args, context) => {
 };
 
 export const accounts: Resolver = (parent, args, context) => {
-  return context.loaders.accounts();
+  return context.accounts;
 };
 
 export const account: Resolver = async (parent, args, context) => {
-  const accounts = await context.loaders.accounts();
-  return accounts && accounts[0];
+  return context.accounts[0];
 };
 
 export const fund: Resolver = async (parent, args, context) => {

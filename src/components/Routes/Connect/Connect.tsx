@@ -1,10 +1,16 @@
-import React, { useContext } from 'react';
-import { ConnectionSelector } from './ConnectionSelector/ConnectionSelector';
-import { OnChainContext } from '~/components/Contexts/Connection';
+import React from 'react';
+import { ConnectionSelector } from '~/components/Common/ConnectionSelector/ConnectionSelector';
+import * as S from './Connect.styles';
 
 export const Connect = () => {
-  const { provider, set } = useContext(OnChainContext);
-  return <ConnectionSelector current={provider} set={set} />;
+  return (
+    <>
+      <S.Connect>
+        <h1>Select your preferred connection method</h1>
+        <ConnectionSelector />
+      </S.Connect>
+    </>
+  );
 };
 
 export default Connect;

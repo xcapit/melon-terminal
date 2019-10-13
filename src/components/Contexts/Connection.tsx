@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect, createContext } from 'react';
+import LRUCache from 'lru-cache';
 import ApolloClient from 'apollo-client';
 import * as Rx from 'rxjs';
 import * as R from 'ramda';
 import { Eth } from 'web3-eth';
-import { mapTo, map, switchMap, expand, distinctUntilChanged, combineLatest, shareReplay, tap } from 'rxjs/operators';
+import { switchMap, distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { ApolloLink } from 'apollo-link';
 import { HttpProvider } from 'web3-providers';
 import { onError } from 'apollo-link-error';
@@ -12,16 +13,13 @@ import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { createSchemaLink, createSchema, createQueryContext } from '~/graphql/setup';
 import { ApolloProvider } from '@apollo/react-hooks';
 
-const ethereum = (window as any).ethereum;
-ethereum.autoRefreshOnNetworkChange = false;
-
 // TODO: Fix this type.
 export type ConnectionProvider = any;
 
 export enum ConnectionProviderTypeEnum {
   'DEFAULT' = 'DEFAULT',
   'FRAME' = 'FRAME',
-  'INJECTED' = 'INJECTED',
+  'METAMASK' = 'METAMASK',
   'CUSTOM' = 'CUSTOM',
 }
 
@@ -40,7 +38,8 @@ export interface ApolloProviderContext {
 }
 
 export interface OnChainContextValue extends ApolloProviderContext {
-  set: React.Dispatch<React.SetStateAction<ConnectionProviderTypeEnum>>;
+  set: (provider: ConnectionProviderTypeEnum, connection: Rx.Observable<Connection>) => void;
+  connection: Rx.Observable<Connection>;
   provider: ConnectionProviderTypeEnum;
 }
 
@@ -59,7 +58,7 @@ export const TheGraphContext = createContext<TheGraphContextValue>(
   })()
 );
 
-const checkConnection = async (eth: Eth) => {
+export const checkConnection = async (eth: Eth) => {
   const [network, accounts] = await Promise.all([
     eth.net.getId().catch(() => undefined),
     eth.getAccounts().catch(() => undefined),
@@ -68,76 +67,7 @@ const checkConnection = async (eth: Eth) => {
   return { eth, network, accounts } as Connection;
 };
 
-const createConnection = (type: ConnectionProviderTypeEnum): Rx.Observable<Connection> => {
-  switch (type) {
-    case ConnectionProviderTypeEnum.FRAME: {
-      const eth$ = Rx.using(
-        () => {
-          const provider = new HttpProvider('http://localhost:1248');
-          const eth = new Eth(provider, undefined, {
-            transactionConfirmationBlocks: 1,
-          });
-
-          return {
-            eth,
-            unsubscribe: () => provider.disconnect(),
-          };
-        },
-        resource => Rx.of((resource as ConnectionProviderResource).eth)
-      );
-
-      // TODO: Check with frame.sh maintainers to see if there is an event that
-      // we can subscribe to instead of polling.
-      return eth$.pipe(
-        switchMap(eth => checkConnection(eth)),
-        expand(connection => Rx.timer(1000).pipe(switchMap(() => checkConnection(connection.eth)))),
-        distinctUntilChanged((a, b) => R.equals(a, b))
-      );
-    }
-
-    case ConnectionProviderTypeEnum.CUSTOM: {
-      const eth$ = Rx.using(
-        () => {
-          const provider = new HttpProvider('https://mainnet.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660');
-          const eth = new Eth(provider, undefined, {
-            transactionConfirmationBlocks: 1,
-          });
-
-          return {
-            eth,
-            unsubscribe: () => provider.disconnect(),
-          };
-        },
-        resource => Rx.of((resource as ConnectionProviderResource).eth)
-      );
-
-      return eth$.pipe(switchMap(eth => checkConnection(eth)));
-    }
-
-    case ConnectionProviderTypeEnum.INJECTED: {
-      if (typeof ethereum === 'undefined') {
-        return Rx.EMPTY;
-      }
-
-      ethereum.autoRefreshOnNetworkChange = false;
-      const eth = new Eth(ethereum, undefined, {
-        transactionConfirmationBlocks: 1,
-      });
-
-      const enable$ = Rx.defer(() => ethereum.enable() as Promise<string[]>).pipe(shareReplay(1));
-      const networkChange$ = Rx.fromEvent<string>(ethereum, 'networkChanged').pipe(map(value => parseInt(value, 10)));
-      const network$ = Rx.concat(Rx.defer(() => eth.net.getId()), networkChange$);
-      const accountsChanged$ = Rx.fromEvent<string[]>(ethereum, 'accountsChanged');
-      const accounts$ = Rx.concat(enable$, accountsChanged$);
-
-      return enable$.pipe(
-        mapTo(eth),
-        combineLatest(network$, accounts$),
-        map(([eth, network, accounts]) => ({ eth, network, accounts }))
-      );
-    }
-  }
-
+const createDefaultConnection = () => {
   const eth$ = Rx.using(
     () => {
       const provider = new HttpProvider('https://mainnet.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660');
@@ -155,7 +85,6 @@ const createConnection = (type: ConnectionProviderTypeEnum): Rx.Observable<Conne
 
   return eth$.pipe(
     switchMap(eth => checkConnection(eth)),
-    expand(connection => Rx.timer(1000).pipe(switchMap(() => checkConnection(connection.eth)))),
     distinctUntilChanged((a, b) => R.equals(a, b))
   );
 };
@@ -221,53 +150,33 @@ const useOnChainApollo = (connection: Rx.Observable<Connection>) => {
   return apollo;
 };
 
-const useConnection = () => {
-  const [type, set] = useState<ConnectionProviderTypeEnum>(ConnectionProviderTypeEnum.DEFAULT);
-  const subject = useMemo(() => new Rx.Subject<ConnectionProviderTypeEnum>(), undefined);
+export const ConnectionProvider: React.FC = React.memo(props => {
+  const [provider, setProvider] = useState(ConnectionProviderTypeEnum.DEFAULT);
+  const connections = useMemo(() => new Rx.BehaviorSubject<Rx.Observable<Connection>>(createDefaultConnection()), []);
   const connection = useMemo(
     () =>
-      subject.pipe(
-        switchMap(type => createConnection(type)),
+      connections.pipe(
+        switchMap(connection => connection),
         shareReplay(1)
       ),
-    [subject]
+    [connections]
   );
 
-  useEffect(() => subject.next(type), [subject, type]);
+  const set = (provider: ConnectionProviderTypeEnum, connection: Rx.Observable<Connection>) => {
+    setProvider(provider);
+    connections.next(connection);
+  };
 
-  return [connection, type, set] as [typeof connection, typeof type, typeof set];
-};
-
-export const ConnectionProvider: React.FC = props => {
-  const [connection, provider, set] = useConnection();
   const client = useOnChainApollo(connection);
 
   return (
-    <OnChainContext.Provider value={{ client, provider, set }}>
+    <OnChainContext.Provider value={{ client, connection, provider, set }}>
       <ApolloProvider client={client}>{props.children}</ApolloProvider>
     </OnChainContext.Provider>
   );
-};
+});
 
 export const RequireSecureConnection: React.FC = props => {
-  // const history = useHistory();
-  // const location = useLocation();
-  // const { connection, provider } = useContext(OnChainContext);
-
-  // // if (!provider && location.pathname !== '/connect') {
-  // //   history.replace({
-  // //     pathname: '/connect',
-  // //     state: {
-  // //       redirect: location,
-  // //     },
-  // //   });
-
-  // //   return null;
-  // // }
-
-  // if (!connection && location.pathname !== '/connect') {
-  //   return <Spinner positioning="overlay" size="large" />;
-  // }
-
+  // TODO: Render a modal window with the connection selector.
   return <>{props.children}</>;
 };

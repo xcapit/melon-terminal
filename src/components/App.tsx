@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import ErrorBoundary, { FallbackProps } from 'react-error-boundary';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { ConnectionProvider, TheGraphContext, OnChainContext, ApolloProviderContext } from './Contexts/Connection';
+import { ConnectionProvider, TheGraphContext, OnChainContext } from './Contexts/Connection';
 import { Spinner } from './Common/Spinner/Spinner';
 import { Layout } from './Layout/Layout';
 import { Theme } from './App.styles';

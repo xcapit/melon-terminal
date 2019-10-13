@@ -21,12 +21,6 @@ export const block = (context: Context) =>
     return eth.getBlock(number);
   });
 
-export const accounts = (context: Context) =>
-  loadCached(context, 'accounts', () => {
-    const eth = context.environment.eth;
-    return eth.getAccounts().catch(() => []) as Promise<string[]>;
-  });
-
 export const totalFunds = (context: Context) =>
   loadCached(context, 'totalFunds', () => {
     return getLastFundId(commonConfig(context));

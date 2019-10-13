@@ -77,6 +77,9 @@ const Global = createGlobalStyle`
     background-color: ${theme.mainColors.primary};
   }
   
+  h1, h2, h3 {
+    margin-bottom: ${theme.spaceUnits.m};
+  }
 
   h2 {
     font-size: ${theme.fontSizes.l};

@@ -13,9 +13,10 @@ import { Connection } from '~/components/Contexts/Connection';
 
 // @ts-ignore
 import schema from '~/graphql/schema.graphql';
+import { map, publishReplay, take } from 'rxjs/operators';
 
 export type Resolver<TParent = any, TArgs = any> = (parent: TParent, args: TArgs, context: Context) => any;
-export type ContextCreator = (cache: LRU<string, any>, request: Operation) => Promise<Context> | Context;
+export type ContextCreator = (request: Operation) => Promise<Context> | Context;
 
 export type Loaders = {
   [K in keyof typeof loaderCreators]: ReturnType<typeof loaderCreators[K]>;
@@ -25,6 +26,7 @@ export interface Context {
   environment: Environment;
   network: number;
   block: number;
+  accounts: string[];
   loaders: Loaders;
   cache: LRU<string, any>;
 }
@@ -35,24 +37,43 @@ interface SchemaLinkOptions<TRoot = any, TContext = any> {
   root?: TRoot;
 }
 
-export const createQueryContext = (observable: Rx.Observable<Connection>): ContextCreator => async cache => {
-  const { eth, network } = await new Promise<Connection>((resolve, reject) => {
-    observable.subscribe(resolve, reject);
-  });
+interface ConnectionWithCache extends Connection {
+  cache: LRU<string, any>;
+}
 
-  // Create a reference to the loaders object so we can create the loader
-  // functions with the pre-initialized context object.
-  const loaders = {} as Loaders;
-  const block = await eth.getBlockNumber();
-  const environment = { eth, deployment: process.env.DEPLOYMENT };
-  const context = { network, block, loaders, environment, cache } as Context;
+export const createQueryContext = (observable: Rx.Observable<Connection>): ContextCreator => {
+  const connection = observable.pipe(
+    map(value => {
+      // This LRU Cache gives us a cross-request cache bucket for calls on the
+      // blockchain. Cache keys should be prefixed with the current block
+      // number from the context object.
+      const cache = new LRU<string, any>(500);
+      return { ...value, cache } as ConnectionWithCache;
+    }),
+    publishReplay(1)
+  ) as Rx.ConnectableObservable<ConnectionWithCache>;
 
-  Object.keys(loaderCreators).forEach(key => {
-    // @ts-ignore
-    loaders[key] = loaderCreators[key](context);
-  });
+  connection.connect();
 
-  return context;
+  return async () => {
+    const { eth, network, accounts, cache } = await new Promise<ConnectionWithCache>((resolve, reject) => {
+      connection.pipe(take(1)).subscribe(resolve, reject);
+    });
+
+    // Create a reference to the loaders object so we can create the loader
+    // functions with the pre-initialized context object.
+    const loaders = {} as Loaders;
+    const block = await eth.getBlockNumber();
+    const environment = { eth, deployment: process.env.DEPLOYMENT };
+    const context = { network, block, accounts, loaders, environment, cache } as Context;
+
+    Object.keys(loaderCreators).forEach(key => {
+      // @ts-ignore
+      loaders[key] = loaderCreators[key](context);
+    });
+
+    return context;
+  };
 };
 
 export const createSchema = () => {
@@ -64,14 +85,9 @@ export const createSchema = () => {
 };
 
 export const createSchemaLink = <TRoot = any>(options: SchemaLinkOptions<TRoot, ContextCreator>) => {
-  // This LRU Cache gives us a cross-request cache bucket for calls on the
-  // blockchain. Cache keys should be prefixed with the current block
-  // number from the context object.
-  const cache = new LRU<string, any>(500);
-
   const handleRequest = async (request: Operation, observer: any) => {
     try {
-      const context: Context = await options.context(cache, request);
+      const context: Context = await options.context(request);
       const args: ExecutionArgs = {
         schema: options.schema,
         rootValue: options.root,

@@ -12,7 +12,7 @@ export const loadCached = <T extends (...args: any[]) => any>(
   return (...args: Parameters<T>): ReturnType<T> => {
     const key = typeof cacheKey === 'function' ? cacheKey(...args) : cacheKey;
     const suffix = typeof cacheKey !== 'function' && args && args.length ? `:${md5(JSON.stringify(args))}` : '';
-    const prefix = `${context.block}:`;
+    const prefix = `${context.network}:${context.block}:`;
 
     const lookup = prefix + key + suffix;
     if (context.cache.has(lookup)) {

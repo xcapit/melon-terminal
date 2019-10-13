@@ -1,24 +1,22 @@
 import * as Rx from 'rxjs';
-import LRU from 'lru-cache';
+import LRUCache from 'lru-cache';
 import { forAwaitEach } from 'iterall';
 import { execute, subscribe, GraphQLSchema, ExecutionArgs } from 'graphql';
 import { ApolloLink, FetchResult, Observable, Operation } from 'apollo-link';
 import { makeExecutableSchema } from 'graphql-tools';
+import { take } from 'rxjs/operators';
 import { Environment } from '@melonproject/melonjs';
+import { NetworkEnum } from '~/types';
+import { Connection } from '~/components/Contexts/Connection';
+import { isSubscription } from '~/graphql/utils/isSubscription';
+import { ensureIterable } from '~/graphql/utils/ensureIterable';
 import * as loaderCreators from '~/graphql/loaders';
 import * as resolvers from '~/graphql/resolvers';
-import { isSubscription } from '~/graphql/utils/isSubscription';
-import { ensureIterable } from '~/graphql/utils/ensureInterable';
-import { Connection } from '~/components/Contexts/Connection';
-
 // @ts-ignore
 import schema from '~/graphql/schema.graphql';
-import { map, publishReplay, take } from 'rxjs/operators';
-import { NetworkEnum } from '~/types';
 
 export type Resolver<TParent = any, TArgs = any> = (parent: TParent, args: TArgs, context: Context) => any;
 export type ContextCreator = (request: Operation) => Promise<Context> | Context;
-
 export type Loaders = {
   [K in keyof typeof loaderCreators]: ReturnType<typeof loaderCreators[K]>;
 };
@@ -29,7 +27,7 @@ export interface Context {
   block: number;
   accounts: string[];
   loaders: Loaders;
-  cache: LRU<string, any>;
+  cache: LRUCache<string, any>;
 }
 
 interface SchemaLinkOptions<TRoot = any, TContext = any> {
@@ -38,27 +36,13 @@ interface SchemaLinkOptions<TRoot = any, TContext = any> {
   root?: TRoot;
 }
 
-interface ConnectionWithCache extends Connection {
-  cache: LRU<string, any>;
-}
-
-export const createQueryContext = (observable: Rx.Observable<Connection>): ContextCreator => {
-  const connection = observable.pipe(
-    map(value => {
-      // This LRU Cache gives us a cross-request cache bucket for calls on the
-      // blockchain. Cache keys should be prefixed with the current block
-      // number from the context object.
-      const cache = new LRU<string, any>(500);
-      return { ...value, cache } as ConnectionWithCache;
-    }),
-    publishReplay(1)
-  ) as Rx.ConnectableObservable<ConnectionWithCache>;
-
-  connection.connect();
-
+export const createQueryContext = (
+  observable: Rx.Observable<Connection>,
+  cache: LRUCache<string, any>
+): ContextCreator => {
   return async () => {
-    const { eth, network, accounts, cache } = await new Promise<ConnectionWithCache>((resolve, reject) => {
-      connection.pipe(take(1)).subscribe(resolve, reject);
+    const { eth, network, accounts } = await new Promise<Connection>((resolve, reject) => {
+      observable.pipe(take(1)).subscribe(resolve, reject);
     });
 
     // Create a reference to the loaders object so we can create the loader

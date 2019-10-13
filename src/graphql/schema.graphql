@@ -4,6 +4,7 @@ scalar BigNumber
 enum NetworkEnum {
   MAINNET
   KOVAN
+  INVALID
 }
 
 type Query {

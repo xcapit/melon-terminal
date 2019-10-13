@@ -8,5 +8,5 @@ export const networkFromId = (id: number) => {
       return NetworkEnum.KOVAN;
   }
 
-  return undefined;
+  return NetworkEnum.INVALID;
 };

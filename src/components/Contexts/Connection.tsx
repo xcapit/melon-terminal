@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect, createContext } from 'react';
 import ApolloClient from 'apollo-client';
+import LRUCache from 'lru-cache';
 import * as Rx from 'rxjs';
 import * as R from 'ramda';
 import { Eth } from 'web3-eth';
-import { switchMap, distinctUntilChanged, shareReplay } from 'rxjs/operators';
+import { switchMap, distinctUntilChanged, switchAll } from 'rxjs/operators';
 import { ApolloLink } from 'apollo-link';
 import { HttpProvider } from 'web3-providers';
 import { onError } from 'apollo-link-error';
@@ -115,18 +116,19 @@ const createErrorLink = () => {
 
 const useOnChainApollo = (connection: Rx.Observable<Connection>) => {
   const schema = useMemo(() => createSchema(), []);
+  const cache = new LRUCache<string, any>(500);
   const apollo = useMemo(() => {
-    const context = createQueryContext(connection);
+    const context = createQueryContext(connection, cache);
     const data = createSchemaLink({ schema, context });
     const error = createErrorLink();
     const link = ApolloLink.from([error, data]);
-    const cache = new InMemoryCache({
+    const memory = new InMemoryCache({
       addTypename: true,
     });
 
     return new ApolloClient({
       link,
-      cache,
+      cache: memory,
       defaultOptions: {
         watchQuery: {
           errorPolicy: 'all',
@@ -144,7 +146,7 @@ const useOnChainApollo = (connection: Rx.Observable<Connection>) => {
   }, [connection]);
 
   useEffect(() => {
-    const reset = () => apollo.resetStore();
+    const reset = () => [cache.reset(), apollo.resetStore()];
     const subscription = connection.subscribe(reset, reset, reset);
     return () => subscription.unsubscribe();
   }, [connection, apollo]);
@@ -153,21 +155,20 @@ const useOnChainApollo = (connection: Rx.Observable<Connection>) => {
 };
 
 export const ConnectionProvider: React.FC = React.memo(props => {
-  const [provider, setProvider] = useState(ConnectionProviderTypeEnum.DEFAULT);
-  const connections = useMemo(() => new Rx.BehaviorSubject<Rx.Observable<Connection>>(createDefaultConnection()), []);
+  const [provider, next] = useState(ConnectionProviderTypeEnum.DEFAULT);
+  const connections = useMemo(() => {
+    return new Rx.BehaviorSubject<Rx.Observable<Connection>>(createDefaultConnection());
+  }, []);
+
   const connection = useMemo(() => {
-    return connections.pipe(
-      switchMap(connection => connection),
-      shareReplay(1)
-    );
+    return connections.pipe(switchAll());
   }, [connections]);
 
+  const client = useOnChainApollo(connection);
   const set = (provider: ConnectionProviderTypeEnum, connection: Rx.Observable<Connection>) => {
-    setProvider(provider);
+    next(provider);
     connections.next(connection);
   };
-
-  const client = useOnChainApollo(connection);
 
   return (
     <OnChainContext.Provider value={{ client, connection, provider, set }}>

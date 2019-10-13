@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router';
 import { useOnChainQuery } from '~/hooks/useQuery';
 import * as S from './Header.styles';
+import { NetworkEnum } from '~/types';
 
 const HeaderQuery = gql`
   query HeaderQuery {
@@ -21,7 +22,7 @@ export const Header: React.FC = () => {
   const { data } = useOnChainQuery(HeaderQuery);
 
   const status = 'Insufficient funds';
-  const network = R.pathOr<string>('NOT CONNECTED', ['network'], data);
+  const network = R.pathOr<NetworkEnum>(NetworkEnum.OFFLINE, ['network'], data);
   const balance = R.path<BigNumber>(['account', 'balance'], data);
 
   return (

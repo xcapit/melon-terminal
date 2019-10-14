@@ -8,58 +8,53 @@ import {
   getFundCalculations,
   getLatestPriceFeedUpdate,
 } from '@melonproject/melonjs';
-import { loadCached } from '~/graphql/utils/loadCached';
 import { Context } from '~/graphql';
+import { createLoader } from './utils/createLoader';
 
 const commonConfig = (context: Context) => ({
   environment: context.environment,
   block: context.block,
 });
 
-export const block = (context: Context) =>
-  loadCached(context, 'block', async (number: number) => {
-    const eth = context.environment.eth;
-    return eth.getBlock(number);
-  });
+export const block = createLoader('block', async (context, number: number) => {
+  const eth = context.environment.eth;
+  return eth.getBlock(number);
+});
 
-export const totalFunds = (context: Context) =>
-  loadCached(context, 'totalFunds', () => {
-    return getLastFundId(commonConfig(context));
-  });
+export const totalFunds = createLoader('totalFunds', context => {
+  return getLastFundId(commonConfig(context));
+});
 
-export const latestPriceFeedUpdate = (context: Context) =>
-  loadCached(context, 'latestPriceFeedUpdate', () => {
-    return getLatestPriceFeedUpdate(commonConfig(context));
-  });
+export const latestPriceFeedUpdate = createLoader('latestPriceFeedUpdate', context => {
+  return getLatestPriceFeedUpdate(commonConfig(context));
+});
 
-export const fundRoutes = (context: Context) =>
-  loadCached(context, 'fundRoutes', async (address: string) => {
-    return getFundRoutes(commonConfig(context), address);
-  });
+export const fundRoutes = createLoader('fundRoutes', async (context, address: string) => {
+  return getFundRoutes(commonConfig(context), address);
+});
 
-export const fundName = (context: Context) =>
-  loadCached(context, 'fundName', async (address: string) => {
-    return getFundName(commonConfig(context), address);
-  });
+export const fundName = createLoader('fundName', async (context, address: string) => {
+  return getFundName(commonConfig(context), address);
+});
 
-export const fundManager = (context: Context) =>
-  loadCached(context, 'fundManager', async (address: string) => {
-    return getFundManager(commonConfig(context), address);
-  });
+export const fundManager = createLoader('fundManager', async (context, address: string) => {
+  return getFundManager(commonConfig(context), address);
+});
 
-export const fundCreator = (context: Context) =>
-  loadCached(context, 'fundCreator', async (address: string) => {
-    return getFundCreator(commonConfig(context), address);
-  });
+export const fundCreator = createLoader('fundCreator', async (context, address: string) => {
+  return getFundCreator(commonConfig(context), address);
+});
 
-export const fundCreationTime = (context: Context) =>
-  loadCached(context, 'fundCreationTime', async (address: string) => {
-    return getFundCreationTime(commonConfig(context), address);
-  });
+export const fundCreationTime = createLoader('fundCreationTime', async (context, address: string) => {
+  return getFundCreationTime(commonConfig(context), address);
+});
 
-export const fundCalculations = (context: Context) =>
-  loadCached(context, 'fundCalculations', async (address: string) => {
-    const loadRoutes = context.loaders.fundRoutes as ReturnType<typeof fundRoutes>;
-    const routes = await loadRoutes(address);
-    return routes.accounting && getFundCalculations(commonConfig(context), routes.accounting);
-  });
+export const fundCalculations = createLoader('fundCalculations', async (context, address: string) => {
+  const loadRoutes = context.loaders.fundRoutes as ReturnType<typeof fundRoutes>;
+  const routes = await loadRoutes(address);
+  if (!routes.accounting) {
+    return null;
+  }
+
+  return getFundCalculations(commonConfig(context), routes.accounting!);
+});

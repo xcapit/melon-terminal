@@ -1,5 +1,5 @@
 import md5 from 'md5';
-import { Context } from '~/graphql/setup';
+import { Context } from '~/graphql';
 
 export const loadCached = <T extends (...args: any[]) => any>(
   context: Context,

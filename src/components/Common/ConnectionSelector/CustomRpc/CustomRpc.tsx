@@ -4,30 +4,43 @@ import * as R from 'ramda';
 import { switchMap, expand, distinctUntilChanged } from 'rxjs/operators';
 import { Eth } from 'web3-eth';
 import { HttpProvider } from 'web3-providers';
-import { Connection, ConnectionProviderResource, checkConnection } from '~/components/Contexts/Connection';
-import { ConnectionMethodProps } from '~/components/Common/ConnectionSelector/ConnectionSelector';
+import { ConnectionMethodProps, AnonymousConnection } from '~/components/Common/ConnectionSelector/ConnectionSelector';
+import { networkFromId } from '~/utils/networkFromId';
 
-const connect = (endpoint: string): Rx.Observable<Connection> => {
-  const eth$ = Rx.using(
-    () => {
-      const provider = new HttpProvider(endpoint);
-      const eth = new Eth(provider, undefined, {
-        transactionConfirmationBlocks: 1,
-      });
+interface EthResource extends Rx.Unsubscribable {
+  eth: Eth;
+}
 
-      return {
-        eth,
-        unsubscribe: () => provider.disconnect(),
-      };
-    },
-    resource => Rx.of((resource as ConnectionProviderResource).eth)
-  );
+const checkConnection = async (eth: Eth) => {
+  const [id, accounts] = await Promise.all([
+    eth.net.getId().catch(() => undefined),
+    eth.getAccounts().catch(() => undefined),
+  ]);
 
-  return eth$.pipe(
-    switchMap(eth => checkConnection(eth)),
-    expand(connection => Rx.timer(10000).pipe(switchMap(() => checkConnection(connection.eth)))),
-    distinctUntilChanged((a, b) => R.equals(a, b))
-  );
+  const network = id && networkFromId(id);
+  return { eth, network, accounts } as AnonymousConnection;
+};
+
+const connect = (endpoint: string): Rx.Observable<AnonymousConnection> => {
+  const createResource = (): EthResource => {
+    const http = new HttpProvider(endpoint);
+    const eth = new Eth(http, undefined, {
+      transactionConfirmationBlocks: 1,
+    });
+
+    return {
+      eth,
+      unsubscribe: () => http.disconnect(),
+    };
+  };
+
+  return Rx.using(createResource, resource => {
+    return Rx.of((resource as EthResource).eth).pipe(
+      switchMap(eth => checkConnection(eth)),
+      expand(connection => Rx.timer(10000).pipe(switchMap(() => checkConnection(connection.eth)))),
+      distinctUntilChanged((a, b) => R.equals(a, b))
+    );
+  });
 };
 
 export const CustomRpc: React.FC<ConnectionMethodProps> = ({ set, active }) => {

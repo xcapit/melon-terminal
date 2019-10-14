@@ -1,4 +1,4 @@
-import { Resolver } from '~/graphql/setup';
+import { Resolver } from '~/graphql';
 import { NetworkEnum } from '~/types';
 
 export const block: Resolver = (parent, args, context) => {
@@ -18,7 +18,7 @@ export const accounts: Resolver = (parent, args, context) => {
 };
 
 export const account: Resolver = async (parent, args, context) => {
-  return context.accounts[0];
+  return context.accounts && context.accounts[0];
 };
 
 export const fund: Resolver = async (parent, args, context) => {
@@ -30,4 +30,8 @@ export const fund: Resolver = async (parent, args, context) => {
 
 export const totalFunds: Resolver = (parent, args, context) => {
   return context.loaders.totalFunds();
+};
+
+export const latestPriceFeedUpdate: Resolver = (parent, args, context) => {
+  return context.loaders.latestPriceFeedUpdate();
 };

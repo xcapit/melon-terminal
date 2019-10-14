@@ -1,19 +1,17 @@
-import React, { useState, useMemo, useEffect, createContext } from 'react';
-import ApolloClient from 'apollo-client';
-import LRUCache from 'lru-cache';
+import React, { useState, useMemo, useEffect, createContext, useRef } from 'react';
 import * as Rx from 'rxjs';
-import * as R from 'ramda';
+import ApolloClient from 'apollo-client';
 import { Eth } from 'web3-eth';
-import { switchMap, distinctUntilChanged, switchAll } from 'rxjs/operators';
+import { switchAll, pluck } from 'rxjs/operators';
 import { ApolloLink } from 'apollo-link';
 import { HttpProvider } from 'web3-providers';
 import { onError } from 'apollo-link-error';
 import { createHttpLink } from 'apollo-link-http';
+import { useObservable } from 'rxjs-hooks';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { ApolloProvider } from '@apollo/react-hooks';
-import { createSchemaLink, createSchema, createQueryContext } from '~/graphql/setup';
+import { createSchemaLink, createSchema, createQueryContext } from '~/graphql';
 import { NetworkEnum } from '~/types';
-import { networkFromId } from '~/utils/networkFromId';
+import { ApolloProvider } from '@apollo/react-hooks';
 
 // TODO: Fix this type.
 export type ConnectionProvider = any;
@@ -27,12 +25,9 @@ export enum ConnectionProviderTypeEnum {
 
 export interface Connection {
   eth: Eth;
+  provider: ConnectionProviderTypeEnum;
   network?: NetworkEnum;
   accounts?: string[];
-}
-
-export interface ConnectionProviderResource extends Rx.Unsubscribable {
-  eth: Eth;
 }
 
 export interface ApolloProviderContext {
@@ -40,9 +35,8 @@ export interface ApolloProviderContext {
 }
 
 export interface OnChainContextValue extends ApolloProviderContext {
-  set: (provider: ConnectionProviderTypeEnum, connection: Rx.Observable<Connection>) => void;
-  connection: Rx.Observable<Connection>;
-  provider: ConnectionProviderTypeEnum;
+  set: (observable: Rx.Observable<Connection>) => void;
+  connection: Connection;
 }
 
 export interface TheGraphContextValue extends ApolloProviderContext {
@@ -59,38 +53,6 @@ export const TheGraphContext = createContext<TheGraphContextValue>(
     return { client };
   })()
 );
-
-export const checkConnection = async (eth: Eth) => {
-  const [id, accounts] = await Promise.all([
-    eth.net.getId().catch(() => undefined),
-    eth.getAccounts().catch(() => undefined),
-  ]);
-
-  const network = id && networkFromId(id);
-  return { eth, network, accounts } as Connection;
-};
-
-const createDefaultConnection = () => {
-  const eth$ = Rx.using(
-    () => {
-      const provider = new HttpProvider('https://mainnet.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660');
-      const eth = new Eth(provider, undefined, {
-        transactionConfirmationBlocks: 1,
-      });
-
-      return {
-        eth,
-        unsubscribe: () => provider.disconnect(),
-      };
-    },
-    resource => Rx.of((resource as ConnectionProviderResource).eth)
-  );
-
-  return eth$.pipe(
-    switchMap(eth => checkConnection(eth)),
-    distinctUntilChanged((a, b) => R.equals(a, b))
-  );
-};
 
 const createErrorLink = () => {
   return onError(({ graphQLErrors, networkError }) => {
@@ -114,11 +76,10 @@ const createErrorLink = () => {
   });
 };
 
-const useOnChainApollo = (connection: Rx.Observable<Connection>) => {
+const useOnChainApollo = (connection: Connection) => {
   const schema = useMemo(() => createSchema(), []);
-  const cache = new LRUCache<string, any>(500);
   const apollo = useMemo(() => {
-    const context = createQueryContext(connection, cache);
+    const context = createQueryContext(connection);
     const data = createSchemaLink({ schema, context });
     const error = createErrorLink();
     const link = ApolloLink.from([error, data]);
@@ -143,39 +104,54 @@ const useOnChainApollo = (connection: Rx.Observable<Connection>) => {
         },
       },
     });
-  }, [connection]);
+  }, [connection, schema]);
 
-  useEffect(() => {
-    const reset = () => [cache.reset(), apollo.resetStore()];
-    const subscription = connection.subscribe(reset, reset, reset);
-    return () => subscription.unsubscribe();
-  }, [connection, apollo]);
+  const apolloRef = useRef<ApolloClient<NormalizedCacheObject>>();
+  useEffect(
+    () => () => {
+      apolloRef.current && apolloRef.current.stop();
+      apolloRef.current && apolloRef.current.cache.reset();
+      apolloRef.current = apollo;
+    },
+    [apollo]
+  );
 
   return apollo;
 };
 
-export const ConnectionProvider: React.FC = React.memo(props => {
-  const [provider, next] = useState(ConnectionProviderTypeEnum.DEFAULT);
-  const connections = useMemo(() => {
-    return new Rx.BehaviorSubject<Rx.Observable<Connection>>(createDefaultConnection());
+export const ConnectionProvider: React.FC = props => {
+  const infura = useMemo<Connection>(() => {
+    const network = process.env.NETWORK;
+    const provider = ConnectionProviderTypeEnum.DEFAULT;
+    const http = new HttpProvider(`https://${network.toLowerCase()}.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660`);
+    const eth = new Eth(http, undefined, {
+      transactionConfirmationBlocks: 1,
+    });
+
+    return { provider, eth, network, accounts: [] };
   }, []);
 
-  const connection = useMemo(() => {
-    return connections.pipe(switchAll());
-  }, [connections]);
+  const [observable, set] = useState<Rx.Observable<Connection>>(Rx.EMPTY);
+  const connection = useObservable<Connection, [Rx.Observable<Connection>]>(
+    inputs$ => {
+      const output$ = inputs$.pipe(
+        pluck(0),
+        switchAll()
+      );
+      return output$;
+    },
+    infura,
+    [observable]
+  );
 
   const client = useOnChainApollo(connection);
-  const set = (provider: ConnectionProviderTypeEnum, connection: Rx.Observable<Connection>) => {
-    next(provider);
-    connections.next(connection);
-  };
 
   return (
-    <OnChainContext.Provider value={{ client, connection, provider, set }}>
+    <OnChainContext.Provider value={{ client, connection, set }}>
       <ApolloProvider client={client}>{props.children}</ApolloProvider>
     </OnChainContext.Provider>
   );
-});
+};
 
 export const RequireSecureConnection: React.FC = props => {
   // TODO: Render a modal window with the connection selector.

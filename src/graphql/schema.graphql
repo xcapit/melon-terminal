@@ -14,6 +14,7 @@ type Query {
   accounts: [Account]!
   fund(address: String): Fund
   totalFunds: BigNumber
+  latestPriceFeedUpdate: DateTime
 }
 
 type Block {

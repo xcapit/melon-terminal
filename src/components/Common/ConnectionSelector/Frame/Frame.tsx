@@ -4,32 +4,43 @@ import * as R from 'ramda';
 import { switchMap, expand, distinctUntilChanged } from 'rxjs/operators';
 import { Eth } from 'web3-eth';
 import { HttpProvider } from 'web3-providers';
-import { Connection, checkConnection, ConnectionProviderResource } from '~/components/Contexts/Connection';
-import { ConnectionMethodProps } from '~/components/Common/ConnectionSelector/ConnectionSelector';
+import { ConnectionMethodProps, AnonymousConnection } from '~/components/Common/ConnectionSelector/ConnectionSelector';
+import { networkFromId } from '~/utils/networkFromId';
 
-const connect = (): Rx.Observable<Connection> => {
-  const eth$ = Rx.using(
-    () => {
-      const provider = new HttpProvider('http://localhost:1248');
-      const eth = new Eth(provider, undefined, {
-        transactionConfirmationBlocks: 1,
-      });
+interface EthResource extends Rx.Unsubscribable {
+  eth: Eth;
+}
 
-      return {
-        eth,
-        unsubscribe: () => provider.disconnect(),
-      };
-    },
-    resource => Rx.of((resource as ConnectionProviderResource).eth)
-  );
+const checkConnection = async (eth: Eth) => {
+  const [id, accounts] = await Promise.all([
+    eth.net.getId().catch(() => undefined),
+    eth.getAccounts().catch(() => undefined),
+  ]);
 
-  // TODO: Check with frame.sh maintainers to see if there is an event that
-  // we can subscribe to instead of polling.
-  return eth$.pipe(
-    switchMap(eth => checkConnection(eth)),
-    expand(connection => Rx.timer(10000).pipe(switchMap(() => checkConnection(connection.eth)))),
-    distinctUntilChanged((a, b) => R.equals(a, b))
-  );
+  const network = id && networkFromId(id);
+  return { eth, network, accounts } as AnonymousConnection;
+};
+
+const connect = (): Rx.Observable<AnonymousConnection> => {
+  const createResource = (): EthResource => {
+    const provider = new HttpProvider('http://localhost:1248');
+    const eth = new Eth(provider, undefined, {
+      transactionConfirmationBlocks: 1,
+    });
+
+    return {
+      eth,
+      unsubscribe: () => provider.disconnect(),
+    };
+  };
+
+  return Rx.using(createResource, resource => {
+    return Rx.of((resource as EthResource).eth).pipe(
+      switchMap(eth => checkConnection(eth)),
+      expand(connection => Rx.timer(10000).pipe(switchMap(() => checkConnection(connection.eth)))),
+      distinctUntilChanged((a, b) => R.equals(a, b))
+    );
+  });
 };
 
 export const Frame: React.FC<ConnectionMethodProps> = ({ set, active }) => {

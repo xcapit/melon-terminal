@@ -6,9 +6,10 @@ import {
   getFundCreator,
   getFundCreationTime,
   getFundCalculations,
+  getLatestPriceFeedUpdate,
 } from '@melonproject/melonjs';
 import { loadCached } from '~/graphql/utils/loadCached';
-import { Context } from '~/graphql/setup';
+import { Context } from '~/graphql';
 
 const commonConfig = (context: Context) => ({
   environment: context.environment,
@@ -24,6 +25,11 @@ export const block = (context: Context) =>
 export const totalFunds = (context: Context) =>
   loadCached(context, 'totalFunds', () => {
     return getLastFundId(commonConfig(context));
+  });
+
+export const latestPriceFeedUpdate = (context: Context) =>
+  loadCached(context, 'latestPriceFeedUpdate', () => {
+    return getLatestPriceFeedUpdate(commonConfig(context));
   });
 
 export const fundRoutes = (context: Context) =>

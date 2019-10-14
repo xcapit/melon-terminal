@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { Block } from 'web3-eth';
-import { Resolver } from '~/graphql/setup';
+import { Resolver } from '~/graphql';
 
 export const id: Resolver<Block> = block => block.hash;
 export const hash: Resolver<Block> = block => block.hash;

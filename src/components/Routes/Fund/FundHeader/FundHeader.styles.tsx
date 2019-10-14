@@ -50,6 +50,7 @@ export const FundHeaderHeadline = styled.div`
 `;
 
 export const FundHeaderLinks = styled.div`
+  text-transform: uppercase;
   color: ${props => props.theme.otherColors.grey};
   font-size: ${props => props.theme.fontSizes.s};
 `;

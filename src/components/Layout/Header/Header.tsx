@@ -12,6 +12,8 @@ const HeaderQuery = gql`
   query HeaderQuery {
     network
     account {
+      id
+      address
       balance
     }
   }
@@ -19,11 +21,11 @@ const HeaderQuery = gql`
 
 export const Header: React.FC = () => {
   const location = useLocation();
-  const { data } = useOnChainQuery(HeaderQuery);
+  const { data, loading } = useOnChainQuery(HeaderQuery);
 
-  const status = 'Insufficient funds';
-  const network = R.pathOr<NetworkEnum>(NetworkEnum.OFFLINE, ['network'], data);
+  const network = R.path<NetworkEnum>(['network'], data);
   const balance = R.path<BigNumber>(['account', 'balance'], data);
+  const address = R.path<string>(['account', 'address'], data);
 
   return (
     <S.HeaderPosition>
@@ -33,17 +35,26 @@ export const Header: React.FC = () => {
             <S.Logo name="with-text" height={30} width={150} />
           </Link>
         </S.LogoContainer>
-        <S.Account>
-          <S.AccountName />
-          <S.AccountInfo>
-            <S.AccountAddress>Your wallet</S.AccountAddress>
-            <S.AccountNetwork>
-              <Link to={{ pathname: '/connect', state: { redirect: location } }}>{network}</Link>
-            </S.AccountNetwork>
-            {balance && <S.AccountBalance>{balance.toFixed(4)} ETH</S.AccountBalance>}
-            {status && <S.AccountStatus>{status}</S.AccountStatus>}
-          </S.AccountInfo>
-        </S.Account>
+        {!loading && (
+          <S.Account>
+            <S.AccountName />
+            <S.AccountInfo>
+              {address && (
+                <S.AccountAddress>
+                  <Link to="/wallet" title={address}>
+                    Your wallet
+                  </Link>
+                </S.AccountAddress>
+              )}
+              <S.AccountNetwork>
+                <Link to={{ pathname: '/connect', state: { redirect: location } }} title="Change connection method">
+                  {network}
+                </Link>
+              </S.AccountNetwork>
+              {balance && <S.AccountBalance>{balance.toFixed(4)} ETH</S.AccountBalance>}
+            </S.AccountInfo>
+          </S.Account>
+        )}
       </S.Header>
     </S.HeaderPosition>
   );

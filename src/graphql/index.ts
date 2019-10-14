@@ -1,10 +1,8 @@
-import * as Rx from 'rxjs';
 import LRUCache from 'lru-cache';
 import { forAwaitEach } from 'iterall';
 import { execute, subscribe, GraphQLSchema, ExecutionArgs } from 'graphql';
 import { ApolloLink, FetchResult, Observable, Operation } from 'apollo-link';
 import { makeExecutableSchema } from 'graphql-tools';
-import { take } from 'rxjs/operators';
 import { Environment } from '@melonproject/melonjs';
 import { NetworkEnum } from '~/types';
 import { Connection } from '~/components/Contexts/Connection';
@@ -22,12 +20,12 @@ export type Loaders = {
 };
 
 export interface Context {
-  environment: Environment;
-  network: NetworkEnum;
-  block: number;
-  accounts: string[];
-  loaders: Loaders;
   cache: LRUCache<string, any>;
+  environment: Environment;
+  loaders: Loaders;
+  block: number;
+  accounts?: string[];
+  network?: NetworkEnum;
 }
 
 interface SchemaLinkOptions<TRoot = any, TContext = any> {
@@ -36,21 +34,27 @@ interface SchemaLinkOptions<TRoot = any, TContext = any> {
   root?: TRoot;
 }
 
-export const createQueryContext = (
-  observable: Rx.Observable<Connection>,
-  cache: LRUCache<string, any>
-): ContextCreator => {
-  return async () => {
-    const { eth, network, accounts } = await new Promise<Connection>((resolve, reject) => {
-      observable.pipe(take(1)).subscribe(resolve, reject);
-    });
+export const createQueryContext = (connection: Connection): ContextCreator => {
+  const cache = new LRUCache<string, any>(500);
 
+  return async () => {
     // Create a reference to the loaders object so we can create the loader
     // functions with the pre-initialized context object.
+    const environment: Environment = {
+      eth: connection.eth,
+      deployment: process.env.DEPLOYMENT,
+    };
+
+    const block = await connection.eth.getBlockNumber();
     const loaders = {} as Loaders;
-    const block = await eth.getBlockNumber();
-    const environment = { eth, deployment: process.env.DEPLOYMENT };
-    const context = { network, block, accounts, loaders, environment, cache } as Context;
+    const context: Context = {
+      cache,
+      block,
+      loaders,
+      environment,
+      accounts: connection.accounts,
+      network: connection.network,
+    };
 
     Object.keys(loaderCreators).forEach(key => {
       // @ts-ignore

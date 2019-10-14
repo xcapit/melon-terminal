@@ -67,24 +67,24 @@ export const AccountName = styled.div`
 export const AccountInfo = styled.div``;
 
 const AccountInfoItem = styled.span`
+  text-transform: uppercase;
+
   &::before {
     content: '|';
     margin-right: ${props => props.theme.spaceUnits.xxs};
     padding-left: ${props => props.theme.spaceUnits.xxs};
     color: ${props => props.theme.otherColors.grey};
   }
-`;
 
-export const AccountAddress = styled(AccountInfoItem)`
-  &::before {
+  &:first-child::before {
     content: '';
     margin-right: 0;
     padding-left: 0;
   }
 `;
 
+export const AccountAddress = styled(AccountInfoItem)``;
+
 export const AccountNetwork = styled(AccountInfoItem)``;
 
 export const AccountBalance = styled(AccountInfoItem)``;
-
-export const AccountStatus = styled(AccountInfoItem)``;

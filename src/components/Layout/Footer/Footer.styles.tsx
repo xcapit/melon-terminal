@@ -13,3 +13,20 @@ export const Footer = styled.div`
   border-top: 1px solid rgb(234, 229, 212);
   font-size: 0.75rem;
 `;
+
+export const FooterItem = styled.span`
+  text-transform: uppercase;
+
+  &::before {
+    content: '|';
+    margin-right: ${props => props.theme.spaceUnits.xxs};
+    padding-left: ${props => props.theme.spaceUnits.xxs};
+    color: ${props => props.theme.otherColors.grey};
+  }
+
+  &:first-child::before {
+    content: '';
+    margin-right: 0;
+    padding-left: 0;
+  }
+`;

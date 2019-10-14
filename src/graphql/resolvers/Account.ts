@@ -5,7 +5,10 @@ import { Resolver } from '~/graphql';
 export const id: Resolver<string> = address => address;
 export const address: Resolver<string> = address => address;
 
-export const balance: Resolver<string> = async (address, args, context) => {
-  const balance = await context.environment.eth.getBalance(address);
-  return new BigNumber(fromWei(balance));
+interface BalanceArgs {
+  token: string;
+}
+
+export const balance: Resolver<string, BalanceArgs> = async (address, args, context) => {
+  return context.loaders.balanceOf(args.token);
 };

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 export const FullSubHeader = styled.div`
   background-color: ${props => props.theme.mainColors.secondary};
@@ -30,5 +31,32 @@ export const PaddedBody = styled(FullBody)`
   @media (${props => props.theme.mediaQueries.s}) {
     padding-left: 7%;
     padding-right: 7%;
+  }
+`;
+
+export const FullNavigation = styled.div`
+  position: relative;
+`;
+
+export const PaddedNavigation = styled(FullNavigation)`
+  border-bottom: 2px solid ${props => props.theme.mainColors.border};
+
+  @media (${props => props.theme.mediaQueries.s}) {
+    padding-left: 7%;
+    padding-right: 7%;
+  }
+`;
+
+export const PrimaryButton = styled.button`
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: block;
+  border: 1px solid 1px solid rgba(195, 179, 121, 0.75);
+  background-color: rgba(195, 179, 121, 0.75);
+  padding: ${props => props.theme.spaceUnits.s} ${props => props.theme.spaceUnits.m};
+
+  &:hover {
+    background-color: rgb(195, 179, 121);
   }
 `;

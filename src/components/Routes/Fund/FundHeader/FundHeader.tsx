@@ -11,20 +11,20 @@ export interface FundHeaderProps {
 
 export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
   const etherscanLink = useEtherscanLink(address);
-  const fundQuery = useFundHeaderQuery(address);
-  if (fundQuery.loading) {
+  const query = useFundHeaderQuery(address);
+  if (query.loading) {
     return <Spinner />;
   }
 
-  const fundData = fundQuery && fundQuery.data && fundQuery.data.fund;
-  if (!fundData) {
+  const data = query && query.data && query.data.fund;
+  if (!data) {
     return null;
   }
 
   return (
     <S.FundHeader>
       <S.FundHeaderHeadline>
-        <S.FundHeaderTitle>{fundData.name}</S.FundHeaderTitle>
+        <S.FundHeaderTitle>{data.name}</S.FundHeaderTitle>
         <S.FundHeaderLinks>
           {
             <a href={etherscanLink!} title={address}>
@@ -36,7 +36,7 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
       <S.FundHeaderInformation>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Share price</S.FundHeaderItemTitle>
-          {fundData.sharePrice && fundData.sharePrice.toFixed(4)}
+          {data.sharePrice && data.sharePrice.toFixed(4)}
         </S.FundHeaderItem>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>AUM</S.FundHeaderItemTitle>
@@ -48,7 +48,7 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
         </S.FundHeaderItem>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Creation date</S.FundHeaderItemTitle>
-          {fundData.creationTime && format(fundData.creationTime, 'yyyy-MM-dd hh:mm a')}
+          {data.creationTime && format(data.creationTime, 'yyyy-MM-dd hh:mm a')}
         </S.FundHeaderItem>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Total number of shares</S.FundHeaderItemTitle>

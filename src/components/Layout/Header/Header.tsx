@@ -5,8 +5,8 @@ import gql from 'graphql-tag';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router';
 import { useOnChainQuery } from '~/hooks/useQuery';
-import * as S from './Header.styles';
 import { NetworkEnum } from '~/types';
+import * as S from './Header.styles';
 
 const HeaderQuery = gql`
   query HeaderQuery {
@@ -21,21 +21,21 @@ const HeaderQuery = gql`
 
 export const Header: React.FC = () => {
   const location = useLocation();
-  const { data, loading } = useOnChainQuery(HeaderQuery);
+  const query = useOnChainQuery(HeaderQuery);
 
-  const network = R.path<NetworkEnum>(['network'], data);
-  const balance = R.path<BigNumber>(['account', 'balance'], data);
-  const address = R.path<string>(['account', 'address'], data);
+  const network = R.path<NetworkEnum>(['network'], query.data);
+  const balance = R.path<BigNumber>(['account', 'balance'], query.data);
+  const address = R.path<string>(['account', 'address'], query.data);
 
   return (
     <S.HeaderPosition>
       <S.Header>
         <S.LogoContainer>
           <Link to="/">
-            <S.Logo name="with-text" height={30} width={150} />
+            <S.Logo name="with-text" height={30} width={120} />
           </Link>
         </S.LogoContainer>
-        {!loading && (
+        {!query.loading && (
           <S.Account>
             <S.AccountName />
             <S.AccountInfo>

@@ -8,8 +8,10 @@ import { Layout } from './Layout/Layout';
 import { Theme } from './App.styles';
 
 const Home = React.lazy(() => import('./Routes/Home/Home'));
+const Wallet = React.lazy(() => import('./Routes/Wallet/Wallet'));
 const Fund = React.lazy(() => import('./Routes/Fund/Fund'));
 const Connect = React.lazy(() => import('./Routes/Connect/Connect'));
+const Setup = React.lazy(() => import('./Routes/Setup/Setup'));
 const Playground = React.lazy(() => import('./Routes/Playground/Playground'));
 const NoMatch = React.lazy(() => import('./Routes/NoMatch/NoMatch'));
 
@@ -20,6 +22,12 @@ const AppRouter = () => (
     </Route>
     <Route path="/connect" exact={true}>
       <Connect />
+    </Route>
+    <Route path="/setup" exact={true}>
+      <Setup />
+    </Route>
+    <Route path="/wallet">
+      <Wallet />
     </Route>
     <Route path="/fund/:address">
       <Fund />

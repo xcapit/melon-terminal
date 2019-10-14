@@ -79,31 +79,15 @@ const Global = createGlobalStyle`
   
   h1, h2, h3 {
     margin-bottom: ${theme.spaceUnits.m};
-  }
-
-  h2 {
-    font-size: ${theme.fontSizes.l};
-    position: relative;
-  }
-  
-  h2::after {
-    content: ' ';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 100%;
-    border-top: 1px solid rgba(34, 36, 38, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  h1, h3 {
     font-size: ${theme.fontSizes.xl};
     font-weight: bold;
     position: relative;
   }
+
   
-  h3::after,
-  h1::after {
+  h1::after,
+  h2::after,
+  h3::after {
     content: ' ';
     position: absolute;
     bottom: -5px;

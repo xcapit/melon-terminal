@@ -10,13 +10,13 @@ import * as S from './FundOverview.styles';
 
 export const FundOverview: React.FC = () => {
   const history = useHistory();
-  const overviewQuery = useFundOverviewQuery();
-  if (overviewQuery.loading) {
+  const query = useFundOverviewQuery();
+  if (query.loading) {
     return <Spinner positioning="centered" size="large" />;
   }
 
-  const overviewData = overviewQuery && overviewQuery.data && overviewQuery.data.funds;
-  if (!overviewData) {
+  const data = query && query.data && query.data.funds;
+  if (!data) {
     return <NoMatch />;
   }
 
@@ -31,7 +31,7 @@ export const FundOverview: React.FC = () => {
         </tr>
       </thead>
       <tbody>
-        {overviewData.map(fund => (
+        {data.map(fund => (
           <S.BodyRow key={fund.id} onClick={() => history.push(`/fund/${fund.id}`)}>
             <S.BodyCell>{fund.name}</S.BodyCell>
             <S.BodyCell>{new BigNumber(fromWei(fund.sharePrice)).toFixed(4)}</S.BodyCell>

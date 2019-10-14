@@ -20,10 +20,19 @@ export const Footer: React.FC = () => {
     <S.FooterPosition>
       <S.Footer>
         <S.FooterItem>
-          <Link to="/playground/onchain">NETWORK EXPLORER</Link>
+          <a href="https://melonprotocol.com">Protocol</a>
         </S.FooterItem>
         <S.FooterItem>
-          <Link to="/playground/thegraph">GRAPH EXPLORER</Link>
+          <a href="https://docs.melonport.com">Documentation</a>
+        </S.FooterItem>
+        <S.FooterItem>
+          <a href="https://github.com/Avantgarde-Finance/manager-interface/issues">Report an issue</a>
+        </S.FooterItem>
+        <S.FooterItem>
+          <Link to="/playground/onchain">Network explorer</Link>
+        </S.FooterItem>
+        <S.FooterItem>
+          <Link to="/playground/thegraph">Graph explorer</Link>
         </S.FooterItem>
         {update && <S.FooterItem>Last price feed update at {format(update, 'yyyy-MM-dd hh:mm a')}</S.FooterItem>}
       </S.Footer>

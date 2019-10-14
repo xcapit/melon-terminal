@@ -7,9 +7,13 @@ import {
   getFundCreationTime,
   getFundCalculations,
   getLatestPriceFeedUpdate,
+  getBalanceOf,
 } from '@melonproject/melonjs';
 import { Context } from '~/graphql';
 import { createLoader } from './utils/createLoader';
+import { async } from 'q';
+import BigNumber from 'bignumber.js';
+import { fromWei } from 'web3-utils';
 
 const commonConfig = (context: Context) => ({
   environment: context.environment,
@@ -57,4 +61,18 @@ export const fundCalculations = createLoader('fundCalculations', async (context,
   }
 
   return getFundCalculations(commonConfig(context), routes.accounting!);
+});
+
+export const balanceOf = createLoader('balanceOf', async (context, token: string) => {
+  const account = context.accounts && context.accounts[0];
+  if (!account) {
+    return new BigNumber(0);
+  }
+
+  if (token === 'ETH') {
+    const balance = await context.environment.eth.getBalance(account);
+    return new BigNumber(fromWei(balance));
+  }
+
+  return getBalanceOf(commonConfig(context), token, account);
 });

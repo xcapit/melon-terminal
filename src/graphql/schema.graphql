@@ -27,7 +27,7 @@ type Block {
 type Account {
   id: ID!
   address: String!
-  balance: BigNumber
+  balance(token: String = "ETH"): BigNumber
 }
 
 type FundRoutes {

@@ -1,4 +1,5 @@
 import LRUCache from 'lru-cache';
+import BigNumber from 'bignumber.js';
 import { forAwaitEach } from 'iterall';
 import { execute, subscribe, GraphQLSchema, ExecutionArgs } from 'graphql';
 import { ApolloLink, FetchResult, Observable, Operation } from 'apollo-link';
@@ -23,7 +24,7 @@ export interface Context {
   cache: LRUCache<string, any>;
   environment: Environment;
   loaders: Loaders;
-  block: number;
+  block: BigNumber;
   accounts?: string[];
   network?: NetworkEnum;
 }
@@ -40,12 +41,8 @@ export const createQueryContext = (connection: Connection): ContextCreator => {
   return async () => {
     // Create a reference to the loaders object so we can create the loader
     // functions with the pre-initialized context object.
-    const environment: Environment = {
-      eth: connection.eth,
-      deployment: process.env.DEPLOYMENT,
-    };
-
-    const block = await connection.eth.getBlockNumber();
+    const environment = new Environment(connection.eth, process.env.DEPLOYMENT);
+    const block = new BigNumber(await connection.eth.getBlockNumber());
     const loaders = {} as Loaders;
     const context: Context = {
       cache,

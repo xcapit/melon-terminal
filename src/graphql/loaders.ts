@@ -1,56 +1,46 @@
-import {
-  getFundName,
-  getLastFundId,
-  getFundRoutes,
-  getFundManager,
-  getFundCreator,
-  getFundCreationTime,
-  getFundCalculations,
-  getLatestPriceFeedUpdate,
-  getBalanceOf,
-} from '@melonproject/melonjs';
-import { Context } from '~/graphql';
-import { createLoader } from './utils/createLoader';
-import { async } from 'q';
 import BigNumber from 'bignumber.js';
+import { Version, PriceSource, Hub, Accounting, Token } from '@melonproject/melonjs';
+import { createLoader } from './utils/createLoader';
 import { fromWei } from 'web3-utils';
 
-const commonConfig = (context: Context) => ({
-  environment: context.environment,
-  block: context.block,
-});
-
-export const block = createLoader('block', async (context, number: number) => {
-  const eth = context.environment.eth;
-  return eth.getBlock(number);
+export const block = createLoader('block', async (context, number: BigNumber) => {
+  const eth = context.environment.client;
+  return eth.getBlock(number.toFixed(0));
 });
 
 export const totalFunds = createLoader('totalFunds', context => {
-  return getLastFundId(commonConfig(context));
+  const version = new Version(context.environment);
+  return version.getLastFundId(context.block);
 });
 
 export const latestPriceFeedUpdate = createLoader('latestPriceFeedUpdate', context => {
-  return getLatestPriceFeedUpdate(commonConfig(context));
+  const source = new PriceSource(context.environment);
+  return source.getLastUpdate(context.block);
 });
 
 export const fundRoutes = createLoader('fundRoutes', async (context, address: string) => {
-  return getFundRoutes(commonConfig(context), address);
+  const hub = new Hub(context.environment, address);
+  return hub.routes(context.block);
 });
 
 export const fundName = createLoader('fundName', async (context, address: string) => {
-  return getFundName(commonConfig(context), address);
+  const hub = new Hub(context.environment, address);
+  return hub.name(context.block);
 });
 
 export const fundManager = createLoader('fundManager', async (context, address: string) => {
-  return getFundManager(commonConfig(context), address);
+  const hub = new Hub(context.environment, address);
+  return hub.manager(context.block);
 });
 
 export const fundCreator = createLoader('fundCreator', async (context, address: string) => {
-  return getFundCreator(commonConfig(context), address);
+  const hub = new Hub(context.environment, address);
+  return hub.creator(context.block);
 });
 
 export const fundCreationTime = createLoader('fundCreationTime', async (context, address: string) => {
-  return getFundCreationTime(commonConfig(context), address);
+  const hub = new Hub(context.environment, address);
+  return hub.creationTime(context.block);
 });
 
 export const fundCalculations = createLoader('fundCalculations', async (context, address: string) => {
@@ -60,7 +50,8 @@ export const fundCalculations = createLoader('fundCalculations', async (context,
     return null;
   }
 
-  return getFundCalculations(commonConfig(context), routes.accounting!);
+  const accounting = new Accounting(context.environment, routes.accounting!);
+  return accounting.performCalculations(context.block);
 });
 
 export const balanceOf = createLoader('balanceOf', async (context, token: string) => {
@@ -70,9 +61,10 @@ export const balanceOf = createLoader('balanceOf', async (context, token: string
   }
 
   if (token === 'ETH') {
-    const balance = await context.environment.eth.getBalance(account);
+    const balance = await context.environment.client.getBalance(account);
     return new BigNumber(fromWei(balance));
   }
 
-  return getBalanceOf(commonConfig(context), token, account);
+  const instance = Token.forSymbol(context.environment, token);
+  return instance.balanceOf(account);
 });

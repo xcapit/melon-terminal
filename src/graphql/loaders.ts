@@ -9,7 +9,7 @@ export const block = (context: Context) => (number: number) => {
 };
 
 export const totalFunds = (context: Context) => () => {
-  const version = new Version(context.environment);
+  const version = Version.forDeployment(context.environment);
 
   return () => {
     version.getLastFundId(context.block);
@@ -17,7 +17,7 @@ export const totalFunds = (context: Context) => () => {
 };
 
 export const latestPriceFeedUpdate = (context: Context) => {
-  const source = new PriceSource(context.environment);
+  const source = PriceSource.forDeployment(context.environment);
 
   return () => {
     return source.getLastUpdate(context.block);
@@ -25,16 +25,18 @@ export const latestPriceFeedUpdate = (context: Context) => {
 };
 
 export const fundRoutes = (context: Context) => {
-  return (address: string) => {
+  return async (address: string) => {
     const hub = new Hub(context.environment, address);
-    return hub.routes(context.block);
+    const routes = await hub.routes(context.block);
+    return routes;
   };
 };
 
 export const fundName = (context: Context) => {
-  return (address: string) => {
+  return async (address: string) => {
     const hub = new Hub(context.environment, address);
-    return hub.name(context.block);
+    const name = await hub.name(context.block);
+    return name;
   };
 };
 

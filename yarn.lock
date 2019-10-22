@@ -1160,10 +1160,10 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@melonproject/melonjs@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@melonproject/melonjs/-/melonjs-0.0.8.tgz#8fd93d1346c483848010b6b912e5c29201c3bd64"
-  integrity sha512-2GR6lsCkyjm3H2zCcBuolozZU2OWsPZMOmAcP6VSzicGerRtXWaz6BdUge9rXYvjvbwk6AraSNcghOkg22W5lg==
+"@melonproject/melonjs@^0.0.14":
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/@melonproject/melonjs/-/melonjs-0.0.14.tgz#2db4c1270825d8b056ae828ada5fdaf826ded0d7"
+  integrity sha512-1trJfcsTv09/MNe2YpBDwJfVckeSOiezSteUpHaZAreRGzaK/n4ESiN03bbnOyOhznQDBzvfCFzJjCH2OZEveA==
   dependencies:
     bignumber.js "^9.0.0"
     ramda "^0.26.1"

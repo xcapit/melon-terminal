@@ -6,6 +6,9 @@ package-lock.json
 coverage/
 build/
 
+# Legacy. TODO: Remove this.
+legacy/
+
 # Ignore all dot files.
 .*
 

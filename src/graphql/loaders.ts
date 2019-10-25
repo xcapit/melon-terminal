@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { Version, PriceSource, Hub, Accounting, Token } from '@melonproject/melonjs';
+import { Version, CanonicalPriceFeed, Hub, Accounting, Token } from '@melonproject/melonjs';
 import { fromWei } from 'web3-utils';
 import { Context } from '.';
 
@@ -17,7 +17,7 @@ export const totalFunds = (context: Context) => () => {
 };
 
 export const latestPriceFeedUpdate = (context: Context) => {
-  const source = PriceSource.forDeployment(context.environment);
+  const source = CanonicalPriceFeed.forDeployment(context.environment);
 
   return () => {
     return source.getLastUpdate(context.block);
@@ -27,7 +27,7 @@ export const latestPriceFeedUpdate = (context: Context) => {
 export const fundRoutes = (context: Context) => {
   return async (address: string) => {
     const hub = new Hub(context.environment, address);
-    const routes = await hub.routes(context.block);
+    const routes = await hub.getRoutes(context.block);
     return routes;
   };
 };
@@ -35,7 +35,7 @@ export const fundRoutes = (context: Context) => {
 export const fundName = (context: Context) => {
   return async (address: string) => {
     const hub = new Hub(context.environment, address);
-    const name = await hub.name(context.block);
+    const name = await hub.getName(context.block);
     return name;
   };
 };
@@ -43,21 +43,21 @@ export const fundName = (context: Context) => {
 export const fundManager = (context: Context) => {
   return (address: string) => {
     const hub = new Hub(context.environment, address);
-    return hub.manager(context.block);
+    return hub.getManager(context.block);
   };
 };
 
 export const fundCreator = (context: Context) => {
   return (address: string) => {
     const hub = new Hub(context.environment, address);
-    return hub.creator(context.block);
+    return hub.getCreator(context.block);
   };
 };
 
 export const fundCreationTime = (context: Context) => {
   return (address: string) => {
     const hub = new Hub(context.environment, address);
-    return hub.creationTime(context.block);
+    return hub.getCreationTime(context.block);
   };
 };
 
@@ -70,7 +70,7 @@ export const fundCalculations = (context: Context) => {
     }
 
     const accounting = new Accounting(context.environment, routes.accounting!);
-    return accounting.performCalculations(context.block);
+    return accounting.getCalculationResults(context.block);
   };
 };
 
@@ -87,6 +87,6 @@ export const balanceOf = (context: Context) => {
     }
 
     const instance = Token.forDeployment(context.environment, token);
-    return instance.balanceOf(account);
+    return instance.getBalanceOf(account);
   };
 };

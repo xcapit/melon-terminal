@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { Resolver } from '~/graphql';
 import { fromWei } from 'web3-utils';
 
@@ -26,15 +27,15 @@ export const creationTime: Resolver<string> = (address, args, context) => {
 
 export const sharePrice: Resolver<string> = async (address, args, context) => {
   const result = await context.loaders.fundCalculations(address);
-  return result && fromWei(result.sharePrice.toFixed());
+  return result && new BigNumber(fromWei(result.sharePrice.toFixed()));
 };
 
 export const gav: Resolver<string> = async (address, args, context) => {
   const result = await context.loaders.fundCalculations(address);
-  return result && fromWei(result.gav.toFixed());
+  return result && new BigNumber(fromWei(result.gav.toFixed()));
 };
 
 export const nav: Resolver<string> = async (address, args, context) => {
   const result = await context.loaders.fundCalculations(address);
-  return result && fromWei(result.nav.toFixed());
+  return result && new BigNumber(fromWei(result.nav.toFixed()));
 };

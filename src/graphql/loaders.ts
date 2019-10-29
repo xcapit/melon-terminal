@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import { Version, CanonicalPriceFeed, Hub, Accounting, Token } from '@melonproject/melonjs';
 import { fromWei } from 'web3-utils';
 import { Context } from '.';
+import { findToken } from './utils/findToken';
 
 export const block = (context: Context) => (number: number) => {
   const eth = context.environment.client;
@@ -9,7 +10,9 @@ export const block = (context: Context) => (number: number) => {
 };
 
 export const totalFunds = (context: Context) => () => {
-  const version = Version.forDeployment(context.environment);
+  const deployment = process.env.DEPLOYMENT;
+  const address = deployment.melonContracts.version;
+  const version = new Version(context.environment, address);
 
   return () => {
     version.getLastFundId(context.block);
@@ -17,7 +20,9 @@ export const totalFunds = (context: Context) => () => {
 };
 
 export const latestPriceFeedUpdate = (context: Context) => {
-  const source = CanonicalPriceFeed.forDeployment(context.environment);
+  const deployment = process.env.DEPLOYMENT;
+  const address = deployment.melonContracts.priceSource;
+  const source = new CanonicalPriceFeed(context.environment, address);
 
   return () => {
     return source.getLastUpdate(context.block);
@@ -86,7 +91,8 @@ export const balanceOf = (context: Context) => {
       return new BigNumber(fromWei(balance));
     }
 
-    const instance = Token.forDeployment(context.environment, token);
+    const definition = findToken(process.env.DEPLOYMENT, token);
+    const instance = new Token(context.environment, definition.address);
     return instance.getBalanceOf(account);
   };
 };

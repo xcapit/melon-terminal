@@ -7,14 +7,19 @@ enum NetworkEnum {
   INVALID
 }
 
-type Query {
-  network: NetworkEnum
-  block: Block
-  account: Account
-  accounts: [Account]!
-  fund(address: String): Fund
-  totalFunds: BigNumber
-  latestPriceFeedUpdate: DateTime
+type TransactionReceipt {
+  hash: String!
+  cost: BigNumber!
+}
+
+type TransactionError {
+  message: String!
+  code: Int!
+}
+
+type TransactionResponse {
+  receipt: TransactionReceipt
+  error: TransactionError
 }
 
 type Block {
@@ -58,6 +63,21 @@ type Fund {
   performanceFeePeriod: BigNumber
 }
 
+type Query {
+  network: NetworkEnum
+  block: Block
+  account: Account
+  accounts: [Account]!
+  fund(address: String): Fund
+  totalFunds: BigNumber
+  latestPriceFeedUpdate: DateTime
+}
+
+type Mutation {
+  depositWeth(amount: BigNumber): TransactionResponse!
+}
+
 type Schema {
   query: Query
+  mutation: Mutation
 }

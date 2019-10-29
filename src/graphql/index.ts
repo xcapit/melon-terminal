@@ -40,7 +40,7 @@ export const createQueryContext = (connection: Connection): ContextCreator => {
   return async () => {
     // Create a reference to the loaders object so we can create the loader
     // functions with the pre-initialized context object.
-    const environment = new Environment(connection.eth, process.env.DEPLOYMENT, {
+    const environment = new Environment(connection.eth, {
       cache,
     });
 

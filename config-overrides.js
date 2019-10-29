@@ -23,12 +23,11 @@ const getPathAliases = () => {
   return aliases;
 };
 
-const getMelonDeployment = () => {
-  const network = process.env.NETWORK.toLowerCase();
-  const deployment = process.env.DEPLOYMENT || `@melonproject/melonjs/deployments/${network}`;
+const getDeployment = () => {
+  const deployment = path.resolve(process.env.DEPLOYMENT);
 
   try {
-    return require(deployment).default;
+    return require(deployment);
   } catch (e) {
     throw new Error(`Failed to load deployment from ${deployment}.`);
   }
@@ -46,7 +45,7 @@ module.exports = override(
     new webpack.DefinePlugin({
       'process.env.NETWORK': JSON.stringify(process.env.NETWORK),
       'process.env.SUBGRAPH': JSON.stringify(process.env.SUBGRAPH),
-      'process.env.DEPLOYMENT': JSON.stringify(getMelonDeployment()),
+      'process.env.DEPLOYMENT': JSON.stringify(getDeployment()),
     })
   ),
   addWebpackPlugin(new webpack.IgnorePlugin(/^scrypt$/)),

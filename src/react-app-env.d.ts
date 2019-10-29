@@ -1,9 +1,8 @@
 /// <reference types="react-scripts" />
 
 import 'styled-components';
-import { Deployment } from '@melonproject/melonjs';
 import { theme } from './components/App.styles';
-import { NetworkEnum } from './types';
+import { Deployment, NetworkEnum } from './types';
 
 declare module 'console' {
   export = typeof import('console');

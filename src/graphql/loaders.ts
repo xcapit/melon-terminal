@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js';
-import { Version, CanonicalPriceFeed, Hub, Accounting, Token } from '@melonproject/melonjs';
 import { fromWei } from 'web3-utils';
-import { Context } from '.';
+import { Version, CanonicalPriceFeed, Hub, Accounting, Token } from '@melonproject/melonjs';
 import { findToken } from './utils/findToken';
+import { Context } from '.';
 
 export const block = (context: Context) => (number: number) => {
   const eth = context.environment.client;
@@ -93,6 +93,7 @@ export const balanceOf = (context: Context) => {
 
     const definition = findToken(process.env.DEPLOYMENT, token);
     const instance = new Token(context.environment, definition.address);
-    return instance.getBalanceOf(account);
+    const balance = await instance.getBalanceOf(account);
+    return new BigNumber(fromWei(balance.toFixed()));
   };
 };

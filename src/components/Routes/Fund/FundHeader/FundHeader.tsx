@@ -79,7 +79,7 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
         </S.FundHeaderItem>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Performance fee period</S.FundHeaderItemTitle>
-          {performanceFee && performanceFee.period && `${performanceFee.period / (60 * 60 * 24)} days`}
+          {performanceFee && performanceFee.period && `${performanceFee.period} days`}
         </S.FundHeaderItem>
       </S.FundHeaderInformation>
     </S.FundHeader>

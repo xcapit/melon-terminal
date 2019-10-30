@@ -8,6 +8,7 @@ export const rate: Resolver<[Hub, PerformanceFee]> = async ([hub, performance], 
   return new BigNumber(fromWei(rate.toFixed()));
 };
 
-export const period: Resolver<[Hub, PerformanceFee]> = ([hub, performance], _, context) => {
-  return performance.getPerformanceFeePeriod(hub.contract.address, context.block);
+export const period: Resolver<[Hub, PerformanceFee]> = async ([hub, performance], _, context) => {
+  const period = await performance.getPerformanceFeePeriod(hub.contract.address, context.block);
+  return period ? period / (60 * 60 * 24) : 0;
 };

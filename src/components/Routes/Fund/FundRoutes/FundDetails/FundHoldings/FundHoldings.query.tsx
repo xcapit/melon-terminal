@@ -12,6 +12,7 @@ export interface FundHoldingsQueryResult {
             address: string;
             symbol: string;
             name: string;
+            price: BigNumber;
           };
         }[];
       };
@@ -34,6 +35,7 @@ const FundHoldingsQuery = gql`
               address
               symbol
               name
+              price
             }
           }
         }

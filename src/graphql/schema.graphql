@@ -39,6 +39,7 @@ type Token {
   name: String!
   symbol: String!
   decimals: Int!
+  price: BigNumber!
 }
 
 type Holding {

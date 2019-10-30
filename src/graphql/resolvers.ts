@@ -4,6 +4,7 @@ export { TokenEnum } from '~/graphql/enums/TokenEnum';
 
 import * as Query from '~/graphql/resolvers/Query';
 import * as Block from '~/graphql/resolvers/Block';
+import * as Token from '~/graphql/resolvers/Token';
 import * as PriceSource from '~/graphql/resolvers/PriceSource';
 import * as Version from '~/graphql/resolvers/Version';
 import * as Account from '~/graphql/resolvers/Account';
@@ -22,6 +23,7 @@ import * as PolicyManager from '~/graphql/resolvers/routes/PolicyManager';
 export {
   Query,
   Block,
+  Token,
   PriceSource,
   Account,
   Version,

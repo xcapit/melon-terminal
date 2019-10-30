@@ -1,6 +1,7 @@
 import React from 'react';
 import { Spinner } from '~/components/Common/Spinner/Spinner';
 import { useFundHoldingsQuery } from './FundHoldings.query';
+import * as S from './FundHoldings.styles';
 
 export interface FundHoldingsProps {
   address: string;
@@ -11,7 +12,7 @@ export const FundHoldings: React.FC<FundHoldingsProps> = ({ address }) => {
   const data = query.data && query.data.fund;
 
   if (query.loading) {
-    return <Spinner />;
+    return <Spinner positioning="centered" />;
   }
 
   if (!data) {
@@ -20,17 +21,29 @@ export const FundHoldings: React.FC<FundHoldingsProps> = ({ address }) => {
 
   const routes = data && data.routes;
   const accounting = routes && routes.accounting;
-  const holdings = accounting && accounting.holdings;
+  const holdings = (accounting && accounting.holdings) || [];
 
   return (
-    <div>
-      {holdings &&
-        holdings.map(holding => (
-          <div key={holding.token.address}>
-            {holding.token.symbol}: {holding.amount.toFixed(4)}
-          </div>
+    <S.Table>
+      <thead>
+        <S.HeaderRow>
+          <S.HeaderCell>Asset</S.HeaderCell>
+          <S.HeaderCell>Price</S.HeaderCell>
+          <S.HeaderCell>Balance</S.HeaderCell>
+        </S.HeaderRow>
+      </thead>
+      <tbody>
+        {holdings.map(holding => (
+          <S.BodyRow key={holding.token.address}>
+            <S.BodyCell>
+              {holding.token.symbol} ({holding.token.name})
+            </S.BodyCell>
+            <S.BodyCell>{holding.token.price.toFixed(4)}</S.BodyCell>
+            <S.BodyCell>{holding.amount.toFixed(4)}</S.BodyCell>
+          </S.BodyRow>
         ))}
-    </div>
+      </tbody>
+    </S.Table>
   );
 };
 

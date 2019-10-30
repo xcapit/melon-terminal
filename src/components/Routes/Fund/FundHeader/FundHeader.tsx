@@ -71,15 +71,15 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
         <S.FundHeaderItem />
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Management fee</S.FundHeaderItemTitle>
-          {managementFee && managementFee.rate && `${managementFee.rate}%`}
+          {`${managementFee && managementFee.rate ? managementFee.rate : 0}%`}
         </S.FundHeaderItem>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Performance fee</S.FundHeaderItemTitle>
-          {performanceFee && performanceFee.rate && `${performanceFee.rate}%`}
+          {`${performanceFee && performanceFee.rate ? performanceFee.rate : 0}%`}
         </S.FundHeaderItem>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Performance fee period</S.FundHeaderItemTitle>
-          {performanceFee && performanceFee.period && `${performanceFee.period} days`}
+          {`${performanceFee && performanceFee.period ? performanceFee.period : 0} days`}
         </S.FundHeaderItem>
       </S.FundHeaderInformation>
     </S.FundHeader>

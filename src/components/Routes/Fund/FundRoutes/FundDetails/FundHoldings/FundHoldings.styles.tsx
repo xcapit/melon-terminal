@@ -8,8 +8,8 @@ export const Table = styled.table`
 `;
 
 export const HeaderCell = styled.th`
-  padding: ${props => props.theme.spaceUnits.s};
   text-align: left;
+  padding: ${props => props.theme.spaceUnits.s};
 `;
 
 export const HeaderRow = styled.tr``;

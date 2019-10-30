@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { useHistory } from 'react-router';
 import { fromWei } from 'web3-utils';
 import { Spinner } from '~/components/Common/Spinner/Spinner';
-import NoMatch from '~/components/Routes/NoMatch/NoMatch';
+import { NoMatch } from '~/components/Routes/NoMatch/NoMatch';
 import { useFundOverviewQuery } from './FundOverview.query';
 import * as S from './FundOverview.styles';
 
@@ -23,12 +23,12 @@ export const FundOverview: React.FC = () => {
   return (
     <S.Table>
       <thead>
-        <tr>
-          <th>Name</th>
-          <th>Share price</th>
-          <th>Assets under management</th>
-          <th>Inception date</th>
-        </tr>
+        <S.HeaderRow>
+          <S.HeaderCell>Name</S.HeaderCell>
+          <S.HeaderCell>Share price</S.HeaderCell>
+          <S.HeaderCell>Assets under management</S.HeaderCell>
+          <S.HeaderCell>Inception date</S.HeaderCell>
+        </S.HeaderRow>
       </thead>
       <tbody>
         {data.map(fund => (

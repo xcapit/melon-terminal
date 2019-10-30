@@ -1,8 +1,8 @@
 import { Resolver } from '~/graphql';
 import { Accounting } from '@melonproject/melonjs';
 import { fromWei } from 'web3-utils';
+import { findToken } from '~/graphql/utils/findToken';
 
-export const id: Resolver<Accounting> = accounting => accounting.contract.address;
 export const address: Resolver<Accounting> = accounting => accounting.contract.address;
 export const sharePrice: Resolver<Accounting> = async (accounting, _, context) => {
   const calculations = await context.loaders.accountingCalculations(accounting);
@@ -17,4 +17,12 @@ export const grossAssetValue: Resolver<Accounting> = async (accounting, _, conte
 export const netAssetValue: Resolver<Accounting> = async (accounting, _, context) => {
   const calculations = await context.loaders.accountingCalculations(accounting);
   return fromWei(calculations.nav.toFixed());
+};
+
+export const holdings: Resolver<Accounting> = async (accounting, _, context) => {
+  const holdings = await accounting.getFundHoldings(context.block);
+  return Object.keys(holdings).map(address => ({
+    token: findToken(context.deployment, address),
+    amount: fromWei(holdings[address].toFixed()),
+  }));
 };

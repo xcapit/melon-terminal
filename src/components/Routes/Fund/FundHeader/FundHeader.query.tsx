@@ -4,7 +4,6 @@ import { useOnChainQuery } from '~/hooks/useQuery';
 
 export interface FundHeaderQueryResult {
   fund: {
-    id: string;
     name: string;
     manager: string;
     creationTime: Date;
@@ -36,7 +35,6 @@ export interface FundHeaderQueryVariables {
 const FundHeaderQuery = gql`
   query FundHeaderQuery($address: String!) {
     fund(address: $address) {
-      id
       name
       manager
       creationTime

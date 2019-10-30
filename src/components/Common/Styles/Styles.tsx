@@ -36,11 +36,10 @@ export const PaddedBody = styled(FullBody)`
 
 export const FullNavigation = styled.div`
   position: relative;
+  border-bottom: 2px solid ${props => props.theme.mainColors.border};
 `;
 
 export const PaddedNavigation = styled(FullNavigation)`
-  border-bottom: 2px solid ${props => props.theme.mainColors.border};
-
   @media (${props => props.theme.mediaQueries.s}) {
     padding-left: 7%;
     padding-right: 7%;

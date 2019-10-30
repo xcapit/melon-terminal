@@ -24,16 +24,26 @@ type TransactionResponse {
 }
 
 type Block {
-  id: ID!
   hash: String!
   number: BigNumber!
   timestamp: DateTime!
 }
 
 type Account {
-  id: ID!
   address: Address!
   balance(token: TokenEnum!): BigNumber
+}
+
+type Token {
+  address: Address!
+  name: String!
+  symbol: String!
+  decimals: Int!
+}
+
+type Holding {
+  token: Token!
+  amount: BigNumber!
 }
 
 type HubRoutes {
@@ -48,7 +58,6 @@ type HubRoutes {
 }
 
 type Hub {
-  id: ID!
   address: Address!
   name: String!
   routes: HubRoutes!
@@ -58,62 +67,54 @@ type Hub {
 }
 
 type Accounting {
-  id: ID!
   address: Address!
+  holdings: [Holding]!
   grossAssetValue: BigNumber!
   netAssetValue: BigNumber!
   sharePrice: BigNumber!
 }
 
 type Participation {
-  id: ID!
   address: Address!
 }
 
 type Shares {
-  id: ID!
   address: Address!
   totalSupply: BigNumber!
 }
 
 type Trading {
-  id: ID!
   address: Address!
 }
 
 type Vault {
-  id: ID!
   address: Address!
 }
 
 type PolicyManager {
-  id: ID!
   address: Address!
 }
 
 type FeeManager {
-  id: ID!
   address: Address!
   performanceFee: PerformanceFee
   managementFee: ManagementFee
 }
 
 type PerformanceFee {
-  rate: BigNumber!
+  rate: Int!
   period: Int!
 }
 
 type ManagementFee {
-  rate: BigNumber!
+  rate: Int!
 }
 
 type Version {
-  id: ID!
   address: Address!
 }
 
 type PriceSource {
-  id: ID!
   address: Address!
   lastUpdate: DateTime!
 }

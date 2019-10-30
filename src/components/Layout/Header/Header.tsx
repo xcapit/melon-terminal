@@ -12,7 +12,6 @@ const HeaderQuery = gql`
   query HeaderQuery {
     network
     account {
-      id
       address
       balance(token: ETH)
     }

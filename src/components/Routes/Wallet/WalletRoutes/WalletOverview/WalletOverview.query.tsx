@@ -4,7 +4,6 @@ import { useOnChainQuery } from '~/hooks/useQuery';
 
 export interface WalletOverviewQueryResult {
   account: {
-    id: string;
     eth: BigNumber;
     weth: BigNumber;
   };
@@ -13,7 +12,6 @@ export interface WalletOverviewQueryResult {
 const WalletOverviewQuery = gql`
   query WalletOverviewQuery {
     account {
-      id
       eth: balance(token: ETH)
       weth: balance(token: WETH)
     }

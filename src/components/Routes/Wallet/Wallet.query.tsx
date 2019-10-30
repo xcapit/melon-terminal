@@ -3,7 +3,6 @@ import { useOnChainQuery } from '~/hooks/useQuery';
 
 export interface WalletQueryResult {
   account: {
-    id: string;
     address: string;
   };
 }
@@ -15,7 +14,6 @@ export interface WalletQueryVariables {
 const WalletQuery = gql`
   query WalletQuery {
     account {
-      id
       address
     }
   }

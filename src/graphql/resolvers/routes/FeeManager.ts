@@ -1,7 +1,6 @@
 import { Resolver } from '~/graphql';
 import { FeeManager, PerformanceFee, ManagementFee } from '@melonproject/melonjs';
 
-export const id: Resolver<FeeManager> = manager => manager.contract.address;
 export const address: Resolver<FeeManager> = manager => manager.contract.address;
 
 export const performanceFee: Resolver<FeeManager> = async (manager, _, context) => {

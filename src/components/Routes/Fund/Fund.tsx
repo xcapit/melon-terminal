@@ -1,8 +1,9 @@
 import React from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router';
 import { RequireSecureConnection } from '~/components/Contexts/Connection';
-import * as S from './Fund.styles';
 import { FundHeader } from './FundHeader/FundHeader';
+import { FundNavigation } from './FundNavigation/FundNavigation';
+import * as S from './Fund.styles';
 
 const NoMatch = React.lazy(() => import('~/components/Routes/NoMatch/NoMatch'));
 const FundRedeem = React.lazy(() => import('./FundRoutes/FundRedeem/FundRedeem'));
@@ -21,6 +22,9 @@ export const Fund: React.FC = () => {
       <S.FundHeader>
         <FundHeader address={match.params.address} />
       </S.FundHeader>
+      <S.FundNavigation>
+        <FundNavigation address={match.params.address} />
+      </S.FundNavigation>
       <S.FundBody>
         <Switch>
           <Route path={match.path} exact={true}>

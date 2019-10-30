@@ -10,7 +10,6 @@ export interface FundOverviewQueryResult {
     isShutdown: boolean;
     createdAt: number;
     version: {
-      id: string;
       name: string;
     };
   }[];
@@ -31,7 +30,6 @@ const FundOverviewQuery = gql`
       isShutdown
       createdAt
       version {
-        id
         name
       }
     }

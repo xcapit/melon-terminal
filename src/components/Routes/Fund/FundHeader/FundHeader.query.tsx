@@ -11,6 +11,19 @@ export interface FundHeaderQueryResult {
     routes?: {
       accounting?: {
         sharePrice: BigNumber;
+        grossAssetValue: BigNumber;
+      };
+      shares?: {
+        totalSupply: BigNumber;
+      };
+      fees?: {
+        managementFee?: {
+          rate: BigNumber;
+        };
+        performanceFee?: {
+          rate: BigNumber;
+          period: number;
+        };
       };
     };
   };
@@ -30,6 +43,19 @@ const FundHeaderQuery = gql`
       routes {
         accounting {
           sharePrice
+          grossAssetValue
+        }
+        shares {
+          totalSupply
+        }
+        fees {
+          managementFee {
+            rate
+          }
+          performanceFee {
+            rate
+            period
+          }
         }
       }
     }

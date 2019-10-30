@@ -43,8 +43,8 @@ type HubRoutes {
   shares: Shares
   trading: Trading
   vault: Vault
-  fees: Fees
-  policies: Policies
+  fees: FeeManager
+  policies: PolicyManager
 }
 
 type Hub {
@@ -60,8 +60,8 @@ type Hub {
 type Accounting {
   id: ID!
   address: Address!
-  gav: BigNumber!
-  nav: BigNumber!
+  grossAssetValue: BigNumber!
+  netAssetValue: BigNumber!
   sharePrice: BigNumber!
 }
 
@@ -73,14 +73,10 @@ type Participation {
 type Shares {
   id: ID!
   address: Address!
+  totalSupply: BigNumber!
 }
 
 type Trading {
-  id: ID!
-  address: Address!
-}
-
-type Fees {
   id: ID!
   address: Address!
 }
@@ -90,9 +86,25 @@ type Vault {
   address: Address!
 }
 
-type Policies {
+type PolicyManager {
   id: ID!
   address: Address!
+}
+
+type FeeManager {
+  id: ID!
+  address: Address!
+  performanceFee: PerformanceFee
+  managementFee: ManagementFee
+}
+
+type PerformanceFee {
+  rate: BigNumber!
+  period: Int!
+}
+
+type ManagementFee {
+  rate: BigNumber!
 }
 
 type Version {

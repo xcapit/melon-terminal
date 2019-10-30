@@ -23,9 +23,15 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
     return null;
   }
 
-  const accounting = data && data.routes && data.routes.accounting;
+  const routes = data && data.routes;
+  const accounting = routes && routes.accounting;
+  const shares = routes && routes.shares;
   const manager = data && data.manager;
   const creation = data && data.creationTime;
+
+  const fees = routes && routes.fees;
+  const managementFee = fees && fees.managementFee;
+  const performanceFee = fees && fees.performanceFee;
 
   return (
     <S.FundHeader>
@@ -42,11 +48,11 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
       <S.FundHeaderInformation>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Share price</S.FundHeaderItemTitle>
-          {accounting && accounting.sharePrice.toFixed(4)}
+          {accounting && accounting.sharePrice && accounting.sharePrice.toFixed(4)}
         </S.FundHeaderItem>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>AUM</S.FundHeaderItemTitle>
-          XXX
+          {accounting && accounting.grossAssetValue && accounting.grossAssetValue.toFixed(4)}
         </S.FundHeaderItem>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Creation date</S.FundHeaderItemTitle>
@@ -60,20 +66,20 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
         </S.FundHeaderItem>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Total number of shares</S.FundHeaderItemTitle>
-          XXX
+          {shares && shares.totalSupply && shares.totalSupply.toFixed(4)}
         </S.FundHeaderItem>
         <S.FundHeaderItem />
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Management fee</S.FundHeaderItemTitle>
-          XXX
+          {managementFee && managementFee.rate && managementFee.rate.toFixed(4)}
         </S.FundHeaderItem>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Performance fee</S.FundHeaderItemTitle>
-          XXX
+          {performanceFee && performanceFee.rate && performanceFee.rate.toFixed(4)}
         </S.FundHeaderItem>
         <S.FundHeaderItem>
           <S.FundHeaderItemTitle>Performance fee period</S.FundHeaderItemTitle>
-          XXX
+          {performanceFee && performanceFee.period && `${performanceFee.period / (60 * 60 * 24)} days`}
         </S.FundHeaderItem>
       </S.FundHeaderInformation>
     </S.FundHeader>

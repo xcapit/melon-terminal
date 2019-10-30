@@ -4,23 +4,25 @@ import { execute, subscribe, GraphQLSchema, ExecutionArgs } from 'graphql';
 import { ApolloLink, FetchResult, Observable, Operation } from 'apollo-link';
 import { makeExecutableSchema } from 'graphql-tools';
 import { Environment } from '@melonproject/melonjs';
-import { NetworkEnum } from '~/types';
 import { Connection } from '~/components/Contexts/Connection';
 import { isSubscription } from '~/graphql/utils/isSubscription';
 import { ensureIterable } from '~/graphql/utils/ensureIterable';
-import * as loaderCreators from '~/graphql/loaders';
+import { NetworkEnum, Deployment } from '~/types';
+import * as loaders from '~/graphql/loaders';
 import * as resolvers from '~/graphql/resolvers';
 // @ts-ignore
-import schema from '~/graphql/schema.graphql';
+import SchemaDefinition from '~/graphql/schema.graphql';
+import * as EnumDefinitions from '~/graphql/enums';
 
 export type Resolver<TParent = any, TArgs = any> = (parent: TParent, args: TArgs, context: Context) => any;
 export type ContextCreator = (request: Operation) => Promise<Context> | Context;
 export type Loaders = {
-  [K in keyof typeof loaderCreators]: ReturnType<typeof loaderCreators[K]>;
+  [K in keyof typeof loaders]: ReturnType<typeof loaders[K]>;
 };
 
 export interface Context {
   cache: LRUCache<string, any>;
+  deployment: Deployment;
   environment: Environment;
   loaders: Loaders;
   block: number;
@@ -38,26 +40,22 @@ export const createQueryContext = (connection: Connection): ContextCreator => {
   const cache = new LRUCache<string, any>(500);
 
   return async () => {
-    // Create a reference to the loaders object so we can create the loader
-    // functions with the pre-initialized context object.
-    const environment = new Environment(connection.eth, {
-      cache,
-    });
-
+    const deployment = process.env.DEPLOYMENT;
+    const environment = new Environment(connection.eth, { cache });
     const block = await connection.eth.getBlockNumber();
-    const loaders = {} as Loaders;
     const context: Context = {
       cache,
+      deployment,
       block,
-      loaders,
       environment,
       accounts: connection.accounts,
       network: connection.network,
+      loaders: {} as Loaders,
     };
 
-    Object.keys(loaderCreators).forEach(key => {
+    Object.keys(loaders).forEach(key => {
       // @ts-ignore
-      loaders[key] = loaderCreators[key](context);
+      context.loaders[key] = loaders[key](context);
     });
 
     return context;
@@ -65,11 +63,13 @@ export const createQueryContext = (connection: Connection): ContextCreator => {
 };
 
 export const createSchema = () => {
-  return makeExecutableSchema({
+  const executable = makeExecutableSchema({
     resolvers,
-    typeDefs: schema,
+    typeDefs: [...Object.values(EnumDefinitions), SchemaDefinition],
     inheritResolversFromInterfaces: true,
   });
+
+  return executable;
 };
 
 export const createSchemaLink = <TRoot = any>(options: SchemaLinkOptions<TRoot, ContextCreator>) => {

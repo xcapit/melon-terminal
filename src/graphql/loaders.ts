@@ -1,7 +1,7 @@
+import * as R from 'ramda';
 import BigNumber from 'bignumber.js';
 import { fromWei } from 'web3-utils';
-import { Version, CanonicalPriceFeed, Hub, Accounting, Token } from '@melonproject/melonjs';
-import { findToken } from './utils/findToken';
+import { Token, Address, Accounting } from '@melonproject/melonjs';
 import { Context } from '.';
 
 export const block = (context: Context) => (number: number) => {
@@ -9,78 +9,8 @@ export const block = (context: Context) => (number: number) => {
   return eth.getBlock(number);
 };
 
-export const totalFunds = (context: Context) => () => {
-  const deployment = process.env.DEPLOYMENT;
-  const address = deployment.melonContracts.version;
-  const version = new Version(context.environment, address);
-
-  return () => {
-    version.getLastFundId(context.block);
-  };
-};
-
-export const latestPriceFeedUpdate = (context: Context) => {
-  const deployment = process.env.DEPLOYMENT;
-  const address = deployment.melonContracts.priceSource;
-  const source = new CanonicalPriceFeed(context.environment, address);
-
-  return () => {
-    return source.getLastUpdate(context.block);
-  };
-};
-
-export const fundRoutes = (context: Context) => {
-  return async (address: string) => {
-    const hub = new Hub(context.environment, address);
-    const routes = await hub.getRoutes(context.block);
-    return routes;
-  };
-};
-
-export const fundName = (context: Context) => {
-  return async (address: string) => {
-    const hub = new Hub(context.environment, address);
-    const name = await hub.getName(context.block);
-    return name;
-  };
-};
-
-export const fundManager = (context: Context) => {
-  return (address: string) => {
-    const hub = new Hub(context.environment, address);
-    return hub.getManager(context.block);
-  };
-};
-
-export const fundCreator = (context: Context) => {
-  return (address: string) => {
-    const hub = new Hub(context.environment, address);
-    return hub.getCreator(context.block);
-  };
-};
-
-export const fundCreationTime = (context: Context) => {
-  return (address: string) => {
-    const hub = new Hub(context.environment, address);
-    return hub.getCreationTime(context.block);
-  };
-};
-
-export const fundCalculations = (context: Context) => {
-  return async (address: string) => {
-    const loadRoutes = context.loaders.fundRoutes as ReturnType<typeof fundRoutes>;
-    const routes = await loadRoutes(address);
-    if (!routes.accounting) {
-      return null;
-    }
-
-    const accounting = new Accounting(context.environment, routes.accounting!);
-    return accounting.getCalculationResults(context.block);
-  };
-};
-
 export const balanceOf = (context: Context) => {
-  return async (token: string) => {
+  return async (token: Address | string) => {
     const account = context.accounts && context.accounts[0];
     if (!account) {
       return new BigNumber(0);
@@ -91,9 +21,17 @@ export const balanceOf = (context: Context) => {
       return new BigNumber(fromWei(balance));
     }
 
-    const definition = findToken(process.env.DEPLOYMENT, token);
-    const instance = new Token(context.environment, definition.address);
+    const instance = new Token(context.environment, token);
     const balance = await instance.getBalanceOf(account);
     return new BigNumber(fromWei(balance.toFixed()));
   };
+};
+
+export const accountingCalculations = (context: Context) => {
+  return R.memoizeWith(
+    (accounting: Accounting) => accounting.contract.address,
+    (accounting: Accounting) => {
+      return accounting.getCalculationResults(context.block);
+    }
+  );
 };

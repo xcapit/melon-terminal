@@ -14,8 +14,8 @@ const WalletOverviewQuery = gql`
   query WalletOverviewQuery {
     account {
       id
-      eth: balance(token: "ETH")
-      weth: balance(token: "WETH")
+      eth: balance(token: ETH)
+      weth: balance(token: WETH)
     }
   }
 `;

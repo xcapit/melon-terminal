@@ -1,3 +1,4 @@
+scalar Address
 scalar DateTime
 scalar BigNumber
 
@@ -31,50 +32,92 @@ type Block {
 
 type Account {
   id: ID!
-  address: String!
-  balance(token: String = "ETH"): BigNumber
+  address: Address!
+  balance(token: TokenEnum!): BigNumber
 }
 
-type FundRoutes {
-  version: String
-  accounting: String
-  participation: String
-  shares: String
-  trading: String
-  vault: String
-  feeManager: String
-  policyManager: String
+type HubRoutes {
+  version: Version
+  accounting: Accounting
+  participation: Participation
+  shares: Shares
+  trading: Trading
+  vault: Vault
+  fees: Fees
+  policies: Policies
 }
 
-type Fund {
+type Hub {
   id: ID!
-  address: String!
+  address: Address!
   name: String!
+  routes: HubRoutes!
   manager: String!
   creator: String!
   creationTime: DateTime!
-  routes: FundRoutes!
-  sharePrice: BigNumber
-  totalSupply: BigNumber
-  nav: BigNumber
-  gav: BigNumber
-  managementFeeRate: BigNumber
-  performanceFeeRate: BigNumber
-  performanceFeePeriod: BigNumber
+}
+
+type Accounting {
+  id: ID!
+  address: Address!
+  gav: BigNumber!
+  nav: BigNumber!
+  sharePrice: BigNumber!
+}
+
+type Participation {
+  id: ID!
+  address: Address!
+}
+
+type Shares {
+  id: ID!
+  address: Address!
+}
+
+type Trading {
+  id: ID!
+  address: Address!
+}
+
+type Fees {
+  id: ID!
+  address: Address!
+}
+
+type Vault {
+  id: ID!
+  address: Address!
+}
+
+type Policies {
+  id: ID!
+  address: Address!
+}
+
+type Version {
+  id: ID!
+  address: Address!
+}
+
+type PriceSource {
+  id: ID!
+  address: Address!
+  lastUpdate: DateTime!
 }
 
 type Query {
-  network: NetworkEnum
-  block: Block
+  network: NetworkEnum!
+  block: Block!
+  prices: PriceSource!
   account: Account
-  accounts: [Account]!
-  fund(address: String): Fund
-  totalFunds: BigNumber
-  latestPriceFeedUpdate: DateTime
+  accounts: [Account!]!
+  fund(address: Address!): Hub
 }
 
 type Mutation {
-  depositWeth(amount: BigNumber): TransactionResponse!
+  wethDeposit(amount: BigNumber): TransactionResponse!
+  wethWithdraw(amount: BigNumber): TransactionResponse!
 }
 
 type Schema {

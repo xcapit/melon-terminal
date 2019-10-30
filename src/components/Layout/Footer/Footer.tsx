@@ -8,13 +8,15 @@ import * as S from './Footer.styles';
 
 const FooterQuery = gql`
   query FooterQuery {
-    latestPriceFeedUpdate
+    prices {
+      lastUpdate
+    }
   }
 `;
 
 export const Footer: React.FC = () => {
   const { data } = useOnChainQuery(FooterQuery);
-  const update = R.path<Date>(['latestPriceFeedUpdate'], data);
+  const update = R.path<Date>(['prices', 'lastUpdate'], data);
 
   return (
     <S.FooterPosition>

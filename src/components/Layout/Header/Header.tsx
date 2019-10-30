@@ -14,7 +14,7 @@ const HeaderQuery = gql`
     account {
       id
       address
-      balance
+      balance(token: ETH)
     }
   }
 `;

@@ -1,13 +1,18 @@
-import BigNumber from 'bignumber.js';
 import gql from 'graphql-tag';
+import BigNumber from 'bignumber.js';
 import { useOnChainQuery } from '~/hooks/useQuery';
 
 export interface FundHeaderQueryResult {
   fund: {
     id: string;
     name: string;
+    manager: string;
     creationTime: Date;
-    sharePrice?: BigNumber;
+    routes?: {
+      accounting?: {
+        sharePrice: BigNumber;
+      };
+    };
   };
 }
 
@@ -22,13 +27,11 @@ const FundHeaderQuery = gql`
       name
       manager
       creationTime
-      sharePrice
-      # totalSupply
-      # nav
-      # gav
-      # managementFeeRate
-      # performanceFeeRate
-      # performanceFeePeriod
+      routes {
+        accounting {
+          sharePrice
+        }
+      }
     }
   }
 `;

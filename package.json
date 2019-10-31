@@ -50,6 +50,7 @@
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-error-boundary": "^1.2.5",
+    "react-hook-form": "^3.26.4",
     "react-hot-loader": "^4.12.12",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.0.1",
@@ -59,7 +60,8 @@
     "styled-reset": "^4.0.0",
     "web3": "^2.0.0-alpha.1",
     "web3-eth-contract": "^2.0.0-alpha.1",
-    "web3-utils": "^2.0.0-alpha.1"
+    "web3-utils": "^2.0.0-alpha.1",
+    "yup": "^0.27.0"
   },
   "devDependencies": {
     "@types/graphql-iso-date": "^3.3.3",
@@ -68,6 +70,7 @@
     "@types/react-router": "^5.1.1",
     "@types/react-router-dom": "^5.1.0",
     "@types/styled-components": "^4.1.19",
+    "@types/yup": "^0.26.24",
     "babel-plugin-styled-components": "^1.10.6",
     "cross-env": "^6.0.3",
     "customize-cra": "^0.8.0",

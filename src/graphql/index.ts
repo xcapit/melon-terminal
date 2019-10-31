@@ -1,10 +1,8 @@
-import LRUCache from 'lru-cache';
 import { forAwaitEach } from 'iterall';
 import { execute, subscribe, GraphQLSchema, ExecutionArgs } from 'graphql';
 import { ApolloLink, FetchResult, Observable, Operation } from 'apollo-link';
 import { makeExecutableSchema } from 'graphql-tools';
 import { Environment } from '@melonproject/melonjs';
-import { Connection } from '~/components/Contexts/Connection';
 import { isSubscription } from '~/graphql/utils/isSubscription';
 import { ensureIterable } from '~/graphql/utils/ensureIterable';
 import { NetworkEnum, Deployment } from '~/types';
@@ -13,6 +11,8 @@ import * as resolvers from '~/graphql/resolvers';
 // @ts-ignore
 import SchemaDefinition from '~/graphql/schema.graphql';
 import * as EnumDefinitions from '~/graphql/enums';
+import { CacheHandler } from '@melonproject/melonjs/Environment';
+import { Connection } from '~/components/Contexts/Connection';
 
 export type Resolver<TParent = any, TArgs = any> = (parent: TParent, args: TArgs, context: Context) => any;
 export type ContextCreator = (request: Operation) => Promise<Context> | Context;
@@ -21,7 +21,7 @@ export type Loaders = {
 };
 
 export interface Context {
-  cache: LRUCache<string, any>;
+  cache: CacheHandler;
   deployment: Deployment;
   environment: Environment;
   loaders: Loaders;
@@ -36,18 +36,15 @@ interface SchemaLinkOptions<TRoot = any, TContext = any> {
   root?: TRoot;
 }
 
-export const createQueryContext = (connection: Connection): ContextCreator => {
-  const cache = new LRUCache<string, any>(500);
-
+export const createQueryContext = (connection: Connection, environment: Environment): ContextCreator => {
   return async () => {
     const deployment = process.env.DEPLOYMENT;
-    const environment = new Environment(connection.eth, { cache });
-    const block = await connection.eth.getBlockNumber();
+    const block = await environment.client.getBlockNumber();
     const context: Context = {
-      cache,
       deployment,
       block,
       environment,
+      cache: environment.cache,
       accounts: connection.accounts,
       network: connection.network,
       loaders: {} as Loaders,

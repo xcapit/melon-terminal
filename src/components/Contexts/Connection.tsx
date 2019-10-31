@@ -12,6 +12,8 @@ import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { createSchemaLink, createSchema, createQueryContext } from '~/graphql';
 import { NetworkEnum } from '~/types';
 import { ApolloProvider } from '@apollo/react-hooks';
+import { Environment, Address } from '@melonproject/melonjs';
+import LRUCache from 'lru-cache';
 
 // TODO: Fix this type.
 export type ConnectionProvider = any;
@@ -27,7 +29,7 @@ export interface Connection {
   eth: Eth;
   provider: ConnectionProviderTypeEnum;
   network?: NetworkEnum;
-  accounts?: string[];
+  accounts?: Address[];
 }
 
 export interface ApolloProviderContext {
@@ -37,6 +39,7 @@ export interface ApolloProviderContext {
 export interface OnChainContextValue extends ApolloProviderContext {
   set: (observable: Rx.Observable<Connection>) => void;
   connection: Connection;
+  environment: Environment;
 }
 
 export interface TheGraphContextValue extends ApolloProviderContext {
@@ -76,10 +79,10 @@ const createErrorLink = () => {
   });
 };
 
-const useOnChainApollo = (connection: Connection) => {
+const useOnChainApollo = (connection: Connection, environment: Environment) => {
   const schema = useMemo(() => createSchema(), []);
   const apollo = useMemo(() => {
-    const context = createQueryContext(connection);
+    const context = createQueryContext(connection, environment);
     const data = createSchemaLink({ schema, context });
     const error = createErrorLink();
     const link = ApolloLink.from([error, data]);
@@ -138,16 +141,23 @@ export const ConnectionProvider: React.FC = props => {
         pluck(0),
         switchAll()
       );
+
       return output$;
     },
     infura,
     [observable]
   );
 
-  const client = useOnChainApollo(connection);
+  const environment = useMemo(() => {
+    return new Environment(connection.eth, {
+      cache: new LRUCache<string, any>(),
+    });
+  }, [connection]);
+
+  const client = useOnChainApollo(connection, environment);
 
   return (
-    <OnChainContext.Provider value={{ client, connection, set }}>
+    <OnChainContext.Provider value={{ client, connection, environment, set }}>
       <ApolloProvider client={client}>{props.children}</ApolloProvider>
     </OnChainContext.Provider>
   );

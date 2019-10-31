@@ -7,10 +7,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Avantgarde-Finance/interface.git"
+    "url": "git+https://github.com/avantgardefinance/interface.git"
   },
   "bugs": {
-    "url": "https://github.com/Avantgarde-Finance/interface/issues"
+    "url": "https://github.com/avantgardefinance/interface/issues"
   },
   "contributors": [
     "Sebastian Siemssen <fubhy@fubhy.com>"

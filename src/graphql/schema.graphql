@@ -8,21 +8,6 @@ enum NetworkEnum {
   INVALID
 }
 
-type TransactionReceipt {
-  hash: String!
-  cost: BigNumber!
-}
-
-type TransactionError {
-  message: String!
-  code: Int!
-}
-
-type TransactionResponse {
-  receipt: TransactionReceipt
-  error: TransactionError
-}
-
 type Block {
   hash: String!
   number: BigNumber!
@@ -103,12 +88,12 @@ type FeeManager {
 }
 
 type PerformanceFee {
-  rate: Int!
-  period: Int!
+  rate: Float!
+  period: Float!
 }
 
 type ManagementFee {
-  rate: Int!
+  rate: Float!
 }
 
 type Version {
@@ -129,12 +114,6 @@ type Query {
   fund(address: Address!): Hub
 }
 
-type Mutation {
-  wethDeposit(amount: BigNumber): TransactionResponse!
-  wethWithdraw(amount: BigNumber): TransactionResponse!
-}
-
 type Schema {
   query: Query
-  mutation: Mutation
 }

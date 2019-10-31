@@ -2,7 +2,7 @@ import React from 'react';
 import format from 'date-fns/format';
 import { useEtherscanLink } from '~/hooks/useEtherscanLink';
 import { Spinner } from '~/components/Common/Spinner/Spinner';
-import { useFundHeaderQuery } from './FundHeader.query';
+import { useFundDetailsQuery } from '~/queries/FundDetails';
 import * as S from './FundHeader.styles';
 
 export interface FundHeaderProps {
@@ -10,25 +10,22 @@ export interface FundHeaderProps {
 }
 
 export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
-  const query = useFundHeaderQuery(address);
-  const data = query.data && query.data.fund;
-
+  const [details, query] = useFundDetailsQuery(address);
   const fundEtherscanLink = useEtherscanLink(address);
-  const managerEtherscanLink = useEtherscanLink(data && data.manager);
+  const managerEtherscanLink = useEtherscanLink(details && details.manager);
   if (query.loading) {
     return <Spinner />;
   }
 
-  if (!data) {
+  if (!details) {
     return null;
   }
 
-  const routes = data && data.routes;
+  const routes = details.routes;
   const accounting = routes && routes.accounting;
   const shares = routes && routes.shares;
-  const manager = data && data.manager;
-  const creation = data && data.creationTime;
-
+  const manager = details.manager;
+  const creation = details.creationTime;
   const fees = routes && routes.fees;
   const managementFee = fees && fees.managementFee;
   const performanceFee = fees && fees.performanceFee;
@@ -36,7 +33,7 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
   return (
     <S.FundHeader>
       <S.FundHeaderHeadline>
-        <S.FundHeaderTitle>{data.name}</S.FundHeaderTitle>
+        <S.FundHeaderTitle>{details.name}</S.FundHeaderTitle>
         <S.FundHeaderLinks>
           {
             <a href={fundEtherscanLink!} title={address}>

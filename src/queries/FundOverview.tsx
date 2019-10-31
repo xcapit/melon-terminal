@@ -1,18 +1,21 @@
 import gql from 'graphql-tag';
 import { useTheGraphQuery } from '~/hooks/useQuery';
 
-export interface FundOverviewQueryResult {
-  funds: {
-    id: string;
+export interface Fund {
+  id: string;
+  name: string;
+  gav: string;
+  sharePrice: string;
+  totalSupply: string;
+  isShutdown: boolean;
+  createdAt: number;
+  version: {
     name: string;
-    sharePrice: string;
-    totalSupply: string;
-    isShutdown: boolean;
-    createdAt: number;
-    version: {
-      name: string;
-    };
-  }[];
+  };
+}
+
+export interface FundOverviewQueryResult {
+  funds: Fund[];
 }
 
 export interface FundOverviewQueryVariables {
@@ -37,5 +40,6 @@ const FundOverviewQuery = gql`
 `;
 
 export const useFundOverviewQuery = () => {
-  return useTheGraphQuery<FundOverviewQueryResult, FundOverviewQueryVariables>(FundOverviewQuery);
+  const result = useTheGraphQuery<FundOverviewQueryResult, FundOverviewQueryVariables>(FundOverviewQuery);
+  return [result && result.data && result.data.funds, result] as [Fund[], typeof result];
 };

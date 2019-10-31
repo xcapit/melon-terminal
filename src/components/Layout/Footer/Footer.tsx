@@ -1,22 +1,11 @@
 import React from 'react';
-import * as R from 'ramda';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
-import gql from 'graphql-tag';
-import { useOnChainQuery } from '~/hooks/useQuery';
+import { usePriceFeedUpdateQuery } from '~/queries/PriceFeedUpdate';
 import * as S from './Footer.styles';
 
-const FooterQuery = gql`
-  query FooterQuery {
-    prices {
-      lastUpdate
-    }
-  }
-`;
-
 export const Footer: React.FC = () => {
-  const { data } = useOnChainQuery(FooterQuery);
-  const update = R.path<Date>(['prices', 'lastUpdate'], data);
+  const [update] = usePriceFeedUpdateQuery();
 
   return (
     <S.FooterPosition>

@@ -1,11 +1,10 @@
 import React from 'react';
-import * as R from 'ramda';
 import { Switch, Route, useRouteMatch } from 'react-router';
 import { Spinner } from '~/components/Common/Spinner/Spinner';
 import { WalletHeader } from './WalletHeader/WalletHeader';
 import { WalletNavigation } from './WalletNavigation/WalletNavigation';
-import { useWalletQuery } from './Wallet.query';
 import * as S from './Wallet.styles';
+import { useAccountAddressQuery } from '~/queries/AccountAddress';
 
 const NoMatch = React.lazy(() => import('~/components/Routes/NoMatch/NoMatch'));
 const WalletOverview = React.lazy(() => import('./WalletRoutes/WalletOverview/WalletOverview'));
@@ -14,12 +13,11 @@ const WalletWrapEther = React.lazy(() => import('./WalletRoutes/WalletWrapEther/
 
 export const Wallet: React.FC = () => {
   const match = useRouteMatch()!;
-  const query = useWalletQuery();
+  const [address, query] = useAccountAddressQuery();
   if (query.loading) {
     return <Spinner />;
   }
 
-  const address = R.path<string>(['account', 'address'], query.data);
   if (!address) {
     return <NoMatch />;
   }

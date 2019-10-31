@@ -1,20 +1,16 @@
 import React from 'react';
-import * as R from 'ramda';
 import NoMatch from '~/components/Routes/NoMatch/NoMatch';
 import { Spinner } from '~/components/Common/Spinner/Spinner';
-import { useWalletOverviewQuery, WalletOverviewQueryResult } from './WalletOverview.query';
 import * as S from './WalletOverview.styles';
-
-type Account = WalletOverviewQueryResult['account'];
+import { useAccountBalancesQuery } from '~/queries/AccountBalances';
 
 export const WalletOverview: React.FC = () => {
-  const query = useWalletOverviewQuery();
+  const [balances, query] = useAccountBalancesQuery();
   if (query.loading) {
     return <Spinner positioning="centered" size="large" />;
   }
 
-  const data = R.path<Account>(['account'], query.data);
-  if (!data) {
+  if (!balances) {
     return <NoMatch />;
   }
 
@@ -22,16 +18,16 @@ export const WalletOverview: React.FC = () => {
     <S.WalletOverviewBody>
       <S.WalletOverviewTitle>Balances</S.WalletOverviewTitle>
       <S.WalletOverviewBalances>
-        {data.eth && (
+        {balances.eth && (
           <S.WalletOverviewBalance>
             <S.WalletOverviewBalanceLabel>ETH</S.WalletOverviewBalanceLabel>
-            <S.WalletOverviewBalanceValue>{data.eth.toFixed(8)}</S.WalletOverviewBalanceValue>
+            <S.WalletOverviewBalanceValue>{balances.eth.toFixed(8)}</S.WalletOverviewBalanceValue>
           </S.WalletOverviewBalance>
         )}
-        {data.weth && (
+        {balances.weth && (
           <S.WalletOverviewBalance>
             <S.WalletOverviewBalanceLabel>WETH</S.WalletOverviewBalanceLabel>
-            <S.WalletOverviewBalanceValue>{data.weth.toFixed(8)}</S.WalletOverviewBalanceValue>
+            <S.WalletOverviewBalanceValue>{balances.weth.toFixed(8)}</S.WalletOverviewBalanceValue>
           </S.WalletOverviewBalance>
         )}
       </S.WalletOverviewBalances>

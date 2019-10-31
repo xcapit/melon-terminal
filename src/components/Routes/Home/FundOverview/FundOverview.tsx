@@ -5,18 +5,17 @@ import { useHistory } from 'react-router';
 import { fromWei } from 'web3-utils';
 import { Spinner } from '~/components/Common/Spinner/Spinner';
 import { NoMatch } from '~/components/Routes/NoMatch/NoMatch';
-import { useFundOverviewQuery } from './FundOverview.query';
+import { useFundOverviewQuery } from '~/queries/FundOverview';
 import * as S from './FundOverview.styles';
 
 export const FundOverview: React.FC = () => {
   const history = useHistory();
-  const query = useFundOverviewQuery();
+  const [funds, query] = useFundOverviewQuery();
   if (query.loading) {
     return <Spinner positioning="centered" size="large" />;
   }
 
-  const data = query && query.data && query.data.funds;
-  if (!data) {
+  if (!funds) {
     return <NoMatch />;
   }
 
@@ -31,7 +30,7 @@ export const FundOverview: React.FC = () => {
         </S.HeaderRow>
       </thead>
       <tbody>
-        {data.map(fund => (
+        {funds.map(fund => (
           <S.BodyRow key={fund.id} onClick={() => history.push(`/fund/${fund.id}`)}>
             <S.BodyCell>{fund.name}</S.BodyCell>
             <S.BodyCell>{new BigNumber(fromWei(fund.sharePrice)).toFixed(4)}</S.BodyCell>

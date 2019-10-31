@@ -1,30 +1,12 @@
-import BigNumber from 'bignumber.js';
 import React from 'react';
-import * as R from 'ramda';
-import gql from 'graphql-tag';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router';
-import { useOnChainQuery } from '~/hooks/useQuery';
-import { NetworkEnum } from '~/types';
+import { useConnectionQuery } from '~/queries/ConnectionQuery';
 import * as S from './Header.styles';
-
-const HeaderQuery = gql`
-  query HeaderQuery {
-    network
-    account {
-      address
-      balance(token: ETH)
-    }
-  }
-`;
 
 export const Header: React.FC = () => {
   const location = useLocation();
-  const query = useOnChainQuery(HeaderQuery);
-
-  const network = R.path<NetworkEnum>(['network'], query.data);
-  const balance = R.path<BigNumber>(['account', 'balance'], query.data);
-  const address = R.path<string>(['account', 'address'], query.data);
+  const [connection] = useConnectionQuery();
 
   return (
     <S.HeaderPosition>
@@ -34,23 +16,23 @@ export const Header: React.FC = () => {
             <S.Logo name="with-text" height={30} width={120} />
           </Link>
         </S.LogoContainer>
-        {!query.loading && (
+        {connection && (
           <S.Account>
             <S.AccountName />
             <S.AccountInfo>
-              {address && (
+              {connection.account && (
                 <S.AccountAddress>
-                  <Link to="/wallet" title={address}>
+                  <Link to="/wallet" title={connection.account.address}>
                     Your wallet
                   </Link>
                 </S.AccountAddress>
               )}
               <S.AccountNetwork>
                 <Link to={{ pathname: '/connect', state: { redirect: location } }} title="Change connection method">
-                  {network}
+                  {connection.network}
                 </Link>
               </S.AccountNetwork>
-              {balance && <S.AccountBalance>{balance.toFixed(4)} ETH</S.AccountBalance>}
+              {connection.account && <S.AccountBalance>{connection.account.balance.toFixed(4)} ETH</S.AccountBalance>}
             </S.AccountInfo>
           </S.Account>
         )}

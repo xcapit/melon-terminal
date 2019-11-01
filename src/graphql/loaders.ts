@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import BigNumber from 'bignumber.js';
 import { fromWei } from 'web3-utils';
-import { Token, Address, Accounting } from '@melonproject/melonjs';
+import { ERC20WithFields, Address, Accounting } from '@melonproject/melonjs';
 import { Context } from '.';
 
 export const block = (context: Context) => (number: number) => {
@@ -21,7 +21,7 @@ export const balanceOf = (context: Context) => {
       return new BigNumber(fromWei(balance));
     }
 
-    const instance = new Token(context.environment, token);
+    const instance = new ERC20WithFields(context.environment, token);
     const balance = await instance.getBalanceOf(account);
     return new BigNumber(fromWei(balance.toFixed()));
   };

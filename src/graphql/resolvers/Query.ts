@@ -7,19 +7,15 @@ export const block: Resolver = (_, __, context) => {
 };
 
 export const network: Resolver = (_, __, context) => {
-  if (context.network === process.env.NETWORK) {
-    return context.network;
+  if (context.environment.network === process.env.ETHEREUM_NETWORK) {
+    return context.environment.network;
   }
 
-  return context.network ? NetworkEnum.INVALID : NetworkEnum.OFFLINE;
-};
-
-export const accounts: Resolver = (_, __, context) => {
-  return context.accounts;
+  return NetworkEnum.INVALID;
 };
 
 export const account: Resolver = async (_, __, context) => {
-  return context.accounts && context.accounts[0];
+  return context.environment.account;
 };
 
 export const prices: Resolver = async (_, __, context) => {

@@ -11,7 +11,7 @@ export const block = (context: Context) => (number: number) => {
 
 export const balanceOf = (context: Context) => {
   return async (token: Address | string) => {
-    const account = context.accounts && context.accounts[0];
+    const account = context.environment.account;
     if (!account) {
       return new BigNumber(0);
     }

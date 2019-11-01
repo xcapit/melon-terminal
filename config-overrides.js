@@ -24,7 +24,7 @@ const getPathAliases = () => {
 };
 
 const getDeployment = () => {
-  const deployment = path.resolve(process.env.DEPLOYMENT);
+  const deployment = path.resolve(process.env.PROTOCOL_DEPLOYMENT);
 
   try {
     return require(deployment);
@@ -43,9 +43,10 @@ module.exports = override(
   }),
   addWebpackPlugin(
     new webpack.DefinePlugin({
-      'process.env.NETWORK': JSON.stringify(process.env.NETWORK),
-      'process.env.SUBGRAPH': JSON.stringify(process.env.SUBGRAPH),
-      'process.env.DEPLOYMENT': JSON.stringify(getDeployment()),
+      'process.env.ETHEREUM_NETWORK': JSON.stringify(process.env.ETHEREUM_NETWORK),
+      'process.env.THEGRAPH_SUBGRAPH': JSON.stringify(process.env.THEGRAPH_SUBGRAPH),
+      'process.env.DEFAULT_ENDPOINT': JSON.stringify(process.env.DEFAULT_ENDPOINT),
+      'process.env.PROTOCOL_DEPLOYMENT': JSON.stringify(getDeployment()),
     })
   ),
   addWebpackPlugin(new webpack.IgnorePlugin(/^scrypt$/)),

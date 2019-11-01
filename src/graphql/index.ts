@@ -2,17 +2,15 @@ import { forAwaitEach } from 'iterall';
 import { execute, subscribe, GraphQLSchema, ExecutionArgs } from 'graphql';
 import { ApolloLink, FetchResult, Observable, Operation } from 'apollo-link';
 import { makeExecutableSchema } from 'graphql-tools';
-import { Environment } from '@melonproject/melonjs';
 import { isSubscription } from '~/graphql/utils/isSubscription';
 import { ensureIterable } from '~/graphql/utils/ensureIterable';
-import { NetworkEnum, Deployment } from '~/types';
+import { Deployment } from '~/types';
+import { Environment } from '~/Environment';
 import * as loaders from '~/graphql/loaders';
 import * as resolvers from '~/graphql/resolvers';
 // @ts-ignore
 import SchemaDefinition from '~/graphql/schema.graphql';
 import * as EnumDefinitions from '~/graphql/enums';
-import { CacheHandler } from '@melonproject/melonjs/Environment';
-import { Connection } from '~/components/Contexts/Connection';
 
 export type Resolver<TParent = any, TArgs = any> = (parent: TParent, args: TArgs, context: Context) => any;
 export type ContextCreator = (request: Operation) => Promise<Context> | Context;
@@ -21,13 +19,10 @@ export type Loaders = {
 };
 
 export interface Context {
-  cache: CacheHandler;
   deployment: Deployment;
   environment: Environment;
   loaders: Loaders;
   block: number;
-  accounts?: string[];
-  network?: NetworkEnum;
 }
 
 interface SchemaLinkOptions<TRoot = any, TContext = any> {
@@ -36,17 +31,14 @@ interface SchemaLinkOptions<TRoot = any, TContext = any> {
   root?: TRoot;
 }
 
-export const createQueryContext = (connection: Connection, environment: Environment): ContextCreator => {
+export const createQueryContext = (environment: Environment): ContextCreator => {
   return async () => {
-    const deployment = process.env.DEPLOYMENT;
+    const deployment = process.env.PROTOCOL_DEPLOYMENT;
     const block = await environment.client.getBlockNumber();
     const context: Context = {
       deployment,
       block,
       environment,
-      cache: environment.cache,
-      accounts: connection.accounts,
-      network: connection.network,
       loaders: {} as Loaders,
     };
 

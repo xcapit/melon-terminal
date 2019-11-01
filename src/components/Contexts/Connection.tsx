@@ -3,33 +3,25 @@ import * as Rx from 'rxjs';
 import ApolloClient from 'apollo-client';
 import { Eth } from 'web3-eth';
 import { switchAll, pluck } from 'rxjs/operators';
-import { ApolloLink } from 'apollo-link';
-import { HttpProvider } from 'web3-providers';
+import { ApolloLink, Observable, FetchResult } from 'apollo-link';
 import { onError } from 'apollo-link-error';
 import { createHttpLink } from 'apollo-link-http';
 import { useObservable } from 'rxjs-hooks';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { createSchemaLink, createSchema, createQueryContext } from '~/graphql';
-import { NetworkEnum } from '~/types';
 import { ApolloProvider } from '@apollo/react-hooks';
-import { Environment, Address } from '@melonproject/melonjs';
-import LRUCache from 'lru-cache';
+import { createSchemaLink, createSchema, createQueryContext } from '~/graphql';
+import { Environment, createEnvironment, createProvider } from '~/Environment';
+import { networkFromId } from '~/utils/networkFromId';
+import { NetworkEnum } from '~/types';
 
 // TODO: Fix this type.
 export type ConnectionProvider = any;
 
-export enum ConnectionProviderTypeEnum {
+export enum ConnectionProviderEnum {
   'DEFAULT' = 'DEFAULT',
   'FRAME' = 'FRAME',
   'METAMASK' = 'METAMASK',
   'CUSTOM' = 'CUSTOM',
-}
-
-export interface Connection {
-  eth: Eth;
-  provider: ConnectionProviderTypeEnum;
-  network?: NetworkEnum;
-  accounts?: Address[];
 }
 
 export interface ApolloProviderContext {
@@ -37,9 +29,9 @@ export interface ApolloProviderContext {
 }
 
 export interface OnChainContextValue extends ApolloProviderContext {
-  set: (observable: Rx.Observable<Connection>) => void;
-  connection: Connection;
-  environment: Environment;
+  set: (provider: ConnectionProviderEnum, observable: Rx.Observable<Environment>) => void;
+  provider: ConnectionProviderEnum;
+  environment?: Environment;
 }
 
 export interface TheGraphContextValue extends ApolloProviderContext {
@@ -49,7 +41,7 @@ export interface TheGraphContextValue extends ApolloProviderContext {
 export const OnChainContext = createContext<OnChainContextValue>({} as OnChainContextValue);
 export const TheGraphContext = createContext<TheGraphContextValue>(
   (() => {
-    const uri = `https://api.thegraph.com/subgraphs/name/${process.env.SUBGRAPH}`;
+    const uri = `https://api.thegraph.com/subgraphs/name/${process.env.THEGRAPH_SUBGRAPH}`;
     const link = createHttpLink({ uri });
     const cache = new InMemoryCache();
     const client = new ApolloClient({ link, cache });
@@ -79,11 +71,18 @@ const createErrorLink = () => {
   });
 };
 
-const useOnChainApollo = (connection: Connection, environment: Environment) => {
+const createNullLink = () => {
+  return new ApolloLink(() => new Observable<FetchResult>(() => {}));
+};
+
+const useOnChainApollo = (environment?: Environment) => {
   const schema = useMemo(() => createSchema(), []);
   const apollo = useMemo(() => {
-    const context = createQueryContext(connection, environment);
-    const data = createSchemaLink({ schema, context });
+    const data =
+      environment && environment.network !== NetworkEnum.OFFLINE && environment.network !== NetworkEnum.INVALID
+        ? createSchemaLink({ schema, context: createQueryContext(environment) })
+        : createNullLink();
+
     const error = createErrorLink();
     const link = ApolloLink.from([error, data]);
     const memory = new InMemoryCache({
@@ -107,7 +106,7 @@ const useOnChainApollo = (connection: Connection, environment: Environment) => {
         },
       },
     });
-  }, [connection, schema]);
+  }, [environment, schema]);
 
   const apolloRef = useRef<ApolloClient<NormalizedCacheObject>>();
   useEffect(
@@ -123,41 +122,38 @@ const useOnChainApollo = (connection: Connection, environment: Environment) => {
 };
 
 export const ConnectionProvider: React.FC = props => {
-  const infura = useMemo<Connection>(() => {
-    const network = process.env.NETWORK;
-    const provider = ConnectionProviderTypeEnum.DEFAULT;
-    const http = new HttpProvider(`https://${network.toLowerCase()}.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660`);
-    const eth = new Eth(http, undefined, {
-      transactionConfirmationBlocks: 1,
-    });
+  const [state, setState] = useState<{
+    observable: Rx.Observable<Environment>;
+    provider: ConnectionProviderEnum;
+  }>({
+    observable: Rx.defer(async () => {
+      const eth = new Eth(createProvider(process.env.DEFAULT_ENDPOINT), undefined, {
+        transactionConfirmationBlocks: 1,
+      });
 
-    return { provider, eth, network, accounts: [] };
-  }, []);
+      return createEnvironment(eth, networkFromId(await eth.net.getId()));
+    }),
+    provider: ConnectionProviderEnum.DEFAULT,
+  });
 
-  const [observable, set] = useState<Rx.Observable<Connection>>(Rx.EMPTY);
-  const connection = useObservable<Connection, [Rx.Observable<Connection>]>(
+  const environment = useObservable<Environment | undefined, [Rx.Observable<Environment>]>(
     inputs$ => {
-      const output$ = inputs$.pipe(
+      return inputs$.pipe(
         pluck(0),
         switchAll()
       );
-
-      return output$;
     },
-    infura,
-    [observable]
+    undefined,
+    [state.observable]
   );
 
-  const environment = useMemo(() => {
-    return new Environment(connection.eth, {
-      cache: new LRUCache<string, any>(),
-    });
-  }, [connection]);
-
-  const client = useOnChainApollo(connection, environment);
+  const client = useOnChainApollo(environment);
+  const set = (provider: ConnectionProviderEnum, observable: Rx.Observable<Environment>) => {
+    setState({ provider, observable });
+  };
 
   return (
-    <OnChainContext.Provider value={{ client, connection, environment, set }}>
+    <OnChainContext.Provider value={{ set, client, environment, provider: state.provider }}>
       <ApolloProvider client={client}>{props.children}</ApolloProvider>
     </OnChainContext.Provider>
   );

@@ -1,7 +1,7 @@
-import { Resolver } from '~/graphql';
-import { Accounting } from '@melonproject/melonjs';
 import { fromWei } from 'web3-utils';
-import { findToken } from '~/graphql/utils/findToken';
+import { Accounting } from '@melonproject/melonjs';
+import { Resolver } from '~/graphql';
+import { findToken } from '~/utils/findToken';
 
 export const address: Resolver<Accounting> = accounting => accounting.contract.address;
 export const sharePrice: Resolver<Accounting> = async (accounting, _, context) => {

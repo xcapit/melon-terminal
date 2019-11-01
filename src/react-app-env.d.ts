@@ -17,9 +17,10 @@ declare module 'styled-components' {
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
-      SUBGRAPH: string;
-      DEPLOYMENT: Deployment;
-      NETWORK: NetworkEnum;
+      THEGRAPH_SUBGRAPH: string;
+      PROTOCOL_DEPLOYMENT: Deployment;
+      ETHEREUM_NETWORK: NetworkEnum;
+      DEFAULT_ENDPOINT: string;
     }
   }
 }

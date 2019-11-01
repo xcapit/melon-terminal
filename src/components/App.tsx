@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import ErrorBoundary, { FallbackProps } from 'react-error-boundary';
+import { ModalProvider } from 'styled-react-modal';
 import { hot } from 'react-hot-loader';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { ConnectionProvider, TheGraphContext, OnChainContext } from './Contexts/Connection';
@@ -46,17 +47,19 @@ const AppRouter = () => (
 
 const AppComponent = () => (
   <Theme>
-    <ConnectionProvider>
-      <Router>
-        <Layout>
-          <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <Suspense fallback={<Spinner size="large" positioning="overlay" />}>
-              <AppRouter />
-            </Suspense>
-          </ErrorBoundary>
-        </Layout>
-      </Router>
-    </ConnectionProvider>
+    <ModalProvider>
+      <ConnectionProvider>
+        <Router>
+          <Layout>
+            <ErrorBoundary FallbackComponent={ErrorFallback}>
+              <Suspense fallback={<Spinner size="large" positioning="overlay" />}>
+                <AppRouter />
+              </Suspense>
+            </ErrorBoundary>
+          </Layout>
+        </Router>
+      </ConnectionProvider>
+    </ModalProvider>
   </Theme>
 );
 

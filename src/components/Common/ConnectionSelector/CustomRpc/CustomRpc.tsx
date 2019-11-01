@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import * as Rx from 'rxjs';
 import * as R from 'ramda';
-import { switchMap, expand, distinctUntilChanged } from 'rxjs/operators';
+import { switchMap, expand, distinctUntilChanged, map } from 'rxjs/operators';
 import { Eth } from 'web3-eth';
-import { HttpProvider } from 'web3-providers';
-import { ConnectionMethodProps, AnonymousConnection } from '~/components/Common/ConnectionSelector/ConnectionSelector';
+import { ConnectionMethodProps } from '~/components/Common/ConnectionSelector/ConnectionSelector';
 import { networkFromId } from '~/utils/networkFromId';
+import { createEnvironment, Environment, createProvider } from '~/Environment';
+import { HttpProvider, WebsocketProvider } from 'web3-providers';
 
 interface EthResource extends Rx.Unsubscribable {
   eth: Eth;
@@ -17,20 +18,28 @@ const checkConnection = async (eth: Eth) => {
     eth.getAccounts().catch(() => undefined),
   ]);
 
-  const network = id && networkFromId(id);
-  return { eth, network, accounts } as AnonymousConnection;
+  const network = networkFromId(id);
+  return { eth, network, account: accounts && accounts[0] };
 };
 
-const connect = (endpoint: string): Rx.Observable<AnonymousConnection> => {
+const connect = (endpoint: string): Rx.Observable<Environment> => {
   const createResource = (): EthResource => {
-    const http = new HttpProvider(endpoint);
-    const eth = new Eth(http, undefined, {
+    const provider = createProvider(endpoint);
+    const eth = new Eth(provider, undefined, {
       transactionConfirmationBlocks: 1,
     });
 
     return {
       eth,
-      unsubscribe: () => http.disconnect(),
+      unsubscribe: () => {
+        if (provider instanceof HttpProvider) {
+          provider.disconnect();
+        }
+
+        if (provider instanceof WebsocketProvider) {
+          provider.disconnect(1000, 'Connection closed by client.');
+        }
+      },
     };
   };
 
@@ -38,7 +47,8 @@ const connect = (endpoint: string): Rx.Observable<AnonymousConnection> => {
     return Rx.of((resource as EthResource).eth).pipe(
       switchMap(eth => checkConnection(eth)),
       expand(connection => Rx.timer(10000).pipe(switchMap(() => checkConnection(connection.eth)))),
-      distinctUntilChanged((a, b) => R.equals(a, b))
+      distinctUntilChanged((a, b) => R.equals(a, b)),
+      map(connection => createEnvironment(connection.eth, connection.network, connection.account))
     );
   });
 };

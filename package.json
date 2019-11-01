@@ -57,8 +57,10 @@
     "rxjs": "^6.5.3",
     "rxjs-hooks": "^0.5.1",
     "styled-components": "^5.0.0-beta.9",
+    "styled-react-modal": "^2.0.0",
     "styled-reset": "^4.0.0",
     "web3": "^2.0.0-alpha.1",
+    "web3-core": "^2.0.0-alpha.1",
     "web3-eth-contract": "^2.0.0-alpha.1",
     "web3-utils": "^2.0.0-alpha.1",
     "yup": "^0.27.0"
@@ -70,6 +72,7 @@
     "@types/react-router": "^5.1.1",
     "@types/react-router-dom": "^5.1.0",
     "@types/styled-components": "^4.1.19",
+    "@types/styled-react-modal": "^1.2.0",
     "@types/yup": "^0.26.24",
     "babel-plugin-styled-components": "^1.10.6",
     "cross-env": "^6.0.3",

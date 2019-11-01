@@ -1,11 +1,12 @@
 import React from 'react';
 import * as Rx from 'rxjs';
 import * as R from 'ramda';
-import { switchMap, expand, distinctUntilChanged } from 'rxjs/operators';
+import { switchMap, expand, distinctUntilChanged, map } from 'rxjs/operators';
 import { Eth } from 'web3-eth';
 import { HttpProvider } from 'web3-providers';
-import { ConnectionMethodProps, AnonymousConnection } from '~/components/Common/ConnectionSelector/ConnectionSelector';
+import { ConnectionMethodProps } from '~/components/Common/ConnectionSelector/ConnectionSelector';
 import { networkFromId } from '~/utils/networkFromId';
+import { Environment, createEnvironment } from '~/Environment';
 
 interface EthResource extends Rx.Unsubscribable {
   eth: Eth;
@@ -17,11 +18,11 @@ const checkConnection = async (eth: Eth) => {
     eth.getAccounts().catch(() => undefined),
   ]);
 
-  const network = id && networkFromId(id);
-  return { eth, network, accounts } as AnonymousConnection;
+  const network = networkFromId(id);
+  return { eth, network, account: accounts && accounts[0] };
 };
 
-const connect = (): Rx.Observable<AnonymousConnection> => {
+const connect = (): Rx.Observable<Environment> => {
   const createResource = (): EthResource => {
     const provider = new HttpProvider('http://localhost:1248');
     const eth = new Eth(provider, undefined, {
@@ -38,7 +39,8 @@ const connect = (): Rx.Observable<AnonymousConnection> => {
     return Rx.of((resource as EthResource).eth).pipe(
       switchMap(eth => checkConnection(eth)),
       expand(connection => Rx.timer(10000).pipe(switchMap(() => checkConnection(connection.eth)))),
-      distinctUntilChanged((a, b) => R.equals(a, b))
+      distinctUntilChanged((a, b) => R.equals(a, b)),
+      map(connection => createEnvironment(connection.eth, connection.network, connection.account))
     );
   });
 };

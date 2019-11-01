@@ -1,12 +1,12 @@
 import React from 'react';
 import * as Rx from 'rxjs';
-import { mapTo, map, combineLatest, share } from 'rxjs/operators';
+import { mapTo, map, combineLatest, share, tap } from 'rxjs/operators';
 import { Eth } from 'web3-eth';
-import { Connection } from '~/components/Contexts/Connection';
 import { ConnectionMethodProps } from '~/components/Common/ConnectionSelector/ConnectionSelector';
 import { networkFromId } from '~/utils/networkFromId';
+import { Environment, createEnvironment } from '~/Environment';
 
-const connect = (): Rx.Observable<Connection> => {
+const connect = (): Rx.Observable<Environment> => {
   const ethereum = (window as any).ethereum;
   if (typeof ethereum === 'undefined') {
     return Rx.EMPTY;
@@ -18,15 +18,14 @@ const connect = (): Rx.Observable<Connection> => {
 
   const enable$ = Rx.defer(() => ethereum.enable() as Promise<string[]>).pipe(share());
   const networkChange$ = Rx.fromEvent<string>(ethereum, 'networkChanged').pipe(map(value => parseInt(value, 10)));
-  const network$ = Rx.concat(Rx.defer(() => eth.net.getId()), networkChange$).pipe(map(id => id && networkFromId(id)));
-
+  const network$ = Rx.concat(Rx.defer(() => eth.net.getId()), networkChange$).pipe(map(id => networkFromId(id)));
   const accountsChanged$ = Rx.fromEvent<string[]>(ethereum, 'accountsChanged');
-  const accounts$ = Rx.concat(enable$, accountsChanged$);
+  const account$ = Rx.concat(enable$, accountsChanged$).pipe(map(accounts => accounts && accounts[0]));
 
   return enable$.pipe(
     mapTo(eth),
-    combineLatest(network$, accounts$),
-    map(([eth, network, accounts]) => ({ eth, network, accounts } as Connection))
+    combineLatest(network$, account$),
+    map(([eth, network, account]) => createEnvironment(eth, network, account))
   );
 };
 

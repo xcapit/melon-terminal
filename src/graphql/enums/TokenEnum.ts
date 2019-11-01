@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import gql from 'graphql-tag';
 import { TokenDefinition } from '~/types';
 
-const deployment = process.env.DEPLOYMENT;
+const deployment = process.env.PROTOCOL_DEPLOYMENT;
 const tokens = R.pathOr<TokenDefinition[]>([], ['thirdPartyContracts', 'tokens'], deployment);
 const defaults = {
   ETH: 'ETH',

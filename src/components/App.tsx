@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { ConnectionProvider, TheGraphContext, OnChainContext } from './Contexts/Connection';
 import { Spinner } from './Common/Spinner/Spinner';
 import { Layout } from './Layout/Layout';
-import { Theme } from './App.styles';
+import { Theme, ModalBackground } from './App.styles';
 
 const Home = React.lazy(() => import('./Routes/Home/Home'));
 const Wallet = React.lazy(() => import('./Routes/Wallet/Wallet'));
@@ -47,7 +47,7 @@ const AppRouter = () => (
 
 const AppComponent = () => (
   <Theme>
-    <ModalProvider>
+    <ModalProvider backgroundComponent={ModalBackground}>
       <ConnectionProvider>
         <Router>
           <Layout>

@@ -1,12 +1,13 @@
 import React, { useContext } from 'react';
 import * as Yup from 'yup';
 import BigNumber from 'bignumber.js';
-import useForm from 'react-hook-form';
+import useForm, { FormContext } from 'react-hook-form';
 import { toWei } from 'web3-utils';
 import { Weth } from '@melonproject/melonjs';
-import { OnChainContext } from '~/components/Contexts/Connection';
 import { findToken } from '~/utils/findToken';
-import { useTransactionModal } from '~/hooks/useTransactionModal';
+import { useTransaction } from '~/hooks/useTransaction';
+import { OnChainContext } from '~/components/Contexts/Connection';
+import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
 
 const validationSchema = Yup.object().shape({
   quantity: Yup.mixed<number>(),
@@ -18,6 +19,10 @@ const defaultValues = {
 
 export const WalletUnwrapEther: React.FC = () => {
   const chain = useContext(OnChainContext);
+  const transaction = useTransaction({
+    environment: chain.environment!,
+  });
+
   const form = useForm<typeof defaultValues>({
     defaultValues,
     validationSchema,
@@ -25,25 +30,28 @@ export const WalletUnwrapEther: React.FC = () => {
     reValidateMode: 'onBlur',
   });
 
-  const [open, modal] = useTransactionModal(chain.environment!);
   const submit = form.handleSubmit(async data => {
     const token = findToken(process.env.PROTOCOL_DEPLOYMENT, 'WETH');
     const weth = new Weth(chain.environment!, token.address);
-    const transaction = weth.withdraw(new BigNumber(toWei(data.quantity)), chain.environment!.account!);
-    open(transaction);
+    const tx = weth.withdraw(new BigNumber(toWei(data.quantity)), chain.environment!.account!);
+    transaction.start(tx);
   });
 
   return (
     <div>
-      <form onSubmit={submit}>
-        <div>
-          {form.errors.quantity && <div>{form.errors.quantity.message}</div>}
-          <input type="number" step="any" name="quantity" ref={form.register} />
-        </div>
-        <button type="submit">Submit</button>
-      </form>
+      <FormContext {...form}>
+        <form onSubmit={submit}>
+          <div>
+            {form.errors.quantity && <div>{form.errors.quantity.message}</div>}
+            <input type="number" step="any" name="quantity" ref={form.register} />
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+      </FormContext>
 
-      {modal}
+      <FormContext {...transaction.form}>
+        <TransactionModal transaction={transaction} />
+      </FormContext>
     </div>
   );
 };

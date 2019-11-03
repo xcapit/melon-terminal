@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router';
-import { useConnectionQuery } from '~/queries/ConnectionQuery';
+import { useConnectionDetails } from '~/queries/ConnectionDetails';
 import * as S from './Header.styles';
 
 export const Header: React.FC = () => {
   const location = useLocation();
-  const [connection] = useConnectionQuery();
+  const [connection] = useConnectionDetails();
 
   return (
     <S.HeaderPosition>

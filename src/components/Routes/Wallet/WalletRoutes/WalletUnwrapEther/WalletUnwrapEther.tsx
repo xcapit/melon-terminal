@@ -8,6 +8,7 @@ import { findToken } from '~/utils/findToken';
 import { useTransaction } from '~/hooks/useTransaction';
 import { OnChainContext } from '~/components/Contexts/Connection';
 import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
+import { refetchQueries } from '~/utils/refetchQueries';
 
 const validationSchema = Yup.object().shape({
   quantity: Yup.mixed<number>(),
@@ -19,8 +20,8 @@ const defaultValues = {
 
 export const WalletUnwrapEther: React.FC = () => {
   const chain = useContext(OnChainContext);
-  const transaction = useTransaction({
-    environment: chain.environment!,
+  const transaction = useTransaction(chain.environment!, {
+    onFinish: () => refetchQueries(chain.client, ['AccountBalancesQuery', 'ConnectionQuery']),
   });
 
   const form = useForm<typeof defaultValues>({

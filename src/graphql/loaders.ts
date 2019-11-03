@@ -17,12 +17,12 @@ export const balanceOf = (context: Context) => {
     }
 
     if (token === 'ETH') {
-      const balance = await context.environment.client.getBalance(account);
+      const balance = await context.environment.client.getBalance(account, context.block);
       return new BigNumber(fromWei(balance));
     }
 
     const instance = new ERC20WithFields(context.environment, token);
-    const balance = await instance.getBalanceOf(account);
+    const balance = await instance.getBalanceOf(account, context.block);
     return new BigNumber(fromWei(balance.toFixed()));
   };
 };

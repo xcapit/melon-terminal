@@ -1,6 +1,8 @@
 import React from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router';
 import { RequireSecureConnection } from '~/components/Contexts/Connection';
+import { useFundExistsQuery } from '~/queries/FundExists';
+import { Spinner } from '~/components/Common/Spinner/Spinner';
 import { FundHeader } from './FundHeader/FundHeader';
 import { FundNavigation } from './FundNavigation/FundNavigation';
 import * as S from './Fund.styles';
@@ -16,6 +18,14 @@ export interface FundRouteParams {
 
 export const Fund: React.FC = () => {
   const match = useRouteMatch<FundRouteParams>()!;
+  const [exists, query] = useFundExistsQuery(match.params.address);
+  if (query.loading) {
+    return <Spinner positioning="centered" />;
+  }
+
+  if (!exists) {
+    return <NoMatch />;
+  }
 
   return (
     <>

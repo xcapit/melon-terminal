@@ -1,5 +1,5 @@
 import React from 'react';
-import Modal from 'styled-react-modal';
+import Modal, { ModalProps } from 'styled-react-modal';
 import { TransactionHookValues, TransactionProgress } from '~/hooks/useTransaction';
 import { Spinner } from '~/components/Common/Spinner/Spinner';
 import { ProgressBar } from '~/components/Common/ProgressBar/ProgressBar';
@@ -28,12 +28,13 @@ function progressToPercentage(progress?: TransactionProgress) {
   return 0;
 }
 
-export interface TransactionModalProps {
+export interface TransactionModalProps extends Partial<ModalProps> {
   transaction: TransactionHookValues;
 }
 
 export const TransactionModal: React.FC<TransactionModalProps> = ({
   transaction: { state, form, cancel, submit, acknowledge },
+  ...rest
 }) => {
   const finished = state.progress >= TransactionProgress.EXECUTION_FINISHED;
   const open =
@@ -41,14 +42,13 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
     state.progress > TransactionProgress.TRANSACTION_STARTED;
 
   return (
-    <Modal isOpen={open}>
+    <Modal isOpen={open} {...rest}>
       <div>
         <div>
           {state.loading && <Spinner />}
 
           {!finished && (
             <form onSubmit={submit}>
-              {form.errors.gas && <div>{form.errors.gas.message}</div>}
               <div>
                 <label htmlFor="gas-price">Gas price</label>
                 <input
@@ -84,7 +84,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
             <ProgressBar progress={progressToPercentage(state.progress)} />
             {state.progress && <div>State: {state.progress}</div>}
             {state.hash && <div>Hash: {state.hash}</div>}
-            {state.error && <div>Error: {state.error}</div>}
+            {state.error && <div>Error: {state.error.message}</div>}
             {state.receipt && <div>Block number: {state.receipt.blockNumber}</div>}
             {state.receipt && <div>Gas used: {state.receipt.gasUsed}</div>}
             {state.receipt && <div>Cummulative gas used: {state.receipt.cumulativeGasUsed}</div>}

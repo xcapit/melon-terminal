@@ -1,7 +1,6 @@
 import gql from 'graphql-tag';
 import BigNumber from 'bignumber.js';
 import { useOnChainQuery } from '~/hooks/useQuery';
-import { Maybe } from '~/types';
 
 export interface FundDetails {
   name: string;

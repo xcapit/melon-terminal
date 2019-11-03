@@ -1,12 +1,14 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useContext } from 'react';
 import ErrorBoundary, { FallbackProps } from 'react-error-boundary';
 import { ModalProvider } from 'styled-react-modal';
 import { hot } from 'react-hot-loader';
+import { useLocation } from 'react-router';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { ConnectionProvider, TheGraphContext, OnChainContext } from './Contexts/Connection';
+import { ConnectionProvider, TheGraphContext, OnChainContext, OnChainContextValue } from './Contexts/Connection';
 import { Spinner } from './Common/Spinner/Spinner';
 import { Layout } from './Layout/Layout';
 import { Theme, ModalBackground } from './App.styles';
+import { OfflineModal } from './Common/OfflineModal/OfflineModal';
 
 const Home = React.lazy(() => import('./Routes/Home/Home'));
 const Wallet = React.lazy(() => import('./Routes/Wallet/Wallet'));
@@ -16,34 +18,55 @@ const Setup = React.lazy(() => import('./Routes/Setup/Setup'));
 const Playground = React.lazy(() => import('./Routes/Playground/Playground'));
 const NoMatch = React.lazy(() => import('./Routes/NoMatch/NoMatch'));
 
-const AppRouter = () => (
-  <Switch>
-    <Route path="/" exact={true}>
-      <Home />
-    </Route>
-    <Route path="/connect" exact={true}>
-      <Connect />
-    </Route>
-    <Route path="/setup" exact={true}>
-      <Setup />
-    </Route>
-    <Route path="/wallet">
-      <Wallet />
-    </Route>
-    <Route path="/fund/:address">
-      <Fund />
-    </Route>
-    <Route path="/playground/onchain" exact={true}>
-      <Playground context={OnChainContext as any} bucket="onchain" />
-    </Route>
-    <Route path="/playground/thegraph" exact={true}>
-      <Playground context={TheGraphContext} bucket="thegraph" />
-    </Route>
-    <Route>
-      <NoMatch />
-    </Route>
-  </Switch>
-);
+function isConnected(connection: OnChainContextValue) {
+  if (!connection.environment) {
+    return false;
+  }
+
+  if (connection.environment.network !== process.env.ETHEREUM_NETWORK) {
+    return false;
+  }
+
+  return true;
+}
+
+const AppRouter = () => {
+  const connection = useContext(OnChainContext);
+  const location = useLocation();
+  const modal = location.pathname !== '/connect' && !isConnected(connection);
+
+  return (
+    <>
+      <OfflineModal isOpen={modal} />
+      <Switch>
+        <Route path="/" exact={true}>
+          <Home />
+        </Route>
+        <Route path="/connect" exact={true}>
+          <Connect />
+        </Route>
+        <Route path="/setup" exact={true}>
+          <Setup />
+        </Route>
+        <Route path="/wallet">
+          <Wallet />
+        </Route>
+        <Route path="/fund/:address">
+          <Fund />
+        </Route>
+        <Route path="/playground/onchain" exact={true}>
+          <Playground context={OnChainContext as any} bucket="onchain" />
+        </Route>
+        <Route path="/playground/thegraph" exact={true}>
+          <Playground context={TheGraphContext} bucket="thegraph" />
+        </Route>
+        <Route>
+          <NoMatch />
+        </Route>
+      </Switch>
+    </>
+  );
+};
 
 const AppComponent = () => (
   <Theme>

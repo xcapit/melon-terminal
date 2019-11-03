@@ -54,7 +54,7 @@ const connect = (endpoint: string): Rx.Observable<Environment> => {
 };
 
 export const CustomRpc: React.FC<ConnectionMethodProps> = ({ set, active }) => {
-  const [endpoint, setEndpoint] = useState('https://mainnet.infura.io/v3/8332aa03fcfa4c889aeee4d0e0628660');
+  const [endpoint, setEndpoint] = useState(process.env.DEFAULT_ENDPOINT);
 
   return (
     <div>

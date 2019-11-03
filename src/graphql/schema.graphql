@@ -5,6 +5,8 @@ scalar BigNumber
 enum NetworkEnum {
   MAINNET
   KOVAN
+  TESTNET
+  OFFLINE
   INVALID
 }
 

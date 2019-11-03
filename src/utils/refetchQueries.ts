@@ -1,7 +1,7 @@
 import ApolloClient, { ObservableQuery } from 'apollo-client';
-import { NormalizedCache } from 'apollo-cache-inmemory';
+import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 
-export function refetchQueries(client: ApolloClient<NormalizedCache>, names: string[]) {
+export function refetchQueries(client: ApolloClient<NormalizedCacheObject>, names: string[]) {
   const refetch: ObservableQuery[] = [];
   const manager = client.queryManager as any;
   (manager.queries as Map<any, any>).forEach(query => {

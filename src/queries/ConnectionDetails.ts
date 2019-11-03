@@ -4,7 +4,7 @@ import { Address } from '@melonproject/melonjs';
 import { useOnChainQuery } from '~/hooks/useQuery';
 import { Maybe, NetworkEnum } from '~/types';
 
-export interface ConnectionQueryResult {
+export interface ConnectionDetailsResult {
   network: NetworkEnum;
   account?: {
     address: Address;
@@ -12,8 +12,8 @@ export interface ConnectionQueryResult {
   };
 }
 
-const ConnectionQuery = gql`
-  query ConnectionQuery {
+const ConnectionDetailsQuery = gql`
+  query ConnectionDetailsQuery {
     network
     account {
       address
@@ -22,7 +22,7 @@ const ConnectionQuery = gql`
   }
 `;
 
-export const useConnectionQuery = () => {
-  const result = useOnChainQuery<ConnectionQueryResult>(ConnectionQuery);
-  return [result.data, result] as [Maybe<ConnectionQueryResult>, typeof result];
+export const useConnectionDetails = () => {
+  const result = useOnChainQuery<ConnectionDetailsResult>(ConnectionDetailsQuery);
+  return [result.data, result] as [Maybe<ConnectionDetailsResult>, typeof result];
 };

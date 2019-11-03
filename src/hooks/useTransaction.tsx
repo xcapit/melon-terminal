@@ -19,7 +19,7 @@ export interface TransactionState {
   transaction?: Transaction;
   hash?: string;
   receipt?: TransactionReceipt;
-  error?: string;
+  error?: Error;
   loading: boolean;
 }
 
@@ -74,7 +74,7 @@ interface EstimationFinished {
 
 interface EstimationError {
   type: TransactionProgress.ESTIMATION_ERROR;
-  error: string;
+  error: Error;
 }
 
 interface ExecutionPending {
@@ -93,7 +93,7 @@ interface ExecutionFinished {
 
 interface ExecutionError {
   type: TransactionProgress.EXECUTION_ERROR;
-  error: string;
+  error: Error;
 }
 
 function reducer(state: TransactionState, action: TransactionAction): TransactionState {
@@ -207,7 +207,7 @@ function estimationFinished(dispatch: React.Dispatch<TransactionAction>, price: 
   dispatch({ limit, price, type: TransactionProgress.ESTIMATION_FINISHED });
 }
 
-function estimationError(dispatch: React.Dispatch<TransactionAction>, error: string) {
+function estimationError(dispatch: React.Dispatch<TransactionAction>, error: Error) {
   dispatch({ error, type: TransactionProgress.ESTIMATION_ERROR });
 }
 
@@ -223,24 +223,25 @@ function executionFinished(dispatch: React.Dispatch<TransactionAction>, receipt:
   dispatch({ receipt, type: TransactionProgress.EXECUTION_FINISHED });
 }
 
-function executionError(dispatch: React.Dispatch<TransactionAction>, error: string) {
+function executionError(dispatch: React.Dispatch<TransactionAction>, error: Error) {
   dispatch({ error, type: TransactionProgress.EXECUTION_ERROR });
 }
 
 export interface TransactionOptions {
-  environment: Environment;
+  onFinish?: (receipt: TransactionReceipt) => void;
+  onError?: (error: Error) => void;
 }
 
 export interface TransactionHookValues<FormValues extends TransactionFormValues = TransactionFormValues> {
   state: TransactionState;
   form: FormContextValues<FormValues>;
-  submit: (e: React.BaseSyntheticEvent) => Promise<void>;
+  submit: (event: React.BaseSyntheticEvent) => Promise<void>;
   start: (transaction: Transaction) => void;
   cancel: () => void;
   acknowledge: () => void;
 }
 
-export function useTransaction(options: TransactionOptions) {
+export function useTransaction(environment: Environment, options?: TransactionOptions) {
   const [state, dispatch] = useReducer(reducer, {
     progress: TransactionProgress.TRANSACTION_WAITING,
     transaction: undefined,
@@ -271,17 +272,34 @@ export function useTransaction(options: TransactionOptions) {
     try {
       executionPending(dispatch);
       const transaction = state.transaction!;
-      const options = {
+      const opts = {
         gas: parseFloat(data.gasLimit),
         gasPrice: data.gasPrice,
       };
 
-      const receipt = await transaction.send(options).on('transactionHash', hash => executionReceived(dispatch, hash));
+      const receipt = await transaction.send(opts).on('transactionHash', hash => executionReceived(dispatch, hash));
       executionFinished(dispatch, receipt);
     } catch (error) {
-      executionError(dispatch, error.message);
+      executionError(dispatch, error);
     }
   });
+
+  useEffect(() => {
+    if (state.progress === TransactionProgress.EXECUTION_FINISHED) {
+      options && options.onFinish && options.onFinish(state.receipt!);
+    }
+
+    if (state.progress === TransactionProgress.TRANSACTION_ACKNOWLEDGED) {
+      options && options.onFinish && options.onFinish(state.receipt!);
+    }
+
+    if (
+      state.progress === TransactionProgress.EXECUTION_ERROR ||
+      state.progress === TransactionProgress.ESTIMATION_ERROR
+    ) {
+      options && options.onError && options.onError(state.error!);
+    }
+  }, [state.progress]);
 
   useEffect(() => {
     if (!state.transaction) {
@@ -292,13 +310,13 @@ export function useTransaction(options: TransactionOptions) {
       try {
         estimationPending(dispatch);
         const [price, limit] = await Promise.all([
-          await options.environment.client.getGasPrice(),
+          await environment.client.getGasPrice(),
           await state.transaction!.estimate(),
         ]);
 
         estimationFinished(dispatch, price, limit);
       } catch (error) {
-        estimationError(dispatch, error.message);
+        estimationError(dispatch, error);
       }
     })();
   }, [state.transaction]);

@@ -12,7 +12,6 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import { createSchemaLink, createSchema, createQueryContext } from '~/graphql';
 import { Environment, createEnvironment, createProvider } from '~/Environment';
 import { networkFromId } from '~/utils/networkFromId';
-import { NetworkEnum } from '~/types';
 
 // TODO: Fix this type.
 export type ConnectionProvider = any;
@@ -79,7 +78,7 @@ const useOnChainApollo = (environment?: Environment) => {
   const schema = useMemo(() => createSchema(), []);
   const apollo = useMemo(() => {
     const data =
-      environment && environment.network !== NetworkEnum.OFFLINE && environment.network !== NetworkEnum.INVALID
+      environment && environment.network === process.env.ETHEREUM_NETWORK
         ? createSchemaLink({ schema, context: createQueryContext(environment) })
         : createNullLink();
 
@@ -95,11 +94,11 @@ const useOnChainApollo = (environment?: Environment) => {
       defaultOptions: {
         watchQuery: {
           errorPolicy: 'all',
-          fetchPolicy: 'network-only',
+          fetchPolicy: 'no-cache',
         },
         query: {
           errorPolicy: 'all',
-          fetchPolicy: 'network-only',
+          fetchPolicy: 'no-cache',
         },
         mutate: {
           errorPolicy: 'all',

@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import * as Rx from 'rxjs';
+import { createPath } from 'history';
 import { useLocation, useHistory } from 'react-router';
 import { ConnectionProviderEnum, OnChainContext } from '~/components/Contexts/Connection';
 import { MetaMask } from './MetaMask/MetaMask';
@@ -22,10 +23,14 @@ export const ConnectionSelector: React.FC = () => {
     context.set(provider, connection);
 
     if (location.state && location.state.redirect) {
-      history.replace(location.state.redirect);
-    } else {
-      history.push('/');
+      const path = createPath(location.state.redirect);
+      // TODO: Add proper logic to filter out paths that are personalized.
+      if (path && !path.startsWith('/wallet')) {
+        return history.replace(location.state.redirect);
+      }
     }
+
+    history.push('/');
   };
 
   return (

@@ -26,7 +26,10 @@ export const prices: Resolver = async (_, __, context) => {
 export const fund: Resolver = async (_, args, context) => {
   try {
     const hub = new Hub(context.environment, args.address);
-    return hub.getCreator(context.block) && hub;
+    // Duck typing the hub contract. If we can fetch a creator for the given
+    // address, we assume that it's a valida hub address.
+    const creator = await hub.getCreator(context.block);
+    return creator && hub;
   } catch (e) {
     return null;
   }

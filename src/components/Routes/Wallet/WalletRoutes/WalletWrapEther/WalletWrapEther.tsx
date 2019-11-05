@@ -5,10 +5,11 @@ import useForm, { FormContext } from 'react-hook-form';
 import { toWei } from 'web3-utils';
 import { Weth } from '@melonproject/melonjs';
 import { findToken } from '~/utils/findToken';
-import { useTransaction, TransactionProgress } from '~/hooks/useTransaction';
+import { useTransaction } from '~/hooks/useTransaction';
 import { OnChainContext } from '~/components/Contexts/Connection';
 import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
 import { refetchQueries } from '~/utils/refetchQueries';
+import { WrapEtherForm } from '~/components/Common/Form/WrapEtherForm';
 
 const validationSchema = Yup.object().shape({
   quantity: Yup.mixed<number>(),
@@ -41,13 +42,7 @@ export const WalletWrapEther: React.FC = () => {
   return (
     <div>
       <FormContext {...form}>
-        <form onSubmit={submit}>
-          <div>
-            {form.errors.quantity && <div>{form.errors.quantity.message}</div>}
-            <input type="number" step="any" name="quantity" ref={form.register} />
-          </div>
-          <button type="submit">Submit</button>
-        </form>
+        <WrapEtherForm submit={submit} form={form} label="wrap" />
       </FormContext>
 
       <FormContext {...transaction.form}>

@@ -13,6 +13,7 @@ export const theme = {
     primaryDark: 'rgb(161, 147, 94)',
     secondary: 'rgb(249, 242, 219)',
     secondaryDark: 'rgb(195, 179, 121)',
+    secondaryDarkAlpha: 'rgb(195, 179, 121, 0.75)',
     border: 'rgb(234, 229, 212)',
   },
 

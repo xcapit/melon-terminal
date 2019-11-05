@@ -311,7 +311,7 @@ export function useTransaction(environment: Environment, options?: TransactionOp
         estimationPending(dispatch);
         const [price, limit] = await Promise.all([
           await environment.client.getGasPrice(),
-          await state.transaction!.estimate(),
+          await state.transaction!.estimateGas(),
         ]);
 
         estimationFinished(dispatch, price, limit);

@@ -20,19 +20,19 @@ interface EthResource extends Rx.Unsubscribable {
 }
 
 const connect = () => {
-  const config = getConfig(NetworkEnum.MAINNET)!;
-  const customNodeOptions = {
-    rpcUrl: config.provider,
-    chainId: 1,
-  };
-
-  const fm = new Fortmatic(process.env.MELON_FORTMATIC_KEY, customNodeOptions);
-  const provider = fm.getProvider();
-  getConfig;
   const create = () => {
+    const config = getConfig(NetworkEnum.MAINNET)!;
+    const customNodeOptions = {
+      rpcUrl: config.provider,
+      chainId: 1,
+    };
+
+    const fm = new Fortmatic(process.env.MELON_FORTMATIC_KEY, customNodeOptions);
+    const provider = fm.getProvider();
     const eth = new Eth(provider, undefined, {
       transactionConfirmationBlocks: 1,
     });
+
     return { eth, unsubscribe: () => fm.user.logout() };
   };
 

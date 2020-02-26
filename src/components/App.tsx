@@ -17,9 +17,10 @@ import { method as coinbase } from './Layout/ConnectionSelector/Coinbase/Coinbas
 import { method as frame } from './Layout/ConnectionSelector/Frame/Frame';
 import { method as ganache } from './Layout/ConnectionSelector/Ganache/Ganache';
 // import { method as fortmatic } from './Layout/ConnectionSelector/Fortmatic/Fortmatic';
+import { method as walletconnect } from './Layout/ConnectionSelector/WalletConnect/WalletConnect';
 import { method as anonymous } from './Layout/ConnectionSelector/Anonymous/Anonymous';
 
-const common = [metamask, dapper, coinbase, frame];
+const common = [metamask, dapper, coinbase, frame, walletconnect];
 let start = anonymous;
 let methods = process.env.MELON_TESTNET ? [ganache, ...common] : common;
 let switchable = true;

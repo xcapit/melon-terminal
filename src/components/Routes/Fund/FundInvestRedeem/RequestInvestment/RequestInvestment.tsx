@@ -217,7 +217,7 @@ export const RequestInvestment = forwardRef(
         const amount = new BigNumber(event.target.value ?? 0)
           .multipliedBy(fromTokenBaseUnit(asset.shareCostInAsset!, token.decimals))
           .multipliedBy(multiplier)
-          .decimalPlaces(18, BigNumber.ROUND_UP);
+          .decimalPlaces(token.decimals, BigNumber.ROUND_UP);
 
         form.setValue(
           'investmentAmount',

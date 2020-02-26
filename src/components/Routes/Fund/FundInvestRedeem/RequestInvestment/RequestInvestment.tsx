@@ -205,7 +205,8 @@ export const RequestInvestment = forwardRef(
       if (asset && token) {
         const shares = toTokenBaseUnit(event.target.value, token.decimals)
           .dividedBy(asset.shareCostInAsset!)
-          .dividedBy(multiplier);
+          .dividedBy(multiplier)
+          .decimalPlaces(18, BigNumber.ROUND_DOWN);
 
         form.setValue('requestedShares', shares.isNaN() ? new BigNumber(0) : shares);
       }
@@ -215,7 +216,8 @@ export const RequestInvestment = forwardRef(
       if (asset && token) {
         const amount = new BigNumber(event.target.value ?? 0)
           .multipliedBy(fromTokenBaseUnit(asset.shareCostInAsset!, token.decimals))
-          .multipliedBy(multiplier);
+          .multipliedBy(multiplier)
+          .decimalPlaces(18, BigNumber.ROUND_UP);
 
         form.setValue(
           'investmentAmount',

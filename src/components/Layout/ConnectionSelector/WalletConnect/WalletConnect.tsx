@@ -77,7 +77,8 @@ export const WalletConnectComponent: React.FC<ConnectionMethodProps> = ({ connec
 
 export const method: ConnectionMethod = {
   connect,
-  supported: () => true,
+  // TODO: Re-enable this connection method once it's confirmed to work fully.
+  supported: () => process.env.NODE_ENV === 'development',
   component: WalletConnectComponent,
   icon: 'WALLETCONNECT',
   name: 'walletconnect',

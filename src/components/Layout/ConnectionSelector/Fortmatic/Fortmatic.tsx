@@ -70,7 +70,8 @@ export const FortmaticComponent: React.FC<ConnectionMethodProps> = ({ connect, d
 
 export const method: ConnectionMethod = {
   connect,
-  supported: () => !!getConfig(NetworkEnum.MAINNET),
+  // TODO: Re-enable this connection method once it's confirmed to work fully.
+  supported: () => process.env.NODE_ENV === 'development' && !!getConfig(NetworkEnum.MAINNET),
   component: FortmaticComponent,
   icon: 'FORTMATIC',
   name: 'fortmatic',

@@ -8,14 +8,19 @@ import { Bar, BarContent } from '~/storybook/components/Bar/Bar';
 import { Headline } from '~/storybook/components/Headline/Headline';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
+import { useFundSlug } from './FundSlug.query';
+import { NetworkEnum } from '~/types';
+import { useEnvironment } from '~/hooks/useEnvironment';
 
 export interface FundHeaderProps {
   address: string;
 }
 
 export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
+  const environment = useEnvironment()!;
   const [fund, query] = useFundDetailsQuery(address);
   const [dailyChange, queryDailyChange] = useFundDailyChange(address);
+  const [slug, slugQuery] = useFundSlug(address);
 
   if (queryDailyChange.loading || query.loading || !fund) {
     return null;
@@ -24,10 +29,14 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
   const routes = fund.routes;
   const accounting = routes && routes.accounting;
 
+  const slugUrl =
+    slug &&
+    slug + (environment.network > 1 ? `.${NetworkEnum[environment.network].toLowerCase()}` : '') + '.melon.fund';
+
   return (
     <Bar>
       <BarContent justify="between">
-        <Headline title={fund.name} text={<EtherscanLink address={address} />} icon="ETHEREUM" />
+        <Headline title={fund.name} text={<a href={`https://${slugUrl}`}>{slugUrl}</a>} icon="ETHEREUM" />
         <RequiresFundSetupComplete fallback={false}>
           <DataBlockSection>
             <DataBlock label="Share price">

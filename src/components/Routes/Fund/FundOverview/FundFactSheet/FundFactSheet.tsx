@@ -20,6 +20,8 @@ import { TwitterLink } from '~/components/Common/TwitterLink/TwitterLink';
 import { useAccount } from '~/hooks/useAccount';
 import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 import { range } from 'ramda';
+import { useFundSlug } from '../../FundHeader/FundSlug.query';
+import { NetworkEnum } from '~/types';
 
 export interface NormalizedCalculation {
   sharePrice: BigNumber;
@@ -40,9 +42,10 @@ export const numberPadding = (digits: number, maxDigits: number) => {
 
 export const FundFactSheet: React.FC<FundFactSheetProps> = ({ address }) => {
   const [fund, fundQuery] = useFundDetailsQuery(address);
-  const environment = useEnvironment();
+  const environment = useEnvironment()!;
   const account = useAccount();
   const [calculations, calculationsQuery] = useFundCalculationHistoryQuery(address);
+  const [slug] = useFundSlug(address);
 
   if (!fundQuery || fundQuery.loading || !calculationsQuery || calculationsQuery.loading) {
     return (
@@ -58,6 +61,10 @@ export const FundFactSheet: React.FC<FundFactSheetProps> = ({ address }) => {
   }
 
   const isManager = sameAddress(fund.manager, account.address);
+
+  const slugUrl =
+    slug &&
+    slug + (environment.network > 1 ? `.${NetworkEnum[environment.network].toLowerCase()}` : '') + '.melon.fund';
 
   const routes = fund.routes;
   const creation = fund.creationTime;
@@ -133,8 +140,8 @@ export const FundFactSheet: React.FC<FundFactSheetProps> = ({ address }) => {
         <TwitterLink
           text={
             isManager
-              ? `Check out my on-chain fund on Melon "${fund.name}" deployed to @ethereum and powered by @melonprotocol on ${window.location.href}.`
-              : `Check out this interesting on-chain fund on Melon "${fund.name}" deployed to @ethereum and powered by @melonprotocol on ${window.location.href}.`
+              ? `Check out my on-chain fund on Melon "${fund.name}" deployed to @ethereum and powered by @melonprotocol on https://${slugUrl}.`
+              : `Check out this interesting on-chain fund on Melon "${fund.name}" deployed to @ethereum and powered by @melonprotocol on https://${slugUrl}.`
           }
         />
       </SectionTitle>

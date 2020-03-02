@@ -38,6 +38,8 @@ export const FundContracts: React.FC<FundContractsProps> = ({ address }) => {
     })
     .filter(item => !!item.address);
 
+  addresses.unshift({ name: 'Fund', address, field: 'fund' });
+
   return (
     <Dictionary>
       <SectionTitle>Fund Contracts</SectionTitle>

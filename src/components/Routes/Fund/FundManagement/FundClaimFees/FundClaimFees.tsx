@@ -14,6 +14,7 @@ import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNu
 import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
 import BigNumber from 'bignumber.js';
+import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 
 export interface ClaimFeesProps {
   address: string;
@@ -83,15 +84,23 @@ export const ClaimFees: React.FC<ClaimFeesProps> = ({ address }) => {
         {transaction.state.name === 'Claim all fees' && (
           <TransactionDescription title="Claim all fees">
             You are claiming all accrued fees (
-            <FormattedNumber value={feeManagerInfo!.managementFeeAmount} suffix="WETH" tooltip={true} />) for this fund.
+            <FormattedNumber
+              value={fromTokenBaseUnit(feeManagerInfo!.managementFeeAmount, 18)}
+              suffix="WETH"
+              tooltip={true}
+            />
+            ) for this fund.
           </TransactionDescription>
         )}
         {transaction.state.name === 'Claim management fees' && (
           <TransactionDescription title="Claim management fee">
             You are claiming the accrued management fees (
             <FormattedNumber
-              value={new BigNumber(feeManagerInfo!.managementFeeAmount).plus(
-                new BigNumber(feeManagerInfo!.performanceFeeAmount)
+              value={fromTokenBaseUnit(
+                new BigNumber(feeManagerInfo!.managementFeeAmount).plus(
+                  new BigNumber(feeManagerInfo!.performanceFeeAmount)
+                ),
+                18
               )}
               suffix="WETH"
               tooltip={true}

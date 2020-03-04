@@ -15,7 +15,7 @@ import { SectionTitle } from '~/storybook/components/Title/Title';
 import { Button } from '~/storybook/components/Button/Button.styles';
 import { networkFromId } from '~/utils/networkFromId';
 
-interface EthResource extends Rx.Unsubscribable {
+interface Resource extends Rx.Unsubscribable {
   eth: Eth;
   provider: any;
 }
@@ -35,8 +35,8 @@ const connect = () => {
   };
 
   return Rx.using(create, resource => {
-    const eth = (resource as EthResource).eth;
-    const provider = (resource as EthResource).provider;
+    const eth = (resource as Resource).eth;
+    const provider = (resource as Resource).provider;
 
     const enable$ = Rx.defer(() => provider.enable() as Promise<string[]>).pipe(startWith([]));
     const initial$ = enable$.pipe(
@@ -53,6 +53,7 @@ const connect = () => {
     const accounts$ = Rx.concat(enable$, Rx.fromEvent<string[]>(provider, 'accountsChanged')).pipe(
       map(accounts => accountsChanged(accounts))
     );
+
     return Rx.concat(initial$, Rx.merge(accounts$, network$));
   });
 };

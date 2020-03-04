@@ -15,7 +15,7 @@ import { Button } from '~/storybook/components/Button/Button';
 import { NetworkEnum } from '~/types';
 import { getConfig } from '~/config';
 
-interface EthResource extends Rx.Unsubscribable {
+interface Resource extends Rx.Unsubscribable {
   eth: Eth;
 }
 
@@ -35,7 +35,7 @@ const connect = (): Rx.Observable<ConnectionAction> => {
     return Rx.EMPTY;
   }
 
-  const create = (): EthResource => {
+  const create = (): Resource => {
     const provider = new HttpProvider(endpoint);
     const eth = new Eth(provider, undefined, {
       transactionConfirmationBlocks: 1,
@@ -45,7 +45,7 @@ const connect = (): Rx.Observable<ConnectionAction> => {
   };
 
   return Rx.using(create, resource => {
-    const eth = (resource as EthResource).eth;
+    const eth = (resource as Resource).eth;
     const connect$ = Rx.defer(async () => networkFromId(await eth.net.getId())).pipe(
       retryWhen(error => error.pipe(delay(10000))),
       take(1),

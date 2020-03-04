@@ -15,13 +15,13 @@ import { Button } from '~/storybook/components/Button/Button';
 import { getConfig } from '~/config';
 import { NetworkEnum } from '~/types';
 
-interface EthResource extends Rx.Unsubscribable {
+interface Resource extends Rx.Unsubscribable {
   eth: Eth;
 }
 
 const connect = (): Rx.Observable<ConnectionAction> => {
   const config = getConfig(NetworkEnum.TESTNET)!;
-  const create = (): EthResource => {
+  const create = (): Resource => {
     const provider = new HttpProvider(config.provider);
     const eth = new Eth(provider, undefined, {
       transactionConfirmationBlocks: 1,
@@ -31,7 +31,7 @@ const connect = (): Rx.Observable<ConnectionAction> => {
   };
 
   return Rx.using(create, resource => {
-    const eth = (resource as EthResource).eth;
+    const eth = (resource as Resource).eth;
 
     const connection$ = Rx.defer(async () => {
       const [id, accounts] = await Promise.all([eth.net.getId(), eth.getAccounts()]);

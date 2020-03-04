@@ -21,15 +21,8 @@ interface EthResource extends Rx.Unsubscribable {
 
 const connect = () => {
   const create = () => {
-    const config = getConfig(NetworkEnum.MAINNET)!;
-    const customNodeOptions = {
-      rpcUrl: config.provider,
-      chainId: 1,
-    };
-
-    const fm = new Fortmatic(process.env.MELON_FORTMATIC_KEY, customNodeOptions);
-    const provider = fm.getProvider();
-    const eth = new Eth(provider, undefined, {
+    const fm = new Fortmatic(process.env.MELON_FORTMATIC_KEY);
+    const eth = new Eth(fm.getProvider(), undefined, {
       transactionConfirmationBlocks: 1,
     });
 
@@ -70,8 +63,7 @@ export const FortmaticComponent: React.FC<ConnectionMethodProps> = ({ connect, d
 
 export const method: ConnectionMethod = {
   connect,
-  // TODO: Re-enable this connection method once it's confirmed to work fully.
-  supported: () => process.env.NODE_ENV === 'development' && !!getConfig(NetworkEnum.MAINNET),
+  supported: () => !!process.env.MELON_FORTMATIC_KEY,
   component: FortmaticComponent,
   icon: 'FORTMATIC',
   name: 'fortmatic',

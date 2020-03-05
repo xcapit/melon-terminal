@@ -90,7 +90,12 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 
   const currentStep = progressToStep(state.progress);
   const errorReportingUri = encodeURI(
-    `https://github.com/avantgardefinance/melon-terminal/issues/new?title=Error in transaction "${state.name}";body=${error?.stack}`
+    `https://github.com/avantgardefinance/melon-terminal/issues/new?title=Error in transaction "${state.name}";` +
+      `body=Contract: [${state.transaction?.contractAddress}](https://etherscan.io/address/${state.transaction?.contractAddress})\n` +
+      `Method: ${state.transaction?.methodName}\n` +
+      `Sender: [${state.transaction?.from}](https://etherscan.io/address/${state.transaction?.from})\n` +
+      `TxHash: [${hash}](https://etherscan.io/tx/${hash})\n\n` +
+      `Stack trace: ${error?.stack}`
   );
 
   return (

@@ -2140,10 +2140,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-4.72.0.tgz#43df23af013ad1135407e5cf33ca6e4c4c7708d5"
   integrity sha512-o+TYF8vBcyySRsb2kqBDv/KMeme8a2nwWoG+lAWzbDmWfb2/MrVWYCVYDYvjXdSoI/Cujqy1i0gIDrkdxa9chA==
 
-"@melonproject/melongql@^0.0.39":
-  version "0.0.39"
-  resolved "https://registry.yarnpkg.com/@melonproject/melongql/-/melongql-0.0.39.tgz#88ec1bc9c568486e48f887628a3e27c30034af01"
-  integrity sha512-O/7u7/12EsKuR+qnX6LVgB5HtcXS26+0aav29P2vycjwAuuFh1gAWVhvWNIjAyTov4WhYYJAIVnHNVmyOX6Hdw==
+"@melonproject/melongql@^0.0.41":
+  version "0.0.41"
+  resolved "https://registry.yarnpkg.com/@melonproject/melongql/-/melongql-0.0.41.tgz#edcc13a8e225e7bcc59975d4831d38180891dac5"
+  integrity sha512-AVybTlFqLREGKUcEr81Fal+Pox/Rq2w0exhnqCVLFk8UWX0c2olesDc6DNstsXxq97P8IyxnrtI04N9e3cYm4A==
   dependencies:
     apollo-link "^1.2.13"
     apollo-utilities "^1.3.3"

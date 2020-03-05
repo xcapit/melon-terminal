@@ -16,6 +16,7 @@ import { usePriceFeedUpdateQuery } from '~/components/Layout/PriceFeedUpdate.que
 import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
 import { RequiresFundNotShutDown } from '~/components/Gates/RequiresFundNotShutDown/RequiresFundNotShutDown';
+import { UserWhitelist, AssetWhitelist, AssetBlacklist } from '@melonproject/melongql';
 
 export interface FundInvestProps {
   address: string;
@@ -29,6 +30,20 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
   const environment = useEnvironment()!;
   const [result, query] = useFundInvestQuery(address);
   const [priceUpdate] = usePriceFeedUpdateQuery();
+
+  const denominationAsset = result?.fund?.routes?.accounting?.denominationAsset;
+  const holdings = result?.fund?.routes?.accounting?.holdings?.filter(holding => !holding.amount?.isZero());
+
+  const policies = result?.fund?.routes?.policyManager?.policies;
+  const assetWhitelists = policies?.filter(policy => policy.identifier === 'AssetWhitelist') as
+    | AssetWhitelist[]
+    | undefined;
+  const assetBlacklists = policies?.filter(policy => policy.identifier === 'AssetBlacklist') as
+    | AssetBlacklist[]
+    | undefined;
+  const userWhitelists = policies?.filter(policy => policy.identifier === 'UserWhitelist') as
+    | UserWhitelist[]
+    | undefined;
 
   const oneDay = 24 * 60 * 60 * 1000;
   const nextUpdate = new Date((priceUpdate?.getTime() || 0) + oneDay);
@@ -53,7 +68,18 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
   const symbol = environment.tokens.find(token => sameAddress(token.address, request?.investmentAsset))?.symbol;
 
   const account = result?.account;
-  const allowedAssets = result?.fund?.routes?.participation?.allowedAssets;
+  const allowedAssets = result?.fund?.routes?.participation?.allowedAssets
+    ?.filter(
+      asset =>
+        !assetWhitelists?.length ||
+        assetWhitelists.every(list => list.assetWhitelist?.some(item => sameAddress(item, asset.token?.address)))
+    )
+    .filter(
+      asset =>
+        !assetBlacklists?.length ||
+        !assetBlacklists.some(list => list.assetBlacklist?.some(item => sameAddress(item, asset.token?.address)))
+    );
+
   const action = useMemo(() => {
     const canCancelRequest = result?.account?.participation?.canCancelRequest;
     if (canCancelRequest) {
@@ -79,6 +105,15 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
       <Block>
         <SectionTitle>Invest</SectionTitle>
         <Spinner />
+      </Block>
+    );
+  }
+
+  if (userWhitelists && !userWhitelists.every(list => list.isWhitelisted)) {
+    return (
+      <Block>
+        <SectionTitle>Invest</SectionTitle>
+        <p>This fund operates an investor whitelist and you are currently not on that whitelist.</p>
       </Block>
     );
   }
@@ -109,6 +144,9 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
               ref={transactionRef}
               address={address}
               allowedAssets={allowedAssets}
+              holdings={holdings}
+              denominationAsset={denominationAsset}
+              policies={policies}
               totalSupply={totalSupply}
               account={account!}
               loading={query.networkStatus < 7}
@@ -154,6 +192,11 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
             {transaction.state.name === 'Invest' && (
               <TransactionDescription title="Request investment">
                 You are creating the actual investment request into the fund.
+              </TransactionDescription>
+            )}
+            {transaction.state.name === 'Execute investment request' && (
+              <TransactionDescription title="Execute investment request">
+                You are executing the investment request.
               </TransactionDescription>
             )}
           </TransactionModal>

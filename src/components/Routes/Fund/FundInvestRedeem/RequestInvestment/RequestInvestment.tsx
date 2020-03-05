@@ -12,7 +12,15 @@ import {
   Participation,
   Environment,
 } from '@melonproject/melonjs';
-import { AllowedInvestmentAsset, Account } from '@melonproject/melongql';
+import {
+  AllowedInvestmentAsset,
+  Account,
+  Holding,
+  Policy,
+  MaxPositions,
+  Token,
+  MaxConcentration,
+} from '@melonproject/melongql';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 import { useAccountAllowanceQuery } from '~/components/Routes/Fund/FundInvestRedeem/RequestInvestment/AccountAllowance.query';
 import { toTokenBaseUnit } from '~/utils/toTokenBaseUnit';
@@ -26,9 +34,11 @@ import { Link } from '~/storybook/components/Link/Link';
 import BigNumber from 'bignumber.js';
 import { TransactionRef } from '../FundInvest/FundInvest';
 import { AccountContextValue } from '~/components/Contexts/Account/Account';
-import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 import { useInvestorTotalExposureQuery } from './InvestorTotalExposure.query';
 import { useCoinAPI } from '~/hooks/useCoinAPI';
+
+import { RequiresFundManager } from '~/components/Gates/RequiresFundManager/RequiresFundManager';
+import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 import {
   CheckboxContainer,
   CheckboxInput,
@@ -41,6 +51,10 @@ export interface RequestInvestmentProps {
   address: string;
   totalSupply?: BigNumber;
   allowedAssets?: AllowedInvestmentAsset[];
+  holdings?: Holding[];
+  policies?: Policy[];
+  denominationAsset?: Token;
+  sharePrice?: BigNumber;
   account: Account;
   loading: boolean;
   transaction: TransactionHookValues<TransactionFormValues>;
@@ -60,12 +74,21 @@ export const RequestInvestment = forwardRef(
     const [formValues, setFormValues] = useState<RequestInvestmentFormValues>();
     const daiRate = useCoinAPI();
 
+    const maxPositionsPolicies = props.policies?.filter(policy => policy.identifier === 'MaxPositions') as
+      | MaxPositions[]
+      | undefined;
+
     const allowedAssets = props.allowedAssets || [];
     const initialAsset = allowedAssets[0];
     const totalSupply = props.totalSupply;
     const multiplier = useMemo(() => {
       return totalSupply?.isZero() ? new BigNumber(1) : new BigNumber(1.1);
     }, [totalSupply]);
+
+    const gav = props.holdings?.reduce(
+      (carry, item) => carry.plus(item.value || new BigNumber(0)),
+      new BigNumber(0)
+    ) as BigNumber;
 
     const validationSchema = Yup.object().shape({
       investmentAmount: Yup.mixed<BigNumber>()
@@ -74,14 +97,28 @@ export const RequestInvestment = forwardRef(
       requestedShares: Yup.mixed<BigNumber>()
         .transform((value, _) => new BigNumber(value))
         .test('positive', 'Number of shares has to be positive', (value: BigNumber) => value.isGreaterThan(0)),
-      investmentAsset: Yup.string(),
+      investmentAsset: Yup.string().test(
+        'maxPositions',
+        'Investing with this asset would violate the maximum number of positions policy',
+        (value: string) =>
+          // no policies
+          !maxPositionsPolicies?.length ||
+          // new investment is in denomination asset
+          sameAddress(props.denominationAsset?.address, value) ||
+          // already existing token
+          !!props.holdings?.some(holding => sameAddress(holding.token?.address, value)) ||
+          // max positions larger than holdings (so new token would still fit)
+          maxPositionsPolicies.every(
+            policy => policy.maxPositions && props.holdings && policy.maxPositions > props.holdings?.length
+          )
+      ),
       acknowledgeLimit: Yup.boolean(),
     });
 
     const defaultValues = {
       requestedShares: new BigNumber(1),
       investmentAsset: initialAsset?.token?.address,
-      investmentAmount: fromTokenBaseUnit(initialAsset!.shareCostInAsset!, initialAsset!.token!.decimals!)
+      investmentAmount: fromTokenBaseUnit(initialAsset?.shareCostInAsset || 0, initialAsset?.token?.decimals || 18)
         .multipliedBy(multiplier)
         .decimalPlaces(initialAsset?.token?.decimals || 18),
     };
@@ -90,7 +127,7 @@ export const RequestInvestment = forwardRef(
       defaultValues,
       validationSchema,
       mode: 'onSubmit',
-      reValidateMode: 'onBlur',
+      reValidateMode: 'onChange',
     });
 
     const investmentAsset = form.watch('investmentAsset') as string;
@@ -230,6 +267,21 @@ export const RequestInvestment = forwardRef(
       value: holding.token!.address!,
       name: holding.token!.symbol!,
     }));
+
+    if (!props.allowedAssets?.length) {
+      return (
+        <>
+          <p>
+            You cannot invest into this fund because it has not defined any investable assets and/or the risk management
+            restrictions prevent the investment in any asset.
+          </p>
+          <RequiresFundManager fallback={false}>
+            As the fund manager, you can on{' '}
+            <Link to={`/fund/${props.address}/manage`}>adapt the list of investable assets</Link>.
+          </RequiresFundManager>
+        </>
+      );
+    }
 
     return (
       <>

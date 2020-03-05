@@ -15,17 +15,21 @@ import { useTransaction } from '~/hooks/useTransaction';
 import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
 import { toTokenBaseUnit } from '~/utils/toTokenBaseUnit';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
-import { Holding } from '@melonproject/melongql';
+import { Holding, Token, Policy, MaxConcentration, PriceTolerance } from '@melonproject/melongql';
 import { Subtitle } from '~/storybook/components/Title/Title';
 import { Button } from '~/storybook/components/Button/Button';
 import { catchError, map, expand, switchMapTo } from 'rxjs/operators';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
+import { InputError } from '~/storybook/components/Input/Input.styles';
+import { validatePolicies } from '../FundLiquidityProviderTrading/validatePolicies';
 
 export interface FundKyberTradingProps {
   trading: string;
   exchange: ExchangeDefinition;
   holdings: Holding[];
+  denominationAsset?: Token;
+  policies?: Policy[];
   maker: TokenDefinition;
   taker: TokenDefinition;
   quantity: BigNumber;
@@ -40,6 +44,8 @@ export const FundKyberTrading: React.FC<FundKyberTradingProps> = props => {
     quantity: props.quantity,
     state: 'loading',
   }));
+
+  const [policyValidation, setPolicyValidation] = useState({ valid: true, message: '' });
 
   const environment = useEnvironment()!;
   const account = useAccount()!;
@@ -96,7 +102,39 @@ export const FundKyberTrading: React.FC<FundKyberTradingProps> = props => {
   const loading = state.state === 'loading';
   const ready = !loading && valid;
 
+  useEffect(() => {
+    (async () =>
+      await validatePolicies({
+        environment,
+        policies: props.policies,
+        taker: props.taker,
+        maker: props.maker,
+        holdings: props.holdings,
+        denominationAsset: props.denominationAsset,
+        setPolicyValidation,
+        value,
+        quantity: props.quantity,
+        trading: props.trading,
+      }))();
+  }, [state]);
+
   const submit = async () => {
+    await validatePolicies({
+      environment,
+      policies: props.policies,
+      taker: props.taker,
+      maker: props.maker,
+      holdings: props.holdings,
+      denominationAsset: props.denominationAsset,
+      setPolicyValidation,
+      value,
+      quantity: props.quantity,
+      trading: props.trading,
+    });
+    if (!policyValidation.valid) {
+      return;
+    }
+
     const trading = new Trading(environment, props.trading);
     const adapter = await KyberTradingAdapter.create(environment, props.exchange.exchange, trading);
 
@@ -116,7 +154,13 @@ export const FundKyberTrading: React.FC<FundKyberTradingProps> = props => {
         Kyber Network (<FormattedNumber value={1} suffix={state.taker.symbol} decimals={0} /> ={' '}
         <FormattedNumber value={rate} suffix={state.maker.symbol} />)
       </Subtitle>
-      <Button type="button" disabled={!ready || !props.active} loading={loading} onClick={submit}>
+
+      <Button
+        type="button"
+        disabled={!ready || !props.active || !policyValidation.valid}
+        loading={loading}
+        onClick={submit}
+      >
         {loading ? (
           ''
         ) : valid ? (
@@ -127,6 +171,9 @@ export const FundKyberTrading: React.FC<FundKyberTradingProps> = props => {
           'No Offer'
         )}
       </Button>
+
+      {policyValidation.valid || <InputError>{policyValidation.message}</InputError>}
+
       <TransactionModal transaction={transaction}>
         <TransactionDescription title="Take order on Kyber">You are taking an order on Kyber.</TransactionDescription>
       </TransactionModal>

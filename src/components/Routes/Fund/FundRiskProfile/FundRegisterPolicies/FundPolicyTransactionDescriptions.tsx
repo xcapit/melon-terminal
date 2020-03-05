@@ -19,7 +19,7 @@ export const FundPolicyTransactionDescriptions: React.FC<FundPolicyTransactionDe
     case 'Register Price tolerance policy': {
       return (
         <TransactionDescription title="Deploy PriceTolerance Contract">
-          You are now registrying the Price Tolerance policy that has just been deployed with your fund.
+          You are now registering the Price Tolerance policy that has just been deployed with your fund.
         </TransactionDescription>
       );
     }
@@ -35,7 +35,7 @@ export const FundPolicyTransactionDescriptions: React.FC<FundPolicyTransactionDe
     case 'Register Maximum number of positions policy': {
       return (
         <TransactionDescription title="Register Maximum number of positions policy">
-          You are now registrying the maximum number of positions policy that has just been deployed with your fund.
+          You are now registering the maximum number of positions policy that has just been deployed with your fund.
         </TransactionDescription>
       );
     }
@@ -51,7 +51,7 @@ export const FundPolicyTransactionDescriptions: React.FC<FundPolicyTransactionDe
     case 'Register Maximum concentration policy': {
       return (
         <TransactionDescription title="Register Maximum concentration policy">
-          You are now registrying the maximum concentration policy that has just been deployed with your fund.
+          You are now registering the maximum concentration policy that has just been deployed with your fund.
         </TransactionDescription>
       );
     }
@@ -67,7 +67,7 @@ export const FundPolicyTransactionDescriptions: React.FC<FundPolicyTransactionDe
     case 'Register Investor whitelist policy': {
       return (
         <TransactionDescription title="Register Investor whitelist policy">
-          You are now registrying the investor whitelist policy that has just been deployed with your fund.
+          You are now registering the investor whitelist policy that has just been deployed with your fund.
         </TransactionDescription>
       );
     }
@@ -99,7 +99,7 @@ export const FundPolicyTransactionDescriptions: React.FC<FundPolicyTransactionDe
     case 'Register Asset whitelist policy': {
       return (
         <TransactionDescription title="Register Asset whitelist policy">
-          You are now registrying the AssetWhitelist policy that has just been deployed with your fund.
+          You are now registering the AssetWhitelist policy that has just been deployed with your fund.
         </TransactionDescription>
       );
     }
@@ -123,7 +123,7 @@ export const FundPolicyTransactionDescriptions: React.FC<FundPolicyTransactionDe
     case 'Register Asset blacklist policy': {
       return (
         <TransactionDescription title="Register Asset whitelist policy">
-          You are now registrying the AssetBlacklist policy that has just been deployed with your fund.
+          You are now registering the AssetBlacklist policy that has just been deployed with your fund.
         </TransactionDescription>
       );
     }

@@ -13,9 +13,10 @@ export const Home: React.FC = () => {
           <GridCol>
             <NotificationBar kind="error">
               <NotificationContent>
-                We are currently experiencing issues with the Melon subgraph, which provides overview data for the Melon
-                Terminal. We are working on a fix. <br />
-                All funds are operational, i.e. you can still invest and trade.
+                The Melon subgraph, which provides overview data for the Melon Terminal, is under maintenance and will
+                be operational again in a couple of hours.
+                <br />
+                Meanwhile all funds are operational i.e. you can invest and trade.
               </NotificationContent>
             </NotificationBar>
             <FundMetrics />

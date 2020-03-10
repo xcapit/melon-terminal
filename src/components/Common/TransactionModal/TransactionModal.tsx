@@ -18,6 +18,8 @@ import { useEnvironment } from '~/hooks/useEnvironment';
 import { NetworkEnum } from '~/types';
 import { TokenValue } from '../TokenValue/TokenValue';
 import { ScrollableTable } from '~/storybook/components/Table/Table';
+import { useFund } from '~/hooks/useFund';
+import { useConnectionState } from '~/hooks/useConnectionState';
 
 function progressToStep(progress: number) {
   if (progress >= TransactionProgress.EXECUTION_FINISHED) {
@@ -58,6 +60,9 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   const coinApi = useCoinAPI();
   const environment = useEnvironment()!;
 
+  const fund = useFund();
+  const connection = useConnectionState();
+
   const hash = state.hash;
   const receipt = state.receipt;
   const options = state.sendOptions;
@@ -94,15 +99,18 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
     error.issueUri = encodeURI(
       `https://github.com/avantgardefinance/melon-terminal/issues/new?title=Error in transaction "${state.name}";` +
         `body=` +
-        'Parameter|Value\n' +
-        '------|-----\n' +
+        `Error message: ${error.message}\n` +
+        (fund?.name ? `Fund: ${fund.name}\n` : '') +
+        `URL: ${window.location.href}\n` +
         (state.transaction?.contract?.address
-          ? `Contract|[${state.transaction?.contract?.address}](https://etherscan.io/address/${state.transaction?.contract?.address})\n`
+          ? `Contract: [${state.transaction?.contract?.address}](https://etherscan.io/address/${state.transaction?.contract?.address})\n`
           : '') +
-        `Method|${state.transaction?.method}\n` +
-        (state.transaction?.args ? `Arguments|${JSON.stringify(state.transaction?.args)}\n` : '') +
-        `Sender|[${state.transaction?.from}](https://etherscan.io/address/${state.transaction?.from})\n` +
-        (hash ? `TxHash|[${hash}](https://etherscan.io/tx/${hash})\n` : '') +
+        `Method: ${state.transaction?.method}\n` +
+        (state.transaction?.args ? `Arguments: ${JSON.stringify(state.transaction?.args)}\n` : '') +
+        `Sender: [${state.transaction?.from}](https://etherscan.io/address/${state.transaction?.from})\n` +
+        (hash ? `TxHash: [${hash}](https://etherscan.io/tx/${hash})\n` : '') +
+        (connection?.method ? `Connection: ${connection.method}\n` : '') +
+        (connection?.network ? `Network: ${NetworkEnum[connection.network]}` : '') +
         (error?.stack ? `\nStack trace: ${error?.stack}` : '')
     );
   }

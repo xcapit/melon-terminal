@@ -19,6 +19,8 @@ export const WalletOverviewInvestmentRequest: React.FC<InvestmentRequest> = prop
   const account = useAccount();
   const [status, query] = useInvestmentRequestStatusQuery(props.account!, props.address);
 
+  const asset = environment.getToken(props.requestAsset);
+
   const transaction = useTransaction(environment, {
     handleError: (error, validation) => {
       if (validation?.name === 'NoInvestmentRequestError') {
@@ -84,16 +86,21 @@ export const WalletOverviewInvestmentRequest: React.FC<InvestmentRequest> = prop
         {status?.canCancelRequest && (
           <TransactionDescription title="Cancel investment request">
             Your investment request will be cancelled. The initially requested investment amount of{' '}
-            <FormattedNumber value={props.requestAmount} suffix={props.requestAsset} /> will be returned to your wallet
+            <FormattedNumber
+              value={fromTokenBaseUnit(props.requestAmount, asset.decimals)}
+              suffix={props.requestAsset}
+            />{' '}
+            will be returned to your wallet
           </TransactionDescription>
         )}
         {status?.investmentRequestState === 'VALID' && (
           <TransactionDescription title="Execute investment request">
             Your investment request will be executed. You will receive{' '}
-            <FormattedNumber value={fromTokenBaseUnit(props.requestShares, 18)} /> shares of the fund &laquo;
+            <FormattedNumber value={fromTokenBaseUnit(props.requestShares, asset.decimals)} /> shares of the fund
+            &laquo;
             {props.name}&raquo; for the maximal amount of{' '}
-            <FormattedNumber value={fromTokenBaseUnit(props.requestAmount, 18)} suffix={props.requestAsset} /> (the
-            exact amount is calculated from the current share price)
+            <FormattedNumber value={fromTokenBaseUnit(props.requestAmount, asset.decimals)} suffix={asset.symbol} />{' '}
+            (the exact amount is calculated from the current share price)
           </TransactionDescription>
         )}
       </TransactionModal>

@@ -17,6 +17,8 @@ import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
 import { RequiresFundNotShutDown } from '~/components/Gates/RequiresFundNotShutDown/RequiresFundNotShutDown';
 import { UserWhitelist, AssetWhitelist, AssetBlacklist } from '@melonproject/melongql';
+import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
+import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 
 export interface FundInvestProps {
   address: string;
@@ -197,6 +199,12 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
             {transaction.state.name === 'Execute investment request' && (
               <TransactionDescription title="Execute investment request">
                 You are executing the investment request.
+              </TransactionDescription>
+            )}
+            {transaction.state.name === 'Cancel investment request' && (
+              <TransactionDescription title="Cancel">
+                Your investment request will be cancelled. The initially requested investment amount will be returned to
+                your wallet.
               </TransactionDescription>
             )}
           </TransactionModal>

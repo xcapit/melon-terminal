@@ -27,7 +27,6 @@ export const FundContracts: React.FC<FundContractsProps> = ({ address }) => {
     { name: 'Vault', field: 'vault' },
     { name: 'Registry', field: 'registry' },
     { name: 'Version', field: 'version' },
-    { name: 'Price Source', field: 'priceSource' },
   ];
 
   const routes = fund?.routes;
@@ -46,13 +45,21 @@ export const FundContracts: React.FC<FundContractsProps> = ({ address }) => {
       {query.loading && <Spinner />}
 
       {!query.loading &&
-        addresses.map(a => (
-          <DictionaryEntry key={a.address}>
-            <DictionaryLabel>{a.name}</DictionaryLabel>
-            <DictionaryData>
-              <EtherscanLink address={a.address} />
-            </DictionaryData>
-          </DictionaryEntry>
+        addresses.map((a, index) => (
+          <>
+            <DictionaryEntry key={`${a.name}-${index}`}>
+              <DictionaryLabel>{a.name}</DictionaryLabel>
+              <DictionaryData>
+                <EtherscanLink address={a.address} />
+              </DictionaryData>
+            </DictionaryEntry>
+            {(a.name === 'Fund' || a.name === 'Vault') && (
+              <DictionaryEntry key={`${a.name}-${index}-empty`}>
+                <DictionaryLabel>&nbsp;</DictionaryLabel>
+                <DictionaryData>&nbsp;</DictionaryData>
+              </DictionaryEntry>
+            )}
+          </>
         ))}
     </Dictionary>
   );

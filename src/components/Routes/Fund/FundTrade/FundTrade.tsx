@@ -31,7 +31,8 @@ export const FundTrade: React.FC<FundTradeProps> = ({ address }) => {
 
   const providers = exchanges.filter(exchange => {
     const supported = [ExchangeIdentifier.KyberNetwork, ExchangeIdentifier.Uniswap, ExchangeIdentifier.MelonEngine];
-    return supported.includes(exchange.id as ExchangeIdentifier);
+    const legacy = ['UniswapOld'];
+    return [...supported, ...legacy].includes(exchange.id as ExchangeIdentifier);
   });
 
   const rfq =

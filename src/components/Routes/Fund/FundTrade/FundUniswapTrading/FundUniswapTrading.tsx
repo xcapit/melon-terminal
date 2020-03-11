@@ -9,14 +9,13 @@ import {
   UniswapExchange,
   UniswapFactory,
   sameAddress,
-  IPriceSource,
 } from '@melonproject/melonjs';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { useAccount } from '~/hooks/useAccount';
 import { useTransaction } from '~/hooks/useTransaction';
 import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
 import { toTokenBaseUnit } from '~/utils/toTokenBaseUnit';
-import { Holding, Token, Policy, MaxConcentration, PriceTolerance } from '@melonproject/melongql';
+import { Holding, Token, Policy } from '@melonproject/melongql';
 import { Subtitle } from '~/storybook/components/Title/Title';
 import { Button } from '~/storybook/components/Button/Button';
 import { catchError, map, switchMapTo, expand } from 'rxjs/operators';

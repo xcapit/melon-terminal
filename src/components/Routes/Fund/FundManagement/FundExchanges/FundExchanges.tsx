@@ -31,7 +31,7 @@ export const FundExchanges: React.FC<ExchangesProps> = ({ address }) => {
 
   const exchanges = useMemo(() => {
     const exchanges = details?.fund?.routes?.trading?.exchanges || [];
-    return exchanges.map(exchange => environment.getExchange(exchange.exchange!)).filter(exchange => !!exchange);
+    return exchanges.map(exchange => environment.getExchange(exchange as any)).filter(exchange => !!exchange);
   }, [details?.fund?.routes?.trading?.exchanges]);
 
   const exchangesRef = useRef(exchanges);

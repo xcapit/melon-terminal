@@ -25,6 +25,7 @@ const FundTrading = gql`
           address
           exchanges {
             exchange
+            adapter
           }
         }
         policyManager {
@@ -71,9 +72,9 @@ export const useFundTrading = (fund?: string) => {
   const trading = result.data?.fund?.routes?.trading?.address;
   const policies = result.data?.fund?.routes?.policyManager?.policies;
   const exchanges = useMemo(() => {
-    const addresses = (result.data?.fund?.routes?.trading?.exchanges || []).map(item => item.exchange!);
+    const addresses = result.data?.fund?.routes?.trading?.exchanges || [];
     return addresses.reduce<ExchangeDefinition[]>((carry, current) => {
-      const exchange = environment.getExchange(current);
+      const exchange = environment.getExchange(current as any);
       return exchange ? [...carry, exchange] : carry;
     }, []);
   }, [result.data]);

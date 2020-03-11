@@ -265,7 +265,7 @@ export const FundFactSheet: React.FC<FundFactSheetProps> = ({ address }) => {
         <DictionaryLabel>Authorized exchanges</DictionaryLabel>
         <DictionaryData>
           {exchanges?.map((exchange, index) => {
-            const item = environment?.getExchange(exchange.exchange!);
+            const item = environment?.getExchange(exchange as any);
 
             return (
               <Fragment key={exchange.exchange}>

@@ -16,6 +16,7 @@ import { SectionTitle } from '~/storybook/components/Title/Title';
 import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
 import { useFund } from '~/hooks/useFund';
 import { Link } from '~/storybook/components/Link/Link';
+import { getNetworkName } from '~/config';
 
 export interface FundLiquidityProviderTradingProps {
   trading: string;
@@ -33,7 +34,6 @@ interface FundLiquidityProviderTradingFormValues {
 
 export const FundLiquidityProviderTrading: React.FC<FundLiquidityProviderTradingProps> = props => {
   const environment = useEnvironment()!;
-  const fund = useFund()!;
 
   const assetWhitelists = props.policies?.filter(policy => policy.identifier === 'AssetWhitelist') as
     | AssetWhitelist[]
@@ -179,8 +179,8 @@ export const FundLiquidityProviderTrading: React.FC<FundLiquidityProviderTrading
         <NotificationBar kind="error">
           <NotificationContent>
             We have deployed a bug fix for the Uniswap adapter. To continue trading on Uniswap, you have to{' '}
-            <Link to={`/fund/${fund.address}/manage`}>register</Link> the new adapter in the{' '}
-            <Link to={`/fund/${fund.address}/manage`}>admin section</Link> of your fund.
+            <Link to={`manage`}>register</Link> the new adapter in the <Link to={`manage`}>admin section</Link> of your
+            fund.
           </NotificationContent>
         </NotificationBar>
       )}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useFundDetailsQuery } from '../FundDetails.query';
 import { Spinner } from '~/storybook/components/Spinner/Spinner';
 import { SectionTitle } from '~/storybook/components/Title/Title';
@@ -45,21 +45,21 @@ export const FundContracts: React.FC<FundContractsProps> = ({ address }) => {
       {query.loading && <Spinner />}
 
       {!query.loading &&
-        addresses.map((a, index) => (
-          <>
-            <DictionaryEntry key={`${a.name}-${index}`}>
+        addresses.map(a => (
+          <Fragment key={a.address}>
+            <DictionaryEntry>
               <DictionaryLabel>{a.name}</DictionaryLabel>
               <DictionaryData>
                 <EtherscanLink address={a.address} />
               </DictionaryData>
             </DictionaryEntry>
             {(a.name === 'Fund' || a.name === 'Vault') && (
-              <DictionaryEntry key={`${a.name}-${index}-empty`}>
+              <DictionaryEntry>
                 <DictionaryLabel>&nbsp;</DictionaryLabel>
                 <DictionaryData>&nbsp;</DictionaryData>
               </DictionaryEntry>
             )}
-          </>
+          </Fragment>
         ))}
     </Dictionary>
   );

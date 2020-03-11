@@ -2001,10 +2001,10 @@
     web3-providers "^2.0.0-alpha.1"
     web3-utils "^2.0.0-alpha.1"
 
-"@melonproject/melonjs@^0.0.111":
-  version "0.0.111"
-  resolved "https://registry.yarnpkg.com/@melonproject/melonjs/-/melonjs-0.0.111.tgz#48cf0305b9546279cdc84b7b07f7ffa370b2a0c1"
-  integrity sha512-fZQEmMttgZuHHxCGViUzC/rcZIpGtgrHKoyEAuyvWfNWUSX1UFaZH1nIg9YGqqmLQRVdb1E2FXAhsMTfV4jvTA==
+"@melonproject/melonjs@^0.0.112":
+  version "0.0.112"
+  resolved "https://registry.yarnpkg.com/@melonproject/melonjs/-/melonjs-0.0.112.tgz#30ac9b03340b66df1779da8c04d18f5579291d6c"
+  integrity sha512-dcwlsM71OOXHdsHM1J7e3rYSPrhxPTpLL8WwLblbOcgE1JSEaLiK8IZbt0FUhgBaJvQJbYCIohfeXFY43lBbUg==
   dependencies:
     "@0x/order-utils" "^8.5.0-beta.4"
     "@0x/order-utils-v2" "npm:@0x/order-utils@8.4.0"

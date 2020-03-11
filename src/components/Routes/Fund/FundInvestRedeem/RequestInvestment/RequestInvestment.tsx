@@ -46,6 +46,7 @@ import {
   CheckboxIcon,
   CheckboxLabel,
 } from '~/storybook/components/Checkbox/Checkbox';
+import { getNetworkName } from '~/config';
 
 export interface RequestInvestmentProps {
   address: string;
@@ -70,6 +71,7 @@ interface RequestInvestmentFormValues {
 export const RequestInvestment = forwardRef(
   (props: RequestInvestmentProps, ref: React.Ref<TransactionRef | undefined>) => {
     const environment = useEnvironment()!;
+    const prefix = getNetworkName(environment.network)!;
     const account = useAccount();
     const [formValues, setFormValues] = useState<RequestInvestmentFormValues>();
     const daiRate = useCoinAPI();
@@ -277,7 +279,7 @@ export const RequestInvestment = forwardRef(
           </p>
           <RequiresFundManager fallback={false}>
             As the fund manager, you can on{' '}
-            <Link to={`/fund/${props.address}/manage`}>adapt the list of investable assets</Link>.
+            <Link to={`/${prefix}/fund/${props.address}/manage`}>adapt the list of investable assets</Link>.
           </RequiresFundManager>
         </>
       );

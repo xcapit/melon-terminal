@@ -264,18 +264,17 @@ export const FundFactSheet: React.FC<FundFactSheetProps> = ({ address }) => {
       <DictionaryEntry>
         <DictionaryLabel>Authorized exchanges</DictionaryLabel>
         <DictionaryData>
-          {exchanges?.map((exchange, index) => {
-            const item = environment?.getExchange(exchange as any);
-
-            return (
-              <Fragment key={exchange.exchange}>
-                <EtherscanLink key={index} inline={true} address={exchange.exchange}>
-                  {item?.name ?? exchange.exchange}
+          {exchanges
+            ?.map(exchange => environment?.getExchange(exchange as any))
+            .filter(item => !!item)
+            .map((item, index) => (
+              <Fragment key={item.id}>
+                <EtherscanLink key={index} inline={true} address={item.exchange}>
+                  {item.name}
                 </EtherscanLink>
                 {index + 1 < exchanges.length && ', '}
               </Fragment>
-            );
-          })}
+            ))}
         </DictionaryData>
       </DictionaryEntry>
       <DictionaryEntry>

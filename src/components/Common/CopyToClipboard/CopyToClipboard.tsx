@@ -1,26 +1,22 @@
 import React, { useState } from 'react';
+// @ts-ignore
+import { CopyToClipboard as Copy } from 'react-copy-to-clipboard';
 import { Tooltip } from '~/storybook/components/Tooltip/Tooltip';
+import * as S from './CopyToClipboard.styled';
 
-interface CopyToClioboardProps {
+interface CopyToClipboardProps {
   text?: string;
+  value?: string;
 }
 
-export const CopyToClioboard: React.FC<CopyToClioboardProps> = ({ children, text }) => {
+export const CopyToClipboard: React.FC<CopyToClipboardProps> = ({ text, value }) => {
   const [message, setMessage] = useState('Click to copy!');
 
-  const onClick = () => {
-    try {
-      navigator.clipboard.writeText(text!);
-      setMessage('Copied!');
-    } catch (err) {
-      console.error(err);
-      setMessage('Error!');
-    }
-  };
-
   return (
-    <div onClick={onClick}>
-      <Tooltip value={message}>{children}</Tooltip>
-    </div>
+    <Tooltip value={message}>
+      <Copy text={value} onCopy={() => setMessage('Copied!')} onMouseLeave={() => setMessage('Click to copy!')}>
+        <S.Span>{text}</S.Span>
+      </Copy>
+    </Tooltip>
   );
 };

@@ -10,7 +10,7 @@ import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 import { useFundSlug } from './FundSlug.query';
 import { NetworkEnum } from '~/types';
 import { useEnvironment } from '~/hooks/useEnvironment';
-import { CopyToClioboard } from '~/components/Common/CopyToClipboard/CopyToClipboard';
+import { CopyToClipboard } from '~/components/Common/CopyToClipboard/CopyToClipboard';
 
 export interface FundHeaderProps {
   address: string;
@@ -33,11 +33,7 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
     slug &&
     slug + (environment.network > 1 ? `.${NetworkEnum[environment.network].toLowerCase()}` : '') + '.melon.fund';
 
-  const SlugComponent = (
-    <CopyToClioboard text={`https://${slugUrl}`}>
-      <a>{slugUrl}</a>
-    </CopyToClioboard>
-  );
+  const SlugComponent = <CopyToClipboard text={slugUrl} value={`https://${slugUrl}`} />;
 
   return (
     <Bar>

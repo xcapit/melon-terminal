@@ -207,17 +207,28 @@ export const FundRequestForQuoteTrading: React.FC<FundRequestForQuoteTradingProp
     }
   };
 
+  console.log(takerCandidates);
+
   const [market, side] = markets.get(takerAsset)?.get(makerAsset) ?? [];
   const amount = new BigNumber(form.watch('takerQuantity') ?? 'NaN');
   const ready = !!(form.formState.isValid && market && amount && !amount.isNaN());
+
+  if (!takerCandidates.length) {
+    return (
+      <Block>
+        <SectionTitle>Request a Quote on 0x</SectionTitle>
+        <p>Request a quote on 0x trading is currently not possible. Please check back later.</p>
+      </Block>
+    );
+  }
 
   if (!takerOptions.length) {
     return (
       <Block>
         <SectionTitle>Request a Quote on 0x</SectionTitle>
         <p>
-          Request a quote on 0x is not possible because the fund's risk management policies prevent the investment in
-          any asset.
+          Request a quote on 0x trading is not possible because the fund's risk management policies prevent the
+          investment in any asset.
         </p>
       </Block>
     );

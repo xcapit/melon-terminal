@@ -207,8 +207,6 @@ export const FundRequestForQuoteTrading: React.FC<FundRequestForQuoteTradingProp
     }
   };
 
-  console.log(takerCandidates);
-
   const [market, side] = markets.get(takerAsset)?.get(makerAsset) ?? [];
   const amount = new BigNumber(form.watch('takerQuantity') ?? 'NaN');
   const ready = !!(form.formState.isValid && market && amount && !amount.isNaN());
@@ -222,7 +220,7 @@ export const FundRequestForQuoteTrading: React.FC<FundRequestForQuoteTradingProp
     );
   }
 
-  if (!takerOptions.length) {
+  if (!makerOptions.length) {
     return (
       <Block>
         <SectionTitle>Request a Quote on 0x</SectionTitle>

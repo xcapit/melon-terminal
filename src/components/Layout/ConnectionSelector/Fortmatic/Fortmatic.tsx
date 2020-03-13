@@ -13,7 +13,6 @@ import {
 import { SectionTitle } from '~/storybook/components/Title/Title';
 import { Button } from '~/storybook/components/Button/Button.styles';
 import { networkFromId } from '~/utils/networkFromId';
-import { getConfig } from '~/config';
 import { NetworkEnum } from '~/types';
 
 interface Resource extends Rx.Unsubscribable {
@@ -23,12 +22,7 @@ interface Resource extends Rx.Unsubscribable {
 
 const connect = () => {
   const create = () => {
-    const config = getConfig(NetworkEnum.MAINNET)!;
-    const fm = new Fortmatic(process.env.MELON_FORTMATIC_KEY, {
-      rpcUrl: config.provider,
-      chainId: 1,
-    });
-
+    const fm = new Fortmatic(process.env.MELON_FORTMATIC_KEY);
     const provider = fm.getProvider();
     const eth = new Eth(provider, undefined, {
       transactionConfirmationBlocks: 1,
@@ -81,7 +75,7 @@ export const FortmaticComponent: React.FC<ConnectionMethodProps> = ({ connect, d
 
 export const method: ConnectionMethod = {
   connect,
-  supported: () => !!process.env.MELON_FORTMATIC_KEY && !!getConfig(NetworkEnum.MAINNET),
+  supported: () => !!process.env.MELON_FORTMATIC_KEY,
   component: FortmaticComponent,
   icon: 'FORTMATIC',
   name: 'fortmatic',

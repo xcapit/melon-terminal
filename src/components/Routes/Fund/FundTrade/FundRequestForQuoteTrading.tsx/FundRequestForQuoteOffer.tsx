@@ -12,7 +12,6 @@ import { SignedOrder, assetDataUtils } from '@0x/order-utils-v2';
 import { Subtitle } from '~/storybook/components/Title/Title';
 import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
 import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
-import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 import { toTokenBaseUnit } from '~/utils/toTokenBaseUnit';
 

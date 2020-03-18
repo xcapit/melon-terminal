@@ -183,21 +183,10 @@ export const FundRequestForQuoteTrading: React.FC<FundRequestForQuoteTradingProp
     name: token.symbol,
   }));
 
-  const makerOptions = makerCandidates
-    .filter(
-      asset =>
-        !assetWhitelists?.length ||
-        assetWhitelists.every(list => list.assetWhitelist?.some(item => sameAddress(item, asset.address)))
-    )
-    .filter(
-      asset =>
-        !assetBlacklists?.length ||
-        !assetBlacklists.some(list => list.assetBlacklist?.some(item => sameAddress(item, asset.address)))
-    )
-    .map(token => ({
-      value: token.address,
-      name: token.symbol,
-    }));
+  const makerOptions = makerCandidates.map(token => ({
+    value: token.address,
+    name: token.symbol,
+  }));
 
   const handleTakerAssetChange = (value: string) => {
     const token = environment.getToken(value)!;
@@ -216,18 +205,6 @@ export const FundRequestForQuoteTrading: React.FC<FundRequestForQuoteTradingProp
       <Block>
         <SectionTitle>Request a Quote on 0x</SectionTitle>
         <p>Request a quote on 0x trading is currently not possible. Please check back later.</p>
-      </Block>
-    );
-  }
-
-  if (!makerOptions.length) {
-    return (
-      <Block>
-        <SectionTitle>Request a Quote on 0x</SectionTitle>
-        <p>
-          Request a quote on 0x trading is not possible because the fund's risk management policies prevent the
-          investment in any asset.
-        </p>
       </Block>
     );
   }

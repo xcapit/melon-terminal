@@ -128,6 +128,20 @@ export const FundRequestForQuoteTrading: React.FC<FundRequestForQuoteTradingProp
             maxPositionsPolicies.every(
               policy => policy.maxPositions && nonZeroHoldings && policy.maxPositions > nonZeroHoldings?.length
             )
+        )
+        .test(
+          'assetWhitelist',
+          'This fund operates an asset whitelist and the asset you are intending to buy is not on that whitelist',
+          asset =>
+            !assetWhitelists?.length ||
+            assetWhitelists.every(list => list.assetWhitelist?.some(item => sameAddress(item, asset.address)))
+        )
+        .test(
+          'assetBlacklist',
+          'This fund operates an asset blacklist and the asset you are intending to buy is on that blacklist',
+          asset =>
+            !assetBlacklists?.length ||
+            !assetBlacklists.some(list => list.assetBlacklist?.some(item => sameAddress(item, asset.address)))
         ),
       takerAsset: Yup.string().required('Missing required sell asset.'),
       takerQuantity: Yup.string()

@@ -177,8 +177,8 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
               </p>
 
               <p>
-                Your investment request will be automatically executed after the next price update, which will be around{' '}
-                <FormattedDate timestamp={nextUpdate}></FormattedDate>.
+                Your investment request will be automatically executed after the next price update, which will be at
+                approximately <FormattedDate timestamp={nextUpdate}></FormattedDate>.
               </p>
 
               <p>

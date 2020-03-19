@@ -173,8 +173,12 @@ export const FundOrderbookMarketForm: React.FC<FundOrderbookMarketFormProps> = p
       price: Yup.string().test(
         'priceTolerance',
         'This price is outside the price tolerance set by the price tolerance policy',
-        async function(value) {
-          const exchange = environment.getExchange(order!.exchange);
+        async function() {
+          if (!order) {
+            return true;
+          }
+
+          const exchange = environment.getExchange(order.exchange);
 
           if (!priceTolerancePolicies?.length) {
             return true;
@@ -408,7 +412,7 @@ export const FundOrderbookMarketForm: React.FC<FundOrderbookMarketFormProps> = p
           <TransactionDescription title="Take order on OasisDEX">{description}</TransactionDescription>
         )}
         {transaction.state.name === 'Take order on 0x' && (
-          <TransactionDescription title="Take order on OasisDEX">{description}</TransactionDescription>
+          <TransactionDescription title="Take order on 0x">{description}</TransactionDescription>
         )}
       </TransactionModal>
     </FormContext>

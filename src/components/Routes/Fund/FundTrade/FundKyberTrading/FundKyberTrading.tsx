@@ -175,7 +175,24 @@ export const FundKyberTrading: React.FC<FundKyberTradingProps> = props => {
       {policyValidation.valid || <InputError>{policyValidation.message}</InputError>}
 
       <TransactionModal transaction={transaction}>
-        <TransactionDescription title="Take order on Kyber">You are taking an order on Kyber.</TransactionDescription>
+        <TransactionDescription title="Take order on Kyber">
+          You are selling{' '}
+          <FormattedNumber
+            value={props.quantity}
+            suffix={props.taker.symbol}
+            decimals={4}
+            tooltip={true}
+            tooltipDecimals={props.taker.decimals}
+          />{' '}
+          through Kyber, in exchange for{' '}
+          <FormattedNumber
+            value={value}
+            suffix={props.maker.symbol}
+            decimals={4}
+            tooltip={true}
+            tooltipDecimals={props.maker.decimals}
+          />
+        </TransactionDescription>
       </TransactionModal>
     </>
   );

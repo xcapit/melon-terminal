@@ -111,7 +111,22 @@ export const FundMelonEngineTrading: React.FC<FundMelonEngineTradingProps> = pro
 
       <TransactionModal transaction={transaction}>
         <TransactionDescription title="Take order on the Melon engine">
-          You are taking an order on the Melon engine.
+          You are selling{' '}
+          <FormattedNumber
+            value={props.quantity}
+            suffix={props.taker.symbol}
+            decimals={4}
+            tooltip={true}
+            tooltipDecimals={props.taker.decimals}
+          />{' '}
+          to the Melon Engine, in exchange for{' '}
+          <FormattedNumber
+            value={value}
+            suffix={props.maker.symbol}
+            decimals={4}
+            tooltip={true}
+            tooltipDecimals={props.maker.decimals}
+          />
         </TransactionDescription>
       </TransactionModal>
     </>

@@ -67,12 +67,12 @@ export const FundExchanges: React.FC<ExchangesProps> = ({ address }) => {
   }
 
   const options = environment.exchanges
-    .filter(exchange => !exchange.historic)
+    .filter(exchange => !exchange.historic || exchanges?.some(enabled => enabled.id === exchange.id))
     .map(exchange => ({
-      label: exchange.name,
+      label: `${exchange.name}${exchange.historic ? ` (deprecated)` : ''}`,
       value: exchange.id,
-      checked: !!exchanges?.some(allowed => allowed.id === exchange.id),
-      disabled: !!exchanges?.some(allowed => allowed.id === exchange.id),
+      checked: !!exchanges?.some(enabled => enabled.id === exchange.id),
+      disabled: !!exchanges?.some(enabled => enabled.id === exchange.id),
     }));
 
   const submit = form.handleSubmit(async data => {

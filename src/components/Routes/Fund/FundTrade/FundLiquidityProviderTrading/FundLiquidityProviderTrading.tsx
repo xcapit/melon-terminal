@@ -166,7 +166,7 @@ export const FundLiquidityProviderTrading: React.FC<FundLiquidityProviderTrading
   }
 
   const uniswapLegacyWarning =
-    props.exchanges.includes(environment.getExchange('UniswapOld')) &&
+    props.exchanges.includes(environment.getExchange('0x3fda51d218919b96a850e7b66d412a4604e4901d')) &&
     !props.exchanges.includes(environment.getExchange(ExchangeIdentifier.Uniswap));
 
   return (

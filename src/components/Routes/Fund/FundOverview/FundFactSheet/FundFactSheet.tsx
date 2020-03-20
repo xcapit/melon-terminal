@@ -129,7 +129,21 @@ export const FundFactSheet: React.FC<FundFactSheetProps> = ({ address }) => {
     normalizedCalculations &&
     standardDeviation(normalizedCalculations.map(item => item.logReturn)) * 100 * Math.sqrt(365.25);
 
-  const exchanges = routes?.trading?.exchanges;
+  const exchanges = routes?.trading?.exchanges
+    ?.map(exchange => environment?.getExchange(exchange as any))
+    .filter(item => !!item)
+    .sort((a, b) => {
+      if (a.historic === b.historic) {
+        return 0;
+      }
+
+      return a.historic ? 1 : -1;
+    })
+    .filter((item, index, array) => {
+      const found = array.findIndex(inner => sameAddress(item.exchange, inner.exchange));
+      return found >= index;
+    });
+
   const allowedAssets = routes?.participation?.allowedAssets;
   const allowedAssetsSymbols = allowedAssets?.map(asset => asset?.token?.symbol);
 
@@ -264,17 +278,14 @@ export const FundFactSheet: React.FC<FundFactSheetProps> = ({ address }) => {
       <DictionaryEntry>
         <DictionaryLabel>Authorized exchanges</DictionaryLabel>
         <DictionaryData>
-          {exchanges
-            ?.map(exchange => environment?.getExchange(exchange as any))
-            .filter(item => !!item)
-            .map((item, index) => (
-              <Fragment key={item.id}>
-                <EtherscanLink key={index} inline={true} address={item.exchange}>
-                  {item.name}
-                </EtherscanLink>
-                {index + 1 < exchanges.length && ', '}
-              </Fragment>
-            ))}
+          {exchanges?.map((item, index) => (
+            <Fragment key={item.id}>
+              <EtherscanLink key={index} inline={true} address={item.adapter}>
+                {item.name}
+              </EtherscanLink>
+              {index + 1 < exchanges.length && ', '}
+            </Fragment>
+          ))}
         </DictionaryData>
       </DictionaryEntry>
       <DictionaryEntry>

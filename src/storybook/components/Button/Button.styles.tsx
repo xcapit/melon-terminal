@@ -92,3 +92,9 @@ export const Button = styled.button<ButtonProps>`
     margin-left: ${props => props.theme.spaceUnits.xs};
   }
 `;
+
+export const LinkButton = styled(Button).attrs({
+  as: 'a',
+})<React.AnchorHTMLAttributes<HTMLAnchorElement>>`
+  text-decoration: none;
+`;

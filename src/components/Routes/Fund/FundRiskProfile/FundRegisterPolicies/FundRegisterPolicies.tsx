@@ -32,7 +32,6 @@ import {
   RadioButtonIcon,
   RadioButtonLabel,
 } from '~/storybook/components/RadioButton/RadioButton';
-import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
 import { FundPolicyTransactionDescriptions } from './FundPolicyTransactionDescriptions';
 import { TransactionReceipt } from 'web3-core';
 

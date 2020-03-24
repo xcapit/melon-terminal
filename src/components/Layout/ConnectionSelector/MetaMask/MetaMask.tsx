@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Rx from 'rxjs';
-import { map, switchMap, mapTo, startWith } from 'rxjs/operators';
+import { map, switchMap, startWith } from 'rxjs/operators';
 import { Eth } from 'web3-eth';
 import { networkFromId } from '~/utils/networkFromId';
 import {

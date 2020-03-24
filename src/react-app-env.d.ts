@@ -38,6 +38,7 @@ declare global {
       MELON_WALLETCONNECT_INFURA_ID: string;
       MELON_API_GATEWAY: string;
       MELON_MAX_EXPOSURE: string;
+      MELON_TELEGRAM_API: string;
     }
   }
 }

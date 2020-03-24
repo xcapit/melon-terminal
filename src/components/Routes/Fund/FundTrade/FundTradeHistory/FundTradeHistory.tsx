@@ -16,22 +16,21 @@ import { SectionTitle } from '~/storybook/components/Title/Title';
 import { useFundTradeHistoryQuery } from './FundTradeHistory.query';
 import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
-import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 
 export interface FundTradeHistoryProps {
   address: string;
 }
 
 export const FundTradeHistory: React.FC<FundTradeHistoryProps> = ({ address }) => {
-  const [calls, query] = useFundTradeHistoryQuery(address);
+  const [trades, query] = useFundTradeHistoryQuery(address);
 
   return (
     <Block>
       <SectionTitle>Order History</SectionTitle>
 
       {query.loading && <Spinner />}
-      {!query.loading && !calls.length && <NoEntries>No entries.</NoEntries>}
-      {!query.loading && calls.length > 0 && (
+      {!query.loading && !trades.length && <NoEntries>No entries.</NoEntries>}
+      {!query.loading && trades.length > 0 && (
         <ScrollableTable>
           <Table>
             <thead>
@@ -46,21 +45,21 @@ export const FundTradeHistory: React.FC<FundTradeHistoryProps> = ({ address }) =
               </HeaderRow>
             </thead>
             <tbody>
-              {calls.map(call => (
-                <BodyRow key={call.id}>
+              {trades.map(trade => (
+                <BodyRow key={trade.id}>
                   <BodyCell>
-                    <FormattedDate timestamp={call.timestamp} />
+                    <FormattedDate timestamp={trade.timestamp} />
                   </BodyCell>
-                  <BodyCell>{call.exchange?.name}</BodyCell>
+                  <BodyCell>{trade.exchange?.name}</BodyCell>
                   <BodyCellRightAlign>
-                    <FormattedNumber tooltip={true} value={call.buyQuantity} />
+                    <FormattedNumber tooltip={true} value={trade.buyQuantity} />
                   </BodyCellRightAlign>
-                  <BodyCell>{call.buyAsset?.symbol}</BodyCell>
+                  <BodyCell>{trade.buyAsset?.symbol}</BodyCell>
                   <BodyCellRightAlign>
-                    <FormattedNumber tooltip={true} value={call.sellQuantity} />
+                    <FormattedNumber tooltip={true} value={trade.sellQuantity} />
                   </BodyCellRightAlign>
-                  <BodyCell>{call.sellAsset?.symbol}</BodyCell>
-                  <BodyCell>{call.methodName}</BodyCell>
+                  <BodyCell>{trade.sellAsset?.symbol}</BodyCell>
+                  <BodyCell>{trade.methodName}</BodyCell>
                 </BodyRow>
               ))}
             </tbody>

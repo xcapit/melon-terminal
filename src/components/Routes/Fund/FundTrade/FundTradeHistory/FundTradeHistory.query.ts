@@ -6,7 +6,7 @@ import { ExchangeDefinition, TokenDefinition, sameAddress } from '@melonproject/
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 
-export interface CallOnExchange {
+export interface Trade {
   id: string;
   timestamp: number;
   exchange?: ExchangeDefinition;
@@ -25,24 +25,20 @@ const FundTradeHistoryQuery = gql`
   query FundTradeHistoryQuery($address: ID!) {
     fund(id: $address) {
       trading {
-        calls(orderBy: timestamp, orderDirection: "desc") {
+        trades(orderBy: timestamp, orderDirection: "desc") {
           id
           timestamp
           exchange {
             id
           }
-          orderAddress2 {
+          assetSold {
             id
           }
-          orderAddress3 {
+          assetBought {
             id
           }
-          orderValue0
-          orderValue1
-          orderValue2
-          orderValue3
-          orderValue6
-          methodSignature
+          amountSold
+          amountBought
           methodName
         }
       }
@@ -56,19 +52,14 @@ export const useFundTradeHistoryQuery = (address: string) => {
     variables: { address: address?.toLowerCase() },
   });
 
-  const calls = useMemo(
+  const trades = useMemo(
     () =>
-      (result.data?.fund?.trading?.calls || []).map((item: any) => {
-        const buyAsset = environment.getToken(item.orderAddress2?.id);
-        const sellAsset = environment.getToken(item.orderAddress3?.id);
+      (result.data?.fund?.trading?.trades || []).map((item: any) => {
+        const buyAsset = environment.getToken(item.assetBought?.id);
+        const sellAsset = environment.getToken(item.assetSold?.id);
 
-        let buyAmount = new BigNumber(item.orderValue0 ?? 0);
-        const sellAmount = new BigNumber((item.orderValue6 || item.orderValue1) ?? 0);
-
-        // Adjust the buy amount for partial fills.
-        if (item.orderValue6) {
-          buyAmount = buyAmount.multipliedBy(item.orderValue6).dividedBy(item.orderValue1);
-        }
+        let buyAmount = new BigNumber(item.amountBought ?? 0);
+        const sellAmount = new BigNumber(item.amountSold ?? 0);
 
         const buyQuantity = buyAsset && fromTokenBaseUnit(buyAmount, buyAsset.decimals);
         const sellQuantity = sellAsset && fromTokenBaseUnit(sellAmount, sellAsset.decimals);
@@ -83,10 +74,10 @@ export const useFundTradeHistoryQuery = (address: string) => {
           timestamp: item.timestamp,
           methodName: item.methodName,
           exchange,
-        } as CallOnExchange;
-      }) as CallOnExchange[],
+        } as Trade;
+      }) as Trade[],
     [result.data]
   );
 
-  return [calls, result] as [typeof calls, typeof result];
+  return [trades, result] as [typeof trades, typeof result];
 };

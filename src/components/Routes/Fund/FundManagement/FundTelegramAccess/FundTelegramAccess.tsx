@@ -82,8 +82,8 @@ export const FundTelegramAccess: React.FC = () => {
       {status?.state === 'idle' && status.data?.authenticated ? (
         <>
           <p>
-            You have sucessfully completed the account validation process. Our bot should've introduced itself to you on
-            Telegram. From now on, you can also manually contact our bot to (re-)gain access to the private channel.
+            You have sucessfully completed the account validation process. The Melon Bot should've introduced itself to you on
+            Telegram.
           </p>
 
           {!!status?.data?.bot && (

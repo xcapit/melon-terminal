@@ -19,12 +19,11 @@ export const TelegramLogin: React.FC<TelegramLoginProps> = props => {
     script.setAttribute('data-size', 'large');
     script.setAttribute('data-radius', '0');
     script.setAttribute('data-request-access', 'write');
-    script.setAttribute('data-userpic', 'true');
     script.setAttribute('data-onauth', `${method}(user)`);
     script.async = true;
 
     return script;
-  }, [method]);
+  }, [method, props.botName]);
 
   React.useEffect(() => {
     if (ref) {

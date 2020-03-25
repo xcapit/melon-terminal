@@ -1,27 +1,27 @@
 import React, { FormEvent, useEffect, useMemo, useState } from 'react';
 import * as R from 'ramda';
 import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
-import { Button } from '~/storybook/components/Button/Button';
+import { Button } from '~/storybook/Button/Button';
 import { useTransaction } from '~/hooks/useTransaction';
 import { TransactionReceipt } from 'web3-core';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { Transaction } from '@melonproject/melonjs';
 import { useAccountFundQuery } from './AccountFund.query';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 import { NoMatch } from '~/components/Routes/NoMatch/NoMatch';
 import { useHistory } from 'react-router';
 import { versionContract } from '~/utils/deploymentContracts';
 import { useAccount } from '~/hooks/useAccount';
-import { Block, BlockActions } from '~/storybook/components/Block/Block';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { GridCol, GridRow, Grid } from '~/storybook/components/Grid/Grid';
+import { Block, BlockActions } from '~/storybook/Block/Block';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { GridCol, GridRow, Grid } from '~/storybook/Grid/Grid';
 import {
   CheckboxContainer,
   CheckboxInput,
   CheckboxMask,
   CheckboxIcon,
   CheckboxLabel,
-} from '~/storybook/components/Checkbox/Checkbox';
+} from '~/storybook/Checkbox/Checkbox';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
 import { getNetworkName } from '~/config';
 

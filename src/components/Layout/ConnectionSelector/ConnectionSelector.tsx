@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useConnectionState } from '~/hooks/useConnectionState';
-import { Dropdown } from '~/storybook/components/Dropdown/Dropdown';
-import { Icons, IconName } from '~/storybook/components/Icons/Icons';
+import { Dropdown } from '~/storybook/Dropdown/Dropdown';
+import { Icons, IconName } from '~/storybook/Icons/Icons';
 import { ConnectionContext } from '~/components/Contexts/Connection/Connection';
 import * as S from './ConnectionSelector.styles';
 import { useLocation, useHistory } from 'react-router';

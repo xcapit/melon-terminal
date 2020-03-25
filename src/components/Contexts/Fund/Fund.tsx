@@ -1,8 +1,8 @@
 import React, { createContext, useMemo } from 'react';
 import { useFundContextQuery, FundContext } from './Fund.query';
 import { toChecksumAddress, isAddress } from 'web3-utils';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
-import { Container } from '~/storybook/components/Container/Container';
+import { Spinner } from '~/storybook/Spinner/Spinner';
+import { Container } from '~/storybook/Container/Container';
 import { Fallback } from '~/components/Common/Fallback/Fallback';
 
 export interface FundContextValue extends FundContext {

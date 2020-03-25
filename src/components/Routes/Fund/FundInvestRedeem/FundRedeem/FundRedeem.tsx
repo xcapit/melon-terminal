@@ -7,19 +7,19 @@ import { useEnvironment } from '~/hooks/useEnvironment';
 import { useFundRedeemQuery } from './FundRedeem.query';
 import { useTransaction } from '~/hooks/useTransaction';
 import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 import { useAccount } from '~/hooks/useAccount';
-import { Input } from '~/storybook/components/Input/Input';
-import { Button } from '~/storybook/components/Button/Button';
-import { Block, BlockActions } from '~/storybook/components/Block/Block';
-import { SectionTitle } from '~/storybook/components/Title/Title';
+import { Input } from '~/storybook/Input/Input';
+import { Button } from '~/storybook/Button/Button';
+import { Block, BlockActions } from '~/storybook/Block/Block';
+import { SectionTitle } from '~/storybook/Title/Title';
 import {
   CheckboxContainer,
   CheckboxInput,
   CheckboxMask,
   CheckboxIcon,
   CheckboxLabel,
-} from '~/storybook/components/Checkbox/Checkbox';
+} from '~/storybook/Checkbox/Checkbox';
 import { toTokenBaseUnit } from '~/utils/toTokenBaseUnit';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';

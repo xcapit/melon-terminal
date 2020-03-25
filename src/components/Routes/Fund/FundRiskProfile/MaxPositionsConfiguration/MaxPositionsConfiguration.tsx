@@ -5,11 +5,11 @@ import { useEnvironment } from '~/hooks/useEnvironment';
 import { MaxPositions, Deployment, PolicyDefinition } from '@melonproject/melonjs';
 import { MaxPositionsBytecode } from '@melonproject/melonjs/abis/MaxPositions.bin';
 import { useAccount } from '~/hooks/useAccount';
-import { Button } from '~/storybook/components/Button/Button';
-import { Input } from '~/storybook/components/Input/Input';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { BlockActions } from '~/storybook/components/Block/Block';
-import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
+import { Button } from '~/storybook/Button/Button';
+import { Input } from '~/storybook/Input/Input';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { BlockActions } from '~/storybook/Block/Block';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 
 interface MaxPositionsConfigurationForm {
   maxPositions: number;

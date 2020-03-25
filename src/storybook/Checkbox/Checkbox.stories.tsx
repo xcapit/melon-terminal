@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox } from '~/storybook/components/Checkbox/Checkbox';
+import { Checkbox } from '~/storybook/Checkbox/Checkbox';
 
 export default { title: 'Atoms|Checkbox' };
 

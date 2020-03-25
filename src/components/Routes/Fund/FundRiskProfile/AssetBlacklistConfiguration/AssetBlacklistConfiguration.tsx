@@ -1,15 +1,15 @@
 import React, { useMemo, useEffect } from 'react';
 import * as Yup from 'yup';
 import { useForm, FormContext } from 'react-hook-form';
-import { Button } from '~/storybook/components/Button/Button';
+import { Button } from '~/storybook/Button/Button';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { Deployment, AssetBlacklist, PolicyDefinition, availableTokens, Transaction } from '@melonproject/melonjs';
 import { AssetBlacklistBytecode } from '@melonproject/melonjs/abis/AssetBlacklist.bin';
 import { useAccount } from '~/hooks/useAccount';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { BlockActions } from '~/storybook/components/Block/Block';
-import { Checkboxes } from '~/storybook/components/Checkbox/Checkbox';
-import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { BlockActions } from '~/storybook/Block/Block';
+import { Checkboxes } from '~/storybook/Checkbox/Checkbox';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 import { FundPolicy, AssetBlacklistPolicy } from '../../FundPolicies/FundPolicies.query';
 import { TransactionReceipt } from 'web3-core';
 

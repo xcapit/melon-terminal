@@ -10,15 +10,15 @@ import {
   BodyRow,
   HeaderCellRightAlign,
   BodyCellRightAlign,
-} from '~/storybook/components/Table/Table';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
-import { Block } from '~/storybook/components/Block/Block';
-import { SectionTitle } from '~/storybook/components/Title/Title';
+} from '~/storybook/Table/Table';
+import { Spinner } from '~/storybook/Spinner/Spinner';
+import { Block } from '~/storybook/Block/Block';
+import { SectionTitle } from '~/storybook/Title/Title';
 import { useFundPerformanceQuery } from './FundPerformance.query';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import styled from 'styled-components';
-import { Dropdown } from '~/storybook/components/Dropdown/Dropdown';
-import { Button } from '~/storybook/components/Button/Button.styles';
+import { Dropdown } from '~/storybook/Dropdown/Dropdown';
+import { Button } from '~/storybook/Button/Button.styles';
 
 export interface FundPerformanceTableProps {
   address: string;

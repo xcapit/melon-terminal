@@ -10,8 +10,8 @@ import {
 } from '~/components/Contexts/Connection/Connection';
 import { map, retryWhen, delay, take, share } from 'rxjs/operators';
 import { networkFromId } from '~/utils/networkFromId';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { Button } from '~/storybook/components/Button/Button';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { Button } from '~/storybook/Button/Button';
 import { NetworkEnum } from '~/types';
 import { getConfig } from '~/config';
 

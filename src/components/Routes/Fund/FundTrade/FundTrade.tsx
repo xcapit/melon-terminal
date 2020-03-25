@@ -1,7 +1,7 @@
 import React from 'react';
 import { ExchangeIdentifier } from '@melonproject/melonjs';
 import { RequiresFundManager } from '~/components/Gates/RequiresFundManager/RequiresFundManager';
-import { Grid, GridRow, GridCol } from '~/storybook/components/Grid/Grid';
+import { Grid, GridRow, GridCol } from '~/storybook/Grid/Grid';
 import { FundHoldings } from '~/components/Routes/Fund/FundTrade/FundHoldings/FundHoldings';
 import { RequiresFundNotShutDown } from '~/components/Gates/RequiresFundNotShutDown/RequiresFundNotShutDown';
 import { RequiresFundDeployedWithCurrentVersion } from '~/components/Gates/RequiresFundDeployedWithCurrentVersion/RequiresFundDeployedWithCurrentVersion';

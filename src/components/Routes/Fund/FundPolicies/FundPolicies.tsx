@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 import {
   useFundPoliciesQuery,
   MaxConcentrationPolicy,
@@ -10,15 +10,7 @@ import {
   AssetBlacklistPolicy,
 } from '~/components/Routes/Fund/FundPolicies/FundPolicies.query';
 import { useEnvironment } from '~/hooks/useEnvironment';
-import {
-  ScrollableTable,
-  Table,
-  HeaderCell,
-  HeaderRow,
-  BodyCell,
-  BodyRow,
-  NoEntries,
-} from '~/storybook/components/Table/Table';
+import { ScrollableTable, Table, HeaderCell, HeaderRow, BodyCell, BodyRow, NoEntries } from '~/storybook/Table/Table';
 import { MaxConcentration } from './MaxConcentration/MaxConcentration';
 import { CustomPolicy } from './CustomPolicy/CustomPolicy';
 import { MaxPositions } from './MaxPositions/MaxPositions';
@@ -27,8 +19,8 @@ import { AssetWhitelist } from './AssetWhitelist/AssetWhitelist';
 import { AssetBlacklist } from './AssetBlacklist/AssetBlacklist';
 import { UserWhitelist } from './UserWhitelist/UserWhitelist';
 import { DeployedEnvironment } from '@melonproject/melonjs';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { Block } from '~/storybook/components/Block/Block';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { Block } from '~/storybook/Block/Block';
 
 export interface FundPoliciesParametersProps {
   policy: FundPolicy;

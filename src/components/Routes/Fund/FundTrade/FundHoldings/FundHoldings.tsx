@@ -1,9 +1,9 @@
 import React from 'react';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 import { useFundHoldingsQuery } from './FundHoldings.query';
 import * as S from './FundHoldings.styles';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { Block } from '~/storybook/components/Block/Block';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { Block } from '~/storybook/Block/Block';
 import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 
 export interface FundHoldingsProps {

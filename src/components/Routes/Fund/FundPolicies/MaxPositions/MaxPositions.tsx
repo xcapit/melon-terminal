@@ -1,6 +1,6 @@
 import React from 'react';
 import { MaxPositionsPolicy } from './FundPolicies.query';
-import { BodyCell } from '~/storybook/components/Table/Table';
+import { BodyCell } from '~/storybook/Table/Table';
 
 interface MaxPositionsProps {
   policy: MaxPositionsPolicy;

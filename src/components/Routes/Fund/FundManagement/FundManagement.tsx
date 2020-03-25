@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, GridRow, GridCol } from '~/storybook/components/Grid/Grid';
+import { Grid, GridRow, GridCol } from '~/storybook/Grid/Grid';
 import FundClaimFees from './FundClaimFees/FundClaimFees';
 import FundShutdown from './FundShutdown/FundShutdown';
 import FundReturnBatchToVault from './FundReturnBatchToVault/FundReturnBatchToVault';

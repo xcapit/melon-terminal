@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 import { useFundInvestmentHistory } from '~/components/Routes/Fund/FundInvestRedeem/FundInvestmentHistoryList/FundTradingInvestmentsHistory.query';
 import {
   ScrollableTable,
@@ -11,9 +11,9 @@ import {
   BodyCellRightAlign,
   BodyRow,
   NoEntries,
-} from '~/storybook/components/Table/Table';
-import { Block } from '~/storybook/components/Block/Block';
-import { SectionTitle } from '~/storybook/components/Title/Title';
+} from '~/storybook/Table/Table';
+import { Block } from '~/storybook/Block/Block';
+import { SectionTitle } from '~/storybook/Title/Title';
 import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';

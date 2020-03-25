@@ -16,12 +16,12 @@ import { TransactionModal } from '~/components/Common/TransactionModal/Transacti
 import { toTokenBaseUnit } from '~/utils/toTokenBaseUnit';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 import { Holding, Token, Policy, MaxConcentration, PriceTolerance } from '@melonproject/melongql';
-import { Subtitle } from '~/storybook/components/Title/Title';
-import { Button } from '~/storybook/components/Button/Button';
+import { Subtitle } from '~/storybook/Title/Title';
+import { Button } from '~/storybook/Button/Button';
 import { catchError, map, expand, switchMapTo } from 'rxjs/operators';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
-import { InputError } from '~/storybook/components/Input/Input.styles';
+import { InputError } from '~/storybook/Input/Input.styles';
 import { validatePolicies } from '../FundLiquidityProviderTrading/validatePolicies';
 
 export interface FundKyberTradingProps {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { RequiresFundManager } from '~/components/Gates/RequiresFundManager/RequiresFundManager';
 import { RequiresFundNotShutDown } from '~/components/Gates/RequiresFundNotShutDown/RequiresFundNotShutDown';
-import { TabBar, TabBarContent, TabBarSection, TabLink } from '~/storybook/components/TabNavigation/TabNavigation';
+import { TabBar, TabBarContent, TabBarSection, TabLink } from '~/storybook/TabNavigation/TabNavigation';
 import { RequiresFundDeployedWithCurrentVersion } from '~/components/Gates/RequiresFundDeployedWithCurrentVersion/RequiresFundDeployedWithCurrentVersion';
 
 export interface FundNavigationProps {

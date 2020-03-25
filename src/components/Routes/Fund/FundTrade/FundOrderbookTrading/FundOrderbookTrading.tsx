@@ -4,10 +4,10 @@ import { Holding, Policy, Token } from '@melonproject/melongql';
 import { FundOrderbook } from '../FundOrderbook/FundOrderbook';
 import { OrderbookItem } from '../FundOrderbook/utils/aggregatedOrderbook';
 import { useEnvironment } from '~/hooks/useEnvironment';
-import { Dropdown } from '~/storybook/components/Dropdown/Dropdown';
+import { Dropdown } from '~/storybook/Dropdown/Dropdown';
 import { FundOrderbookMarketForm } from '../FundOrderbookMarketForm/FundOrderbookMarketForm';
-import { Block } from '~/storybook/components/Block/Block';
-import { SectionTitle } from '~/storybook/components/Title/Title';
+import { Block } from '~/storybook/Block/Block';
+import { SectionTitle } from '~/storybook/Title/Title';
 import * as S from './FundOrderbookTrading.styles';
 
 export interface FundOrderbookTradingProps {

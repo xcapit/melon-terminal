@@ -1,8 +1,8 @@
 import React from 'react';
 import WalletWrapEther from './WalletWrapEther/WalletWrapEther';
 import WalletUnwrapEther from './WalletUnwrapEther/WalletUnwrapEther';
-import { Grid, GridRow, GridCol } from '~/storybook/components/Grid/Grid';
-import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
+import { Grid, GridRow, GridCol } from '~/storybook/Grid/Grid';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 
 const WalletWeth: React.FC = () => {
   return (

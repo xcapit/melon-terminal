@@ -16,13 +16,13 @@ import { AllowedInvestmentAsset, Account, Holding, Policy, MaxPositions, Token }
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 import { useAccountAllowanceQuery } from '~/components/Routes/Fund/FundInvestRedeem/RequestInvestment/AccountAllowance.query';
 import { toTokenBaseUnit } from '~/utils/toTokenBaseUnit';
-import { Input } from '~/storybook/components/Input/Input';
-import { BlockActions } from '~/storybook/components/Block/Block';
-import { Button } from '~/storybook/components/Button/Button';
-import { Dropdown } from '~/storybook/components/Dropdown/Dropdown';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
-import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
-import { Link } from '~/storybook/components/Link/Link';
+import { Input } from '~/storybook/Input/Input';
+import { BlockActions } from '~/storybook/Block/Block';
+import { Button } from '~/storybook/Button/Button';
+import { Dropdown } from '~/storybook/Dropdown/Dropdown';
+import { Spinner } from '~/storybook/Spinner/Spinner';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
+import { Link } from '~/storybook/Link/Link';
 import BigNumber from 'bignumber.js';
 import { TransactionRef } from '../FundInvest/FundInvest';
 import { AccountContextValue } from '~/components/Contexts/Account/Account';
@@ -37,7 +37,7 @@ import {
   CheckboxMask,
   CheckboxIcon,
   CheckboxLabel,
-} from '~/storybook/components/Checkbox/Checkbox';
+} from '~/storybook/Checkbox/Checkbox';
 import { getNetworkName } from '~/config';
 
 export interface RequestInvestmentProps {

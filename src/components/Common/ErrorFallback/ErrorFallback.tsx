@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { FallbackProps } from 'react-error-boundary';
-import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
-import { Container } from '~/storybook/components/Container/Container';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
+import { Container } from '~/storybook/Container/Container';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 
 export const ErrorFallback: React.FC<FallbackProps> = ({ error }) => {
   useEffect(() => {

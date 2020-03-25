@@ -1,15 +1,15 @@
 import React from 'react';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { useTransaction } from '~/hooks/useTransaction';
-import { Button } from '~/storybook/components/Button/Button';
+import { Button } from '~/storybook/Button/Button';
 import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
 import { Hub, Trading } from '@melonproject/melonjs';
 import { useAccount } from '~/hooks/useAccount';
-import { Block, BlockActions } from '~/storybook/components/Block/Block';
-import { SectionTitle } from '~/storybook/components/Title/Title';
+import { Block, BlockActions } from '~/storybook/Block/Block';
+import { SectionTitle } from '~/storybook/Title/Title';
 import { useFundReturnBatchToVaultQuery } from './FundReturnBatchToVaultQuery.query';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
-import { GridCol } from '~/storybook/components/Grid/Grid';
+import { GridCol } from '~/storybook/Grid/Grid';
 
 export interface ReturnBatchToVaultProps {
   address: string;

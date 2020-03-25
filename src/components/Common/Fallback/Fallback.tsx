@@ -1,5 +1,5 @@
 import React from 'react';
-import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 
 export interface FallbackProps {
   kind?: 'neutral' | 'warning' | 'error' | 'success';

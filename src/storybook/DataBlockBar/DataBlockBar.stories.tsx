@@ -1,5 +1,5 @@
 import React from 'react';
-import { DataBlockBar, DataBlockBarContent } from '../DataBlockBar/DataBlockBar';
+import { DataBlockBar, DataBlockBarContent } from './DataBlockBar';
 import { DataBlock } from '../DataBlock/DataBlock';
 
 export default { title: 'Layouts|DataBlockBar' };

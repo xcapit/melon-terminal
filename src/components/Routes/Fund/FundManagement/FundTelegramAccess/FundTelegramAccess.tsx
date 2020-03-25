@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { Block } from '~/storybook/components/Block/Block';
-import { SectionTitle } from '~/storybook/components/Title/Title';
+import { Block } from '~/storybook/Block/Block';
+import { SectionTitle } from '~/storybook/Title/Title';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { useAccount } from '~/hooks/useAccount';
 import { useTelegramStatus } from '~/hooks/useTelegramStatus';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 import { useConnectionState } from '~/hooks/useConnectionState';
 import { TelegramLogin } from '~/components/Common/TelegramLogin/TelegramLogin';
 import { useIsMounted } from '~/hooks/useIsMounted';
-import { LinkButton } from '~/storybook/components/Button/Button.styles';
-import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
+import { LinkButton } from '~/storybook/Button/Button.styles';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 
 export const FundTelegramAccess: React.FC = () => {
   const mounted = useIsMounted();
@@ -82,8 +82,8 @@ export const FundTelegramAccess: React.FC = () => {
       {status?.state === 'idle' && status.data?.authenticated ? (
         <>
           <p>
-            You have sucessfully completed the account validation process. The Melon Bot should've introduced itself to you on
-            Telegram.
+            You have sucessfully completed the account validation process. The Melon Bot should've introduced itself to
+            you on Telegram.
           </p>
 
           {!!status?.data?.bot && (

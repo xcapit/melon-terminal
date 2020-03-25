@@ -6,12 +6,12 @@ import { useEnvironment } from '~/hooks/useEnvironment';
 import { useAccount } from '~/hooks/useAccount';
 import { useTransaction } from '~/hooks/useTransaction';
 import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
-import { Button } from '~/storybook/components/Button/Button';
+import { Button } from '~/storybook/Button/Button';
 import { catchError, switchMap } from 'rxjs/operators';
 import { SignedOrder, assetDataUtils } from '@0x/order-utils-v2';
-import { Subtitle } from '~/storybook/components/Title/Title';
+import { Subtitle } from '~/storybook/Title/Title';
 import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
-import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 import { toTokenBaseUnit } from '~/utils/toTokenBaseUnit';
 

@@ -4,7 +4,7 @@ import { useAccount } from '~/hooks/useAccount';
 import { Participation } from '@melonproject/melonjs';
 import { Account } from '@melonproject/melongql';
 import { TransactionHookValues, TransactionFormValues } from '~/hooks/useTransaction';
-import { Button } from '~/storybook/components/Button/Button';
+import { Button } from '~/storybook/Button/Button';
 
 export interface CancelRequestProps {
   address: string;

@@ -1,9 +1,9 @@
 import React from 'react';
 import { useLocation } from 'react-router';
 import { usePriceFeedUpdateQuery } from '~/components/Layout/PriceFeedUpdate.query';
-import { Link, NavLink } from '~/storybook/components/Link/Link';
+import { Link, NavLink } from '~/storybook/Link/Link';
 import { useAccount } from '~/hooks/useAccount';
-import { Skeleton, SkeletonHead, SkeletonBody, SkeletonFeet } from '~/storybook/components/Skeleton/Skeleton';
+import { Skeleton, SkeletonHead, SkeletonBody, SkeletonFeet } from '~/storybook/Skeleton/Skeleton';
 import {
   Header as HeaderContainer,
   HeaderContent,
@@ -13,16 +13,16 @@ import {
   HeaderTitle,
   LogoDesktop,
   LogoMobile,
-} from '~/storybook/components/Header/Header';
-import { Footer, FooterNavigation, FooterItem } from '~/storybook/components/Footer/Footer';
-import { Logo } from '~/storybook/components/Logo/Logo';
+} from '~/storybook/Header/Header';
+import { Footer, FooterNavigation, FooterItem } from '~/storybook/Footer/Footer';
+import { Logo } from '~/storybook/Logo/Logo';
 import { ConnectionSelector } from './ConnectionSelector/ConnectionSelector';
 import { useEnvironment } from '~/hooks/useEnvironment';
-import { Icons } from '~/storybook/components/Icons/Icons';
+import { Icons } from '~/storybook/Icons/Icons';
 import { NetworkEnum } from '~/types';
 import { useVersionQuery } from '~/components/Layout/Version.query';
 import * as S from './Layout.styles';
-import { DarkModeSwitch } from '~/storybook/components/DarkModeSwitch/DarkModeSwitch';
+import { DarkModeSwitch } from '~/storybook/DarkModeSwitch/DarkModeSwitch';
 import { FormattedDate } from '../Common/FormattedDate/FormattedDate';
 import { useConnectionState } from '~/hooks/useConnectionState';
 import { getNetworkName } from '~/config';

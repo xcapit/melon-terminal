@@ -4,7 +4,7 @@ import { TransactionHookValues, TransactionFormValues } from '~/hooks/useTransac
 import { Participation, Transaction } from '@melonproject/melonjs';
 import { Account } from '@melonproject/melongql';
 import { useAccount } from '~/hooks/useAccount';
-import { Button } from '~/storybook/components/Button/Button';
+import { Button } from '~/storybook/Button/Button';
 import { BigNumber } from 'bignumber.js';
 import { TransactionRef } from '~/components/Routes/Fund/FundInvestRedeem/FundInvest/FundInvest';
 

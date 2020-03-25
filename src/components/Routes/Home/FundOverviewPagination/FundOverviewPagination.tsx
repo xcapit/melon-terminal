@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Pagination } from '~/storybook/components/Pagination/Pagination';
+import { Pagination } from '~/storybook/Pagination/Pagination';
 
 export interface FundOverviewPaginationProps {
   offset: number;

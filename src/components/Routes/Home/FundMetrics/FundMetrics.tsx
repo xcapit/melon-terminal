@@ -1,17 +1,12 @@
 import React from 'react';
 import { useFundMetricsQuery } from '~/components/Routes/Home/FundMetrics/FundMetrics.query';
 import { useCoinAPI } from '~/hooks/useCoinAPI';
-import {
-  Dictionary,
-  DictionaryEntry,
-  DictionaryLabel,
-  DictionaryData,
-} from '~/storybook/components/Dictionary/Dictionary';
-import { SectionTitle } from '~/storybook/components/Title/Title';
+import { Dictionary, DictionaryEntry, DictionaryLabel, DictionaryData } from '~/storybook/Dictionary/Dictionary';
+import { SectionTitle } from '~/storybook/Title/Title';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
-import { Grid, GridCol, GridRow } from '~/storybook/components/Grid/Grid';
+import { Spinner } from '~/storybook/Spinner/Spinner';
+import { Grid, GridCol, GridRow } from '~/storybook/Grid/Grid';
 
 export const FundMetrics: React.FC = () => {
   const [metrics, metricsQuery] = useFundMetricsQuery();

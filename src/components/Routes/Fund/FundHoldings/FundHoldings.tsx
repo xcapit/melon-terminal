@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 import { useFundHoldingsQuery } from './FundHoldings.query';
 import * as S from './FundHoldings.styles';
 import BigNumber from 'bignumber.js';
@@ -12,12 +12,12 @@ import {
   BodyCellRightAlign,
   BodyRow,
   HeaderRow,
-} from '~/storybook/components/Table/Table';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { Block } from '~/storybook/components/Block/Block';
+} from '~/storybook/Table/Table';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { Block } from '~/storybook/Block/Block';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
-import { Icons, IconName } from '~/storybook/components/Icons/Icons';
+import { Icons, IconName } from '~/storybook/Icons/Icons';
 import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 
 export interface FundHoldingsProps {

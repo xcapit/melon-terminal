@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // @ts-ignore
 import { CopyToClipboard as Copy } from 'react-copy-to-clipboard';
-import { Tooltip } from '~/storybook/components/Tooltip/Tooltip';
+import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 import * as S from './CopyToClipboard.styled';
 
 interface CopyToClipboardProps {

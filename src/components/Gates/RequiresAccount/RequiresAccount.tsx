@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAccount } from '~/hooks/useAccount';
 import { Fallback } from '~/components/Common/Fallback/Fallback';
-import { Container } from '~/storybook/components/Container/Container';
+import { Container } from '~/storybook/Container/Container';
 
 export interface RequiresAccountProps {
   loader?: React.ReactElement;

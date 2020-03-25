@@ -1,14 +1,14 @@
 import React from 'react';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 import { useFundParticipationOverviewQuery } from '~/components/Routes/Wallet/WalletOverview/FundParticipationOverview.query';
 import { WalletOverviewInvestmentRequest } from './WalletOverviewInvestmentRequest/WalletOverviewInvestmentRequest';
 import { WalletOverviewManagedFund } from './WalletOverviewManagedFund/WalletOverviewManagedFund';
 import { WalletOverviewInvestedFund } from './WalletOverviewInvestedFund/WalletOverviewInvestedFund';
 import { WalletOverviewAccountBalance } from './WalletOverviewAccountBalance/WalletOverviewAccountBalance';
 import { useAccount } from '~/hooks/useAccount';
-import { Block } from '~/storybook/components/Block/Block';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { GridRow, Grid, GridCol } from '~/storybook/components/Grid/Grid';
+import { Block } from '~/storybook/Block/Block';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { GridRow, Grid, GridCol } from '~/storybook/Grid/Grid';
 import {
   ScrollableTable,
   BodyRow,
@@ -17,7 +17,7 @@ import {
   Table,
   HeaderRow,
   HeaderCellRightAlign,
-} from '~/storybook/components/Table/Table';
+} from '~/storybook/Table/Table';
 import { useVersionQuery } from '~/components/Layout/Version.query';
 
 const fundHeadings = [

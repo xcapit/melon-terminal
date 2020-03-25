@@ -1,14 +1,9 @@
 import React, { Fragment } from 'react';
 import { sameAddress } from '@melonproject/melonjs';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 import { useFundDetailsQuery } from '../FundDetails.query';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import {
-  Dictionary,
-  DictionaryEntry,
-  DictionaryData,
-  DictionaryLabel,
-} from '~/storybook/components/Dictionary/Dictionary';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { Dictionary, DictionaryEntry, DictionaryData, DictionaryLabel } from '~/storybook/Dictionary/Dictionary';
 import { EtherscanLink } from '~/components/Common/EtherscanLink/EtherscanLink';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';

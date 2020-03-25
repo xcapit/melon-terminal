@@ -5,16 +5,16 @@ import { useForm, FormContext } from 'react-hook-form';
 import { Holding, Policy, AssetWhitelist, AssetBlacklist, MaxPositions, Token } from '@melonproject/melongql';
 import { ExchangeDefinition, ExchangeIdentifier, sameAddress } from '@melonproject/melonjs';
 import { useEnvironment } from '~/hooks/useEnvironment';
-import { Dropdown } from '~/storybook/components/Dropdown/Dropdown';
-import { Input } from '~/storybook/components/Input/Input';
+import { Dropdown } from '~/storybook/Dropdown/Dropdown';
+import { Input } from '~/storybook/Input/Input';
 import { FundMelonEngineTrading } from '../FundMelonEngineTrading/FundMelonEngineTrading';
 import { FundKyberTrading } from '../FundKyberTrading/FundKyberTrading';
 import { FundUniswapTrading } from '../FundUniswapTrading/FundUniswapTrading';
-import { Block } from '~/storybook/components/Block/Block';
-import { Grid, GridRow, GridCol } from '~/storybook/components/Grid/Grid';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
-import { Link } from '~/storybook/components/Link/Link';
+import { Block } from '~/storybook/Block/Block';
+import { Grid, GridRow, GridCol } from '~/storybook/Grid/Grid';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
+import { Link } from '~/storybook/Link/Link';
 
 export interface FundLiquidityProviderTradingProps {
   trading: string;

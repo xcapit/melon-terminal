@@ -2,7 +2,7 @@ import React, { createContext } from 'react';
 import { useSpring } from 'react-spring';
 
 import { ProgressBarStepProps } from './ProgressBarStep/ProgressBarStep';
-import * as S from '~/storybook/components/ProgressBar/ProgressBar';
+import * as S from '~/storybook/ProgressBar/ProgressBar';
 
 export interface ProgressBarProps {
   step: number;

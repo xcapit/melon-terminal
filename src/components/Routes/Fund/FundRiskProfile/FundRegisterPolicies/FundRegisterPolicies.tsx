@@ -22,16 +22,16 @@ import { UserWhitelistConfiguration } from '../UserWhitelistConfiguration/UserWh
 import { AssetWhitelistConfiguration } from '../AssetWhitelistConfiguration/AssetWhitelistConfiguration';
 import { AssetBlacklistConfiguration } from '../AssetBlacklistConfiguration/AssetBlacklistConfiguration';
 import { useAccount } from '~/hooks/useAccount';
-import { Block } from '~/storybook/components/Block/Block';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { Block } from '~/storybook/Block/Block';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 import {
   RadioButtonContainer,
   RadioButtonInput,
   RadioButtonMask,
   RadioButtonIcon,
   RadioButtonLabel,
-} from '~/storybook/components/RadioButton/RadioButton';
+} from '~/storybook/RadioButton/RadioButton';
 import { FundPolicyTransactionDescriptions } from './FundPolicyTransactionDescriptions';
 import { TransactionReceipt } from 'web3-core';
 

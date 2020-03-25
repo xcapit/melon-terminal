@@ -1,10 +1,10 @@
 import React from 'react';
 import { Participation } from '@melonproject/melonjs';
 import { InvestmentRequest } from '~/components/Routes/Wallet/WalletOverview/FundParticipationOverview.query';
-import { BodyCell, BodyRow, BodyCellRightAlign } from '~/storybook/components/Table/Table';
+import { BodyCell, BodyRow, BodyCellRightAlign } from '~/storybook/Table/Table';
 import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
 import { useInvestmentRequestStatusQuery } from '~/components/Routes/Wallet/WalletOverview/WalletOverviewInvestmentRequest/InvestmentRequestStatus.query';
-import { Button } from '~/storybook/components/Button/Button.styles';
+import { Button } from '~/storybook/Button/Button.styles';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { useAccount } from '~/hooks/useAccount';
 import { useTransaction } from '~/hooks/useTransaction';

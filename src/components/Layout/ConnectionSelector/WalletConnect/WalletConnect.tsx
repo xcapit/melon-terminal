@@ -11,8 +11,8 @@ import {
   ConnectionMethodProps,
   ConnectionMethod,
 } from '~/components/Contexts/Connection/Connection';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { Button } from '~/storybook/components/Button/Button.styles';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { Button } from '~/storybook/Button/Button.styles';
 import { networkFromId } from '~/utils/networkFromId';
 
 interface Resource extends Rx.Unsubscribable {

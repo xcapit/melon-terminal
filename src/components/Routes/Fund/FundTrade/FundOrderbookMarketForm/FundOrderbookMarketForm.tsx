@@ -15,16 +15,16 @@ import {
   sameAddress,
   IPriceSource,
 } from '@melonproject/melonjs';
-import { Dropdown } from '~/storybook/components/Dropdown/Dropdown';
-import { Button } from '~/storybook/components/Button/Button';
-import { Input } from '~/storybook/components/Input/Input';
+import { Dropdown } from '~/storybook/Dropdown/Dropdown';
+import { Button } from '~/storybook/Button/Button';
+import { Input } from '~/storybook/Input/Input';
 import { OrderbookItem } from '../FundOrderbook/utils/aggregatedOrderbook';
 import { useAccount } from '~/hooks/useAccount';
 import { OasisDexOrderbookItem } from '../FundOrderbook/utils/matchingMarketOrderbook';
 import { useForm, FormContext } from 'react-hook-form';
-import { BlockActions } from '~/storybook/components/Block/Block';
+import { BlockActions } from '~/storybook/Block/Block';
 import { toTokenBaseUnit } from '~/utils/toTokenBaseUnit';
-import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 import {
   Holding,
   Policy,

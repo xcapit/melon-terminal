@@ -1,9 +1,9 @@
 import React from 'react';
-import { Bar, BarContent } from '~/storybook/components/Bar/Bar';
-import { Headline } from '~/storybook/components/Headline/Headline';
+import { Bar, BarContent } from '~/storybook/Bar/Bar';
+import { Headline } from '~/storybook/Headline/Headline';
 import { useAccount } from '~/hooks/useAccount';
 import { EtherscanLink } from '~/components/Common/EtherscanLink/EtherscanLink';
-import { DataBlockSection, DataBlock } from '~/storybook/components/DataBlock/DataBlock';
+import { DataBlockSection, DataBlock } from '~/storybook/DataBlock/DataBlock';
 import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 
 export const WalletHeader: React.FC = () => {

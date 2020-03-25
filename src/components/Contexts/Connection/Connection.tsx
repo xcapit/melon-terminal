@@ -5,7 +5,7 @@ import { getConfig } from '~/config';
 import { Address, DeploymentOutput, DeployedEnvironment, sameAddress } from '@melonproject/melonjs';
 import { NetworkEnum } from '~/types';
 import { Eth } from 'web3-eth';
-import { IconName } from '~/storybook/components/Icons/Icons';
+import { IconName } from '~/storybook/Icons/Icons';
 import { map } from 'rxjs/operators';
 
 export enum ConnectionStatus {

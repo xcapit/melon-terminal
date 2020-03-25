@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import BigNumber from 'bignumber.js';
 import { ExchangeDefinition, MelonEngineTradingAdapter, TokenDefinition, Trading } from '@melonproject/melonjs';
 import { useEnvironment } from '~/hooks/useEnvironment';
-import { Button } from '~/storybook/components/Button/Button';
+import { Button } from '~/storybook/Button/Button';
 import { useTransaction } from '~/hooks/useTransaction';
 import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
 import { useMelonEngineTradingQuery } from './FundMelonEngineTrading.query';
 import { Holding, Token, Policy, MaxConcentration, PriceTolerance } from '@melonproject/melongql';
 import { toTokenBaseUnit } from '~/utils/toTokenBaseUnit';
 import { useAccount } from '~/hooks/useAccount';
-import { Subtitle } from '~/storybook/components/Title/Title';
+import { Subtitle } from '~/storybook/Title/Title';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
-import { InputError } from '~/storybook/components/Input/Input.styles';
+import { InputError } from '~/storybook/Input/Input.styles';
 import { validatePolicies } from '../FundLiquidityProviderTrading/validatePolicies';
 
 export interface FundMelonEngineTradingProps {

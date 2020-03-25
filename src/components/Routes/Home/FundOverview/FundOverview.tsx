@@ -1,16 +1,16 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 import { FundOverviewPagination } from '~/components/Routes/Home/FundOverviewPagination/FundOverviewPagination';
 import { useFundOverviewQuery, FundProcessed } from '~/components/Routes/Home/FundOverview/FundOverview.query';
 import { usePagination } from '~/hooks/usePagination';
 import { useAccount } from '~/hooks/useAccount';
-import { Grid, GridRow, GridCol } from '~/storybook/components/Grid/Grid';
-import { Block } from '~/storybook/components/Block/Block';
-import { Input } from '~/storybook/components/Input/Input';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { Button } from '~/storybook/components/Button/Button';
+import { Grid, GridRow, GridCol } from '~/storybook/Grid/Grid';
+import { Block } from '~/storybook/Block/Block';
+import { Input } from '~/storybook/Input/Input';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { Button } from '~/storybook/Button/Button';
 import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import {
@@ -23,7 +23,7 @@ import {
   BodyRow,
   BodyCell,
   BodyRowHover,
-} from '~/storybook/components/Table/Table';
+} from '~/storybook/Table/Table';
 import {
   CheckboxMask,
   CheckboxLabel,
@@ -31,7 +31,7 @@ import {
   CheckboxPositioning,
   CheckboxInput,
   CheckboxIcon,
-} from '~/storybook/components/Checkbox/Checkbox';
+} from '~/storybook/Checkbox/Checkbox';
 import styled from 'styled-components';
 import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 import { getNetworkName } from '~/config';

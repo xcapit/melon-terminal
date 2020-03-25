@@ -1,7 +1,7 @@
 import React from 'react';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { Block } from '~/storybook/components/Block/Block';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { Block } from '~/storybook/Block/Block';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
 import { useAccountBalanceQuery } from '~/components/Routes/Wallet/WalletOverview/WalletOverviewAccountBalance/AccountBalances.query';
 import * as S from './WalletOverviewAccount.styles';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAccount } from '~/hooks/useAccount';
-import { TabBar, TabBarContent, TabBarSection, TabLink } from '~/storybook/components/TabNavigation/TabNavigation';
+import { TabBar, TabBarContent, TabBarSection, TabLink } from '~/storybook/TabNavigation/TabNavigation';
 
 export const WalletNavigation: React.FC = () => {
   const account = useAccount();

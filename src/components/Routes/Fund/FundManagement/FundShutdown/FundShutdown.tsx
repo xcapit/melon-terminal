@@ -1,12 +1,12 @@
 import React from 'react';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { useTransaction } from '~/hooks/useTransaction';
-import { Button } from '~/storybook/components/Button/Button';
+import { Button } from '~/storybook/Button/Button';
 import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
 import { Version, Trading } from '@melonproject/melonjs';
 import { useAccount } from '~/hooks/useAccount';
-import { Block, BlockActions } from '~/storybook/components/Block/Block';
-import { SectionTitle } from '~/storybook/components/Title/Title';
+import { Block, BlockActions } from '~/storybook/Block/Block';
+import { SectionTitle } from '~/storybook/Title/Title';
 import { useFundShutdownQuery } from '~/components/Routes/Fund/FundManagement/FundShutdown/FundShutdown.query';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
 

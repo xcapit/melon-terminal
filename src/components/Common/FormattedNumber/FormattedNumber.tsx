@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import BigNumber from 'bignumber.js';
-import { Tooltip } from '~/storybook/components/Tooltip/Tooltip';
+import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 import { numberWithCommas } from '~/utils/numberWithCommas';
 
 export interface FormattedNumberData {

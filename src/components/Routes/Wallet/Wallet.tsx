@@ -1,8 +1,8 @@
 import React, { Suspense } from 'react';
 import ErrorBoundary from 'react-error-boundary';
 import { Switch, Route, useRouteMatch } from 'react-router';
-import { Container } from '~/storybook/components/Container/Container';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { Container } from '~/storybook/Container/Container';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 import { ErrorFallback } from '~/components/Common/ErrorFallback/ErrorFallback';
 import { WalletHeader } from './WalletHeader/WalletHeader';
 import { WalletNavigation } from './WalletNavigation/WalletNavigation';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { useFundVersionQuery } from '~/components/Gates/RequiresFundDeployedWithCurrentVersion/FundVersion.query';
-import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 import { useVersionQuery } from '~/components/Layout/Version.query';
 
 export interface RequiresFundDeployedWithCurrentVersionProps {

@@ -10,8 +10,8 @@ import {
   ConnectionMethod,
   ConnectionMethodProps,
 } from '~/components/Contexts/Connection/Connection';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { Button } from '~/storybook/components/Button/Button';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { Button } from '~/storybook/Button/Button';
 import { getConfig } from '~/config';
 import { NetworkEnum } from '~/types';
 

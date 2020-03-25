@@ -5,11 +5,11 @@ import { useForm, FormContext } from 'react-hook-form';
 import { Holding, Policy, AssetWhitelist, AssetBlacklist, MaxPositions, Token } from '@melonproject/melongql';
 import { ExchangeDefinition, sameAddress, TokenDefinition } from '@melonproject/melonjs';
 import { useEnvironment } from '~/hooks/useEnvironment';
-import { Dropdown } from '~/storybook/components/Dropdown/Dropdown';
-import { Input } from '~/storybook/components/Input/Input';
-import { Block } from '~/storybook/components/Block/Block';
-import { Grid, GridRow, GridCol } from '~/storybook/components/Grid/Grid';
-import { SectionTitle } from '~/storybook/components/Title/Title';
+import { Dropdown } from '~/storybook/Dropdown/Dropdown';
+import { Input } from '~/storybook/Input/Input';
+import { Block } from '~/storybook/Block/Block';
+import { Grid, GridRow, GridCol } from '~/storybook/Grid/Grid';
+import { SectionTitle } from '~/storybook/Title/Title';
 import { FundRequestForQuoteOffer } from './FundRequestForQuoteOffer';
 
 export interface FundRequestForQuoteTradingProps {

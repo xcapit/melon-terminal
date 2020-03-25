@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 import { ShareFundQuery } from '~/components/Routes/Fund/ShareFund/ShareFund.query';
-import { Icons } from '~/storybook/components/Icons/Icons';
+import { Icons } from '~/storybook/Icons/Icons';
 import { useLazyOnChainQuery } from '~/hooks/useQuery';
 
 export interface ShareFundProps {

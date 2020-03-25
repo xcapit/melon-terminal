@@ -1,13 +1,8 @@
 import React, { Fragment } from 'react';
 import { useFundDetailsQuery } from '../FundDetails.query';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import {
-  Dictionary,
-  DictionaryEntry,
-  DictionaryLabel,
-  DictionaryData,
-} from '~/storybook/components/Dictionary/Dictionary';
+import { Spinner } from '~/storybook/Spinner/Spinner';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { Dictionary, DictionaryEntry, DictionaryLabel, DictionaryData } from '~/storybook/Dictionary/Dictionary';
 import { EtherscanLink } from '~/components/Common/EtherscanLink/EtherscanLink';
 
 export interface FundContractsProps {

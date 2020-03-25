@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { Container } from '~/storybook/components/Container/Container';
-import { Title } from '~/storybook/components/Title/Title';
+import { Container } from '~/storybook/Container/Container';
+import { Title } from '~/storybook/Title/Title';
 
 export const Header = styled.div`
   position: relative;

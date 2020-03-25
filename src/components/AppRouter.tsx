@@ -4,7 +4,7 @@ import { Route, Switch, Redirect, useRouteMatch } from 'react-router-dom';
 import { OnChainApollo, TheGraphApollo } from './Contexts/Apollo/Apollo';
 import { RequiresAccount } from './Gates/RequiresAccount/RequiresAccount';
 import { RequiresConnection } from './Gates/RequiresConnection/RequiresConnection';
-import { Spinner } from '../storybook/components/Spinner/Spinner';
+import { Spinner } from '../storybook/Spinner/Spinner';
 import { ErrorFallback } from './Common/ErrorFallback/ErrorFallback';
 import { Layout } from './Layout/Layout';
 

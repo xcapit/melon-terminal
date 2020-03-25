@@ -1,6 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
-import { Logo as BaseLogo } from '~/storybook/components/Logo/Logo';
-import { SpinnerProps } from '~/storybook/components/Spinner/Spinner';
+import { Logo as BaseLogo } from '~/storybook/Logo/Logo';
+import { SpinnerProps } from '~/storybook/Spinner/Spinner';
 
 const rotate = keyframes`
   from {

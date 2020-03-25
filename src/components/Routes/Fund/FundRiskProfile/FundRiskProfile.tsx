@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, GridRow, GridCol } from '~/storybook/components/Grid/Grid';
+import { Grid, GridRow, GridCol } from '~/storybook/Grid/Grid';
 import { FundRegisterPolicies } from './FundRegisterPolicies/FundRegisterPolicies';
 import { FundPolicies } from '../FundPolicies/FundPolicies';
 import { RequiresFundDeployedWithCurrentVersion } from '~/components/Gates/RequiresFundDeployedWithCurrentVersion/RequiresFundDeployedWithCurrentVersion';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '~/storybook/components/Icons/Icons';
+import { Icons } from '~/storybook/Icons/Icons';
 
 export interface TwitterLinkProps {
   text: string;

@@ -5,11 +5,11 @@ import { useEnvironment } from '~/hooks/useEnvironment';
 import { PriceTolerance, Deployment, PolicyDefinition } from '@melonproject/melonjs';
 import { PriceToleranceBytecode } from '@melonproject/melonjs/abis/PriceTolerance.bin';
 import { useAccount } from '~/hooks/useAccount';
-import { Input } from '~/storybook/components/Input/Input';
-import { Button } from '~/storybook/components/Button/Button';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { BlockActions } from '~/storybook/components/Block/Block';
-import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
+import { Input } from '~/storybook/Input/Input';
+import { Button } from '~/storybook/Button/Button';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { BlockActions } from '~/storybook/Block/Block';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 
 interface PriceToleranceConfigurationForm {
   priceTolerance: number;

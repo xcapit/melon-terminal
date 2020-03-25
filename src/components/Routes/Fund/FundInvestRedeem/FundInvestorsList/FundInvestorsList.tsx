@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spinner } from '~/storybook/components/Spinner/Spinner';
+import { Spinner } from '~/storybook/Spinner/Spinner';
 import { useFundInvestments } from '~/components/Routes/Fund/FundInvestRedeem/FundInvestorsList/FundInvestments.query';
 import {
   ScrollableTable,
@@ -11,9 +11,9 @@ import {
   BodyCellRightAlign,
   BodyRow,
   NoEntries,
-} from '~/storybook/components/Table/Table';
-import { Block } from '~/storybook/components/Block/Block';
-import { SectionTitle } from '~/storybook/components/Title/Title';
+} from '~/storybook/Table/Table';
+import { Block } from '~/storybook/Block/Block';
+import { SectionTitle } from '~/storybook/Title/Title';
 import { EtherscanLink } from '~/components/Common/EtherscanLink/EtherscanLink';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 import { TokenValue } from '~/components/Common/TokenValue/TokenValue';

@@ -6,11 +6,11 @@ import { MaxConcentration, Deployment, PolicyDefinition } from '@melonproject/me
 import { MaxConcentrationBytecode } from '@melonproject/melonjs/abis/MaxConcentration.bin';
 import { BigNumber } from 'bignumber.js';
 import { useAccount } from '~/hooks/useAccount';
-import { Input } from '~/storybook/components/Input/Input';
-import { Button } from '~/storybook/components/Button/Button';
-import { SectionTitle } from '~/storybook/components/Title/Title';
-import { BlockActions } from '~/storybook/components/Block/Block';
-import { NotificationBar, NotificationContent } from '~/storybook/components/NotificationBar/NotificationBar';
+import { Input } from '~/storybook/Input/Input';
+import { Button } from '~/storybook/Button/Button';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { BlockActions } from '~/storybook/Block/Block';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 
 interface MaxConcentrationConfigurationForm {
   maxConcentration: number;

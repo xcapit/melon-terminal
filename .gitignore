@@ -22,6 +22,7 @@ build/
 !.env.defaults
 !.env.schema
 !.env.example
+!.storybook
 
 # Ignore SVGR
 svgr/

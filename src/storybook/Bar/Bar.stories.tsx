@@ -1,8 +1,8 @@
 import React from 'react';
-import { withKnobs, select } from '@storybook/addon-knobs';
+import { select } from '@storybook/addon-knobs';
 import { Bar, BarContent } from './Bar';
 
-export default { title: 'Atoms|Bar' };
+export default { title: 'Bar|Bar' };
 
 export const Default: React.FC = () => {
   return (
@@ -11,7 +11,7 @@ export const Default: React.FC = () => {
         justify={select(
           'Justify',
           {
-            Default: undefined,
+            undefined: undefined,
             Between: 'between',
             Around: 'around',
             End: 'end',

@@ -20,12 +20,6 @@
     "noEmit": true,
     "jsx": "react"
   },
-  "include": [
-    "src",
-    ".storybook/main.ts",
-    ".storybook/preview.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src", ".storybook"],
+  "exclude": ["node_modules"]
 }

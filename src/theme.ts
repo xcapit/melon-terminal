@@ -15,7 +15,7 @@ const logoColorsLightMode = [
 
 const logoColorsDarkMode = ['#ededed', '#ffa41b', '#9818d6', '#61d4b3', '#fdd365', '#fb8d62', '#fd2eb3'];
 
-export const globalTheme = {
+const theme = {
   spaceUnits: {
     xxxs: '2px',
     xxs: '4px',
@@ -108,7 +108,8 @@ export const globalTheme = {
   },
 };
 
-export const lightTheme = {
+export const light = {
+  mode: 'light' as 'light' | 'dark',
   mainColors: {
     primary: 'rgb(255, 255, 255)',
     primaryAlpha: 'rgba(255, 255, 255, 0.6)',
@@ -152,10 +153,11 @@ export const lightTheme = {
     hover: 'rgba(0, 0, 0, 0.2)',
   },
   logoColors: logoColorsLightMode,
-  ...globalTheme,
+  ...theme,
 };
 
-export const darkTheme = {
+export const dark = {
+  mode: 'dark' as 'light' | 'dark',
   mainColors: {
     primary: '#313131',
     primaryAlpha: '#3B4252',
@@ -199,7 +201,7 @@ export const darkTheme = {
     hover: 'rgba(0, 0, 0, 0.2)',
   },
   logoColors: logoColorsDarkMode,
-  ...globalTheme,
+  ...theme,
 };
 
 export const Global = createGlobalStyle`
@@ -232,22 +234,22 @@ export const Global = createGlobalStyle`
   }
 
   h1, h2, h3 {
-    margin-bottom: ${lightTheme.spaceUnits.m};
-    font-size: ${lightTheme.fontSizes.xxl};
+    margin-bottom: ${props => props.theme.spaceUnits.m};
+    font-size: ${props => props.theme.fontSizes.xxl};
     font-weight: bold;
     position: relative;
   }
 
 
   h2, h3 {
-    padding-bottom: ${lightTheme.spaceUnits.xs};
-    border-bottom : ${lightTheme.border.borderSecondary};
-    margin-bottom: ${lightTheme.spaceUnits.xs};
+    padding-bottom: ${props => props.theme.spaceUnits.xs};
+    border-bottom : ${props => props.theme.border.borderSecondary};
+    margin-bottom: ${props => props.theme.spaceUnits.xs};
   }
 
   h4 {
-    font-size: ${lightTheme.fontSizes.xl};
-    margin-bottom: ${lightTheme.spaceUnits.xs};
+    font-size: ${props => props.theme.fontSizes.xl};
+    margin-bottom: ${props => props.theme.spaceUnits.xs};
   }
 
   a {
@@ -256,7 +258,7 @@ export const Global = createGlobalStyle`
     text-decoration: underline;
     cursor: pointer;
     color: ${props => props.theme.mainColors.textColor};
-    transition: ${lightTheme.transition.defaultAll};
+    transition: ${props => props.theme.transition.defaultAll};
     :hover{
       opacity: 0.6;
     }
@@ -265,11 +267,13 @@ export const Global = createGlobalStyle`
   hr {
     border: 0;
     height: 0;
-    border-top: 1px solid ${lightTheme.mainColors.border};
-    margin: ${lightTheme.spaceUnits.s} 0;
+    border-top: 1px solid ${props => props.theme.mainColors.border};
+    margin: ${props => props.theme.spaceUnits.s} 0;
   }
 
   p {
-    margin-bottom: ${lightTheme.spaceUnits.m};
+    margin-bottom: ${props => props.theme.spaceUnits.m};
   }
 `;
+
+export type Theme = typeof light;

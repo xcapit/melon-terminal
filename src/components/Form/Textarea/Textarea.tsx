@@ -7,12 +7,12 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
   label?: string;
 }
 
-export const Textarea: React.FC<TextareaProps> = props => {
+export const Textarea: React.FC<TextareaProps> = ({ label, ...props }) => {
   const [field, meta] = useField({ type: 'textarea', ...props });
 
   return (
     <Wrapper>
-      {props.label && <Label>{props.label}</Label>}
+      {label && <Label>{label}</Label>}
       <TextareaInput cols={30} rows={5} error={!!meta.error} {...props} {...field} />
       {meta.error && <Error>{meta.error}</Error>}
     </Wrapper>

@@ -9,18 +9,22 @@ export type CheckboxItemProps<TValue = string | boolean> = React.InputHTMLAttrib
     label?: string;
   };
 
-export const CheckboxItem: React.FC<CheckboxItemProps> = props => (
-  <CheckboxContainer>
-    <CheckboxInput type="checkbox" id={props.id ?? props.name} {...props} />
+export const CheckboxItem: React.FC<CheckboxItemProps> = ({ label, error, ...rest }) => {
+  const id = rest.id ?? rest.name;
 
-    <CheckboxMask>
-      <CheckboxIcon />
-    </CheckboxMask>
+  return (
+    <CheckboxContainer>
+      <CheckboxInput type="checkbox" {...rest} id={id} />
 
-    {props.label && <CheckboxLabel htmlFor={props.id ?? props.name}>{props.label}</CheckboxLabel>}
-    {props.error && <Error>{props.error}</Error>}
-  </CheckboxContainer>
-);
+      <CheckboxMask>
+        <CheckboxIcon />
+      </CheckboxMask>
+
+      {label && <CheckboxLabel htmlFor={id}>{label}</CheckboxLabel>}
+      {error && <Error>{error}</Error>}
+    </CheckboxContainer>
+  );
+};
 
 export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;

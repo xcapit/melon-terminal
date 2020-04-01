@@ -32,11 +32,11 @@ export interface InputFieldProps<TValue = any> extends React.InputHTMLAttributes
 }
 
 export const InputField: React.FC<InputFieldProps> = props => {
-  const { field, meta, helper, ...rest } = props;
+  const { label, field, meta, helper, ...rest } = props;
 
   return (
     <Wrapper>
-      {props.label && <Label>{props.label}</Label>}
+      {label && <Label>{label}</Label>}
       <S.Input error={!!meta.error} {...rest} {...field} />
       {meta.error && <Error>{meta.error}</Error>}
     </Wrapper>

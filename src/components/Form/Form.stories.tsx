@@ -9,25 +9,11 @@ import { CheckboxGroup } from '~/components/Form/CheckboxGroup/CheckboxGroup';
 import { useFormik, Form } from './Form';
 import { Select } from './Select/Select';
 import { BigNumberInput } from './BigNumberInput/BigNumberInput';
+import { RadioButtons } from './RadioButtons/RadioButtons';
 
 export default { title: 'Forms|Form' };
 
 const options = [
-  {
-    value: 'value1',
-    label: 'label1',
-  },
-  {
-    value: 'value2',
-    label: 'label2',
-  },
-  {
-    value: 'value3',
-    label: 'label3',
-  },
-];
-
-const selectOptions = [
   { value: 'chocolate', label: 'Chocolate' },
   { value: 'strawberry', label: 'Strawberry' },
   { value: 'vanilla', label: 'Vanilla' },
@@ -62,7 +48,7 @@ const initialValues = {
   noLabel: 'No Label',
   textarea: 'Foo',
   checkbox: false,
-  checkboxes: [],
+  checkboxes: ['chocolate'],
   bigNumber: new BigNumber(123.456789),
 };
 
@@ -82,9 +68,10 @@ export const Basic = () => {
       <Textarea name="textarea" label="Textarea" />
       <Checkbox name="checkbox" label="Checkbox" />
       <CheckboxGroup name="checkboxes" label="Checkbox group" options={options} />
-      <Select name="select" options={selectOptions} label="Select" />
-      <Select name="selectMultiple" options={selectOptions} label="Select multiple" isMulti={true} />
+      <Select name="select" options={options} label="Select" />
+      <Select name="selectMultiple" options={options} label="Select multiple" isMulti={true} />
       <BigNumberInput name="bigNumber" label="BigNumber" />
+      <RadioButtons label="Radio Button" name="radioGroup" options={options} />
       <Button type="submit">Submit</Button>
     </Form>
   );

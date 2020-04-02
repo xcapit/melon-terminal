@@ -1,12 +1,13 @@
 import React from 'react';
-import { useField, Error, Wrapper, Label } from '~/components/Form/Form';
+import { useField, Error, Wrapper, Label, GenericInputProps } from '~/components/Form/Form';
 import * as S from './RadioButtons.styles';
 
-export interface RadioButtonItem extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface RadioButtonProps extends GenericInputProps {
+  name: string;
   label?: string;
 }
 
-export const RadioButtonItem: React.FC<RadioButtonItem> = ({ label, ...rest }) => {
+export const RadioButton: React.FC<RadioButtonProps> = ({ label, ...rest }) => {
   const id = rest.id ?? `${rest.name}:${rest.value}`;
 
   return (
@@ -26,18 +27,16 @@ export interface RadioButtonOption {
   disabled?: boolean;
 }
 
-export interface RadioButtonGroupProps {
+export interface RadioButtonsProps extends RadioButtonProps {
   options: RadioButtonOption[];
-  name: string;
-  label?: string;
 }
 
-export const RadioButtons: React.FC<RadioButtonGroupProps> = ({ options, ...props }) => {
+export const RadioButtons: React.FC<RadioButtonsProps> = ({ options, ...props }) => {
   const [field, meta] = useField({ type: 'radio', ...props });
   const children = options.map(item => {
     const key = `${item.label}:${item.value}`;
     const checked = meta.value === item.value;
-    return <RadioButtonItem key={key} {...props} {...field} {...item} checked={checked} />;
+    return <RadioButton key={key} {...meta} {...field} {...props} {...item} checked={checked} />;
   });
 
   return (

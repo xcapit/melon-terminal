@@ -8,50 +8,6 @@ export const CheckboxContainer = styled.div`
   text-align: left;
 `;
 
-export const CheckboxInput = styled.input`
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 100;
-  width: ${props => props.theme.spaceUnits.m};
-  height: ${props => props.theme.spaceUnits.m};
-  opacity: 0;
-  margin: 0px;
-  cursor: pointer;
-  &:hover + span {
-    svg {
-      color: ${props => props.theme.mainColors.primaryDark};
-    }
-  }
-  :checked + span {
-    background: ${props => props.theme.mainColors.primaryDark};
-    svg {
-      color: ${props => props.theme.mainColors.primary};
-    }
-  }
-  &:hover:checked + span {
-    background: ${props => props.theme.mainColors.secondaryDark};
-    svg {
-      color: ${props => props.theme.mainColors.textColor};
-    }
-  }
-  ${props =>
-    props.disabled &&
-    css`
-      pointer-events: none;
-      + span {
-        border: 2px solid ${props => props.theme.mainColors.textColor};
-        background: ${props => props.theme.mainColors.secondary};
-      }
-      :checked + span {
-        background: ${props => props.theme.mainColors.secondaryDark};
-        svg {
-          color: ${props => props.theme.mainColors.textColor};
-        }
-      }
-    `}
-`;
-
 export const CheckboxMask = styled.span`
   position: relative;
   display: inline-block;
@@ -79,4 +35,59 @@ export const CheckboxLabel = styled.label`
   vertical-align: middle;
   padding-left: ${props => props.theme.spaceUnits.xs};
   cursor: pointer;
+`;
+
+export const CheckboxInput = styled.input`
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: ${props => props.theme.spaceUnits.m};
+  height: ${props => props.theme.spaceUnits.m};
+  opacity: 0;
+  margin: 0px;
+  cursor: pointer;
+
+  &:hover + ${CheckboxMask} {
+    ${CheckboxIcon} {
+      color: ${props => props.theme.mainColors.primaryDark};
+    }
+  }
+
+  &:checked + ${CheckboxMask} {
+    background: ${props => props.theme.mainColors.primaryDark};
+    ${CheckboxIcon} {
+      color: ${props => props.theme.mainColors.primary};
+    }
+  }
+
+  &:hover:checked + ${CheckboxMask} {
+    background: ${props => props.theme.mainColors.secondaryDark};
+    ${CheckboxIcon} {
+      color: ${props => props.theme.mainColors.textColor};
+    }
+  }
+
+  ${props =>
+    props.disabled &&
+    css`
+      pointer-events: none;
+
+      & + ${CheckboxMask} {
+        border: 2px solid ${props => props.theme.mainColors.textColor};
+        background: ${props => props.theme.mainColors.secondary};
+      }
+
+      &:checked + ${CheckboxMask} {
+        background: ${props => props.theme.mainColors.secondaryDark};
+        ${CheckboxIcon} {
+          color: ${props => props.theme.mainColors.textColor};
+        }
+      }
+
+      & ~ ${CheckboxLabel} {
+        color: ${props => props.theme.mainColors.secondaryDark};
+        pointer-events: none;
+      }
+    `}
 `;

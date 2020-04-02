@@ -10,6 +10,8 @@ import { useFormik, Form } from './Form';
 import { Select } from './Select/Select';
 import { BigNumberInput } from './BigNumberInput/BigNumberInput';
 import { RadioButtons } from './RadioButtons/RadioButtons';
+import { TokenValue, tokens } from './TokenValueInput/TokenValue';
+import { TokenValueInput } from './TokenValueInput/TokenValueInput';
 
 export default { title: 'Forms|Form' };
 
@@ -40,6 +42,12 @@ const validationSchema = Yup.object({
     })
     .test('greater-or-equal', 'Must be bigger than 100', (value: BigNumber) => {
       return value.isGreaterThanOrEqualTo(100);
+    }),
+  tokenValue: Yup.mixed()
+    .required()
+    .test('has-enough-decimals', 'Must have at the full decimal amount.', (value: TokenValue) => {
+      const decimals = value.value?.decimalPlaces();
+      return !!decimals && new BigNumber(value.token.decimals).isEqualTo(decimals);
     }),
 });
 
@@ -72,6 +80,7 @@ export const Basic = () => {
       <Select name="selectMultiple" options={options} label="Select multiple" isMulti={true} />
       <BigNumberInput name="bigNumber" label="BigNumber" />
       <RadioButtons label="Radio Button" name="radioGroup" options={options} />
+      <TokenValueInput label="Token value" name="tokenValue" tokens={tokens} />
       <Button type="submit">Submit</Button>
     </Form>
   );

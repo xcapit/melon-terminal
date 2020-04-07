@@ -41,7 +41,7 @@ export const FundTradeHistory: React.FC<FundTradeHistoryProps> = ({ address }) =
                 <HeaderCell>Buy asset</HeaderCell>
                 <HeaderCellRightAlign>Sell quantity</HeaderCellRightAlign>
                 <HeaderCell>Sell asset</HeaderCell>
-                <HeaderCell>Price</HeaderCell>
+                <HeaderCellRightAlign>Price</HeaderCellRightAlign>
                 <HeaderCell>Type</HeaderCell>
               </HeaderRow>
             </thead>

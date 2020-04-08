@@ -1,12 +1,13 @@
 import React from 'react';
 import BigNumber from 'bignumber.js';
-import { NumberFormatValues } from 'react-number-format';
-import { BigNumberInputField } from '~/components/Form/BigNumberInput/BigNumberInput';
-import { SelectField, SelectOption } from '~/components/Form/Select/Select';
-import { useField, Wrapper, Error, Label } from '~/components/Form/Form';
-import { TokenValue } from './TokenValue';
 import { TokenDefinition, sameAddress } from '@melonproject/melonjs';
 import { ValueType } from 'react-select';
+import { NumberFormatValues } from 'react-number-format';
+import { BigNumberInputField } from '~/components/Form/BigNumberInput/BigNumberInput';
+import { SelectField, SelectOption, SelectLabel } from '~/components/Form/Select/Select';
+import { useField, Wrapper, Error, Label } from '~/components/Form/Form';
+import { TokenValue } from './TokenValue';
+import * as S from './TokenValueInput.style';
 
 export interface TokenValueInputProps {
   name: string;
@@ -15,22 +16,26 @@ export interface TokenValueInputProps {
 }
 
 export const TokenValueInput: React.FC<TokenValueInputProps> = ({ tokens, label, ...props }) => {
-  const [{ onChange, ...field }, meta, helpers] = useField<TokenValue | undefined>(props.name);
+  const [{ onChange, ...field }, meta, { setValue }] = useField<TokenValue | undefined>(props.name);
+
+  const inputRef = React.useRef<undefined | HTMLInputElement>();
+  const [open, setOpen] = React.useState(false);
+  const toggleOpen = React.useCallback(() => setOpen(!open), [open, setOpen]);
 
   const options = React.useMemo<SelectOption[]>(() => {
     return tokens.map(item => ({
       value: item.address,
-      label: item.name,
+      label: item.symbol,
       icon: item.symbol,
       token: item,
     }));
   }, [tokens]);
 
-  const token = React.useMemo(() => {
+  const selection = React.useMemo(() => {
     return options.find(option => sameAddress(option.value, field.value?.token.address));
   }, [options, field.value]);
 
-  const value = React.useMemo(() => {
+  const number = React.useMemo(() => {
     if (!field.value) {
       return;
     }
@@ -45,42 +50,73 @@ export const TokenValueInput: React.FC<TokenValueInputProps> = ({ tokens, label,
         return;
       }
 
-      const value = field.value?.value;
-      const token = (option as SelectOption).token as TokenDefinition;
-      helpers.setValue(new TokenValue(token, value));
-    },
-    [tokens, field.value, helpers.setValue]
-  );
+      setValue(new TokenValue((option as SelectOption).token as TokenDefinition, field.value?.value));
+      setOpen(false);
 
-  const onValueChange = React.useCallback(
-    (values: NumberFormatValues) => {
-      if (!field.value?.token) {
-        return;
-      }
-
-      const value = new BigNumber(values.value);
-      const token = field.value.token;
-      helpers.setValue(new TokenValue(token, value));
+      // Focus the big number input field after selecting a token.
+      setTimeout(() => {
+        inputRef.current?.focus();
+      });
     },
-    [field.value, helpers.setValue]
+    [field.value, setValue, setOpen]
   );
 
   const isAllowed = React.useCallback(() => !!field.value, [field.value]);
+  const onValueChange = React.useCallback(
+    (values: NumberFormatValues) => {
+      if (!field.value) {
+        return;
+      }
+
+      setValue(new TokenValue(field.value.token, new BigNumber(values.value)));
+    },
+    [field.value, setValue]
+  );
 
   return (
     <Wrapper>
       <Label>{label}</Label>
-      <SelectField {...meta} {...field} {...props} value={token} options={options} onChange={onSelectChange} />
-      <BigNumberInputField
-        {...meta}
-        {...field}
-        {...props}
-        value={value}
-        decimalScale={field.value?.token.decimals}
-        isAllowed={isAllowed}
-        onValueChange={onValueChange}
-      />
-      {meta.error && <Error>{meta.error}</Error>}
+      <S.InputContainer>
+        <S.SelectTrigger onClick={toggleOpen}>
+          {selection ? <SelectLabel icon={selection.icon} label={selection.label} /> : 'Select a token ...'}
+        </S.SelectTrigger>
+
+        <BigNumberInputField
+          {...meta}
+          {...field}
+          {...props}
+          getInputRef={inputRef}
+          value={number}
+          decimalScale={selection?.token.decimals}
+          onValueChange={onValueChange}
+          isAllowed={isAllowed}
+          disabled={!field.value}
+          placeholder={field.value ? 'Enter a value ...' : undefined}
+        />
+
+        {meta.error && <Error>{meta.error}</Error>}
+      </S.InputContainer>
+
+      {open ? (
+        <SelectField
+          {...meta}
+          {...field}
+          {...props}
+          autoFocus={true}
+          backspaceRemovesValue={false}
+          controlShouldRenderValue={false}
+          hideSelectedOptions={false}
+          isClearable={false}
+          isSearchable={true}
+          menuIsOpen={true}
+          tabSelectsValue={false}
+          components={{ IndicatorSeparator: null }}
+          onChange={onSelectChange}
+          options={options}
+          value={selection}
+          placeholder="Search ..."
+        />
+      ) : null}
     </Wrapper>
   );
 };

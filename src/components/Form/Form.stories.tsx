@@ -1,6 +1,7 @@
 import React from 'react';
 import * as Yup from 'yup';
 import BigNumber from 'bignumber.js';
+import { TokenDefinition } from '@melonproject/melonjs';
 import { Input } from '~/components/Form/Input/Input';
 import { Textarea } from '~/components/Form/Textarea/Textarea';
 import { Button } from '~/components/Form/Button/Button';
@@ -10,7 +11,7 @@ import { useFormik, Form } from './Form';
 import { Select } from './Select/Select';
 import { BigNumberInput } from './BigNumberInput/BigNumberInput';
 import { RadioButtons } from './RadioButtons/RadioButtons';
-import { TokenValue, tokens } from './TokenValueInput/TokenValue';
+import { TokenValue } from './TokenValueInput/TokenValue';
 import { TokenValueInput } from './TokenValueInput/TokenValueInput';
 
 export default { title: 'Forms|Form' };
@@ -20,6 +21,27 @@ const options = [
   { value: 'strawberry', label: 'Strawberry' },
   { value: 'vanilla', label: 'Vanilla' },
 ];
+
+const tokens = [
+  {
+    address: '0x0000000000000000000000000000000000000001',
+    symbol: 'WETH',
+    name: 'Wrapped Ether',
+    decimals: 18,
+  },
+  {
+    address: '0x0000000000000000000000000000000000000002',
+    symbol: 'MLN',
+    name: 'Melon',
+    decimals: 18,
+  },
+  {
+    address: '0x0000000000000000000000000000000000000003',
+    symbol: 'SAI',
+    name: 'Sai',
+    decimals: 9,
+  },
+] as TokenDefinition[];
 
 const validationSchema = Yup.object({
   input: Yup.string()

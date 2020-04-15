@@ -11,7 +11,8 @@ import { useFormik, Form } from './Form';
 import { Select } from './Select/Select';
 import { BigNumberInput } from './BigNumberInput/BigNumberInput';
 import { RadioButtons } from './RadioButtons/RadioButtons';
-import { TokenValue } from './TokenValueInput/TokenValue';
+import { TokenValue } from './TokenValueSelect/TokenValue';
+import { TokenValueSelect } from './TokenValueSelect/TokenValueSelect';
 import { TokenValueInput } from './TokenValueInput/TokenValueInput';
 
 export default { title: 'Forms|Form' };
@@ -71,6 +72,12 @@ const validationSchema = Yup.object({
       const decimals = value.value?.decimalPlaces();
       return !!decimals && new BigNumber(value.token.decimals).isEqualTo(decimals);
     }),
+  tokenValueInput: Yup.mixed()
+    .required()
+    .test('has-enough-decimals', 'Must have at the full decimal amount.', (value: TokenValue) => {
+      const decimals = value.value?.decimalPlaces();
+      return !!decimals && new BigNumber(value.token.decimals).isEqualTo(decimals);
+    }),
 });
 
 const initialValues = {
@@ -102,7 +109,8 @@ export const Basic = () => {
       <Select name="selectMultiple" options={options} label="Select multiple" isMulti={true} />
       <BigNumberInput name="bigNumber" label="BigNumber" />
       <RadioButtons label="Radio Button" name="radioGroup" options={options} />
-      <TokenValueInput label="Token value" name="tokenValue" tokens={tokens} />
+      <TokenValueSelect label="Token value Select" name="tokenValue" tokens={tokens} />
+      <TokenValueInput label="Token value Input" name="tokenValueInput" token={tokens[0]} />
       <Button type="submit">Submit</Button>
     </Form>
   );

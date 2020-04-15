@@ -1,39 +1,21 @@
 import React from 'react';
 import BigNumber from 'bignumber.js';
-import { TokenDefinition, sameAddress } from '@melonproject/melonjs';
-import { ValueType } from 'react-select';
 import { NumberFormatValues } from 'react-number-format';
-import { BigNumberInputField } from '~/components/Form/BigNumberInput/BigNumberInput';
-import { SelectField, SelectOption, SelectLabel } from '~/components/Form/Select/Select';
+import { TokenDefinition } from '@melonproject/melonjs';
 import { useField, Wrapper, Error, Label } from '~/components/Form/Form';
-import { TokenValue } from './TokenValue';
-import * as S from './TokenValueInput.style';
+import { SelectLabel } from '~/components/Form/Select/Select';
+import { BigNumberInputField } from '~/components/Form/BigNumberInput/BigNumberInput';
+import { TokenValue } from '../TokenValueSelect/TokenValue';
+import * as S from './TokenValueInput.styles';
 
 export interface TokenValueInputProps {
   name: string;
   label?: string;
-  tokens: TokenDefinition[];
+  token: TokenDefinition;
 }
 
-export const TokenValueInput: React.FC<TokenValueInputProps> = ({ tokens, label, ...props }) => {
-  const [{ onChange, ...field }, meta, { setValue }] = useField<TokenValue | undefined>(props.name);
-
-  const inputRef = React.useRef<undefined | HTMLInputElement>();
-  const [open, setOpen] = React.useState(false);
-  const toggleOpen = React.useCallback(() => setOpen(!open), [open, setOpen]);
-
-  const options = React.useMemo<SelectOption[]>(() => {
-    return tokens.map(item => ({
-      value: item.address,
-      label: item.symbol,
-      icon: item.symbol,
-      token: item,
-    }));
-  }, [tokens]);
-
-  const selection = React.useMemo(() => {
-    return options.find(option => sameAddress(option.value, field.value?.token.address));
-  }, [options, field.value]);
+export const TokenValueInput: React.FC<TokenValueInputProps> = ({ token, label, ...props }) => {
+  const [{ onChange, ...field }, meta, { setValue }] = useField(props.name);
 
   const number = React.useMemo(() => {
     if (!field.value) {
@@ -44,79 +26,36 @@ export const TokenValueInput: React.FC<TokenValueInputProps> = ({ tokens, label,
     return (BigNumber.isBigNumber(value) ? value.toFixed() : value) as string;
   }, [field.value]);
 
-  const onSelectChange = React.useCallback(
-    (option: ValueType<SelectOption>) => {
-      if (Array.isArray(option)) {
-        return;
-      }
-
-      setValue(new TokenValue((option as SelectOption).token as TokenDefinition, field.value?.value));
-      setOpen(false);
-
-      // Focus the big number input field after selecting a token.
-      setTimeout(() => {
-        inputRef.current?.focus();
-      });
-    },
-    [field.value, setValue, setOpen]
-  );
-
-  const isAllowed = React.useCallback(() => !!field.value, [field.value]);
   const onValueChange = React.useCallback(
     (values: NumberFormatValues) => {
-      if (!field.value) {
+      if (!values.value) {
         return;
       }
-
-      setValue(new TokenValue(field.value.token, new BigNumber(values.value)));
+      setValue(new TokenValue(token, new BigNumber(values.value)));
     },
-    [field.value, setValue]
+    [setValue]
   );
 
   return (
     <Wrapper>
       <Label>{label}</Label>
       <S.InputContainer>
-        <S.SelectTrigger onClick={toggleOpen}>
-          {selection ? <SelectLabel icon={selection.icon} label={selection.label} /> : 'Select a token ...'}
-        </S.SelectTrigger>
+        <S.TokenWrapper>
+          <SelectLabel icon={token.symbol} label={token.symbol} />
+        </S.TokenWrapper>
 
         <BigNumberInputField
           {...meta}
           {...field}
           {...props}
-          getInputRef={inputRef}
           value={number}
-          decimalScale={selection?.token.decimals}
+          decimalScale={token.decimals}
           onValueChange={onValueChange}
-          isAllowed={isAllowed}
-          disabled={!field.value}
           placeholder={field.value ? 'Enter a value ...' : undefined}
         />
-
-        {meta.error && <Error>{meta.error}</Error>}
       </S.InputContainer>
 
-      {open ? (
-        <SelectField
-          {...meta}
-          {...field}
-          {...props}
-          autoFocus={true}
-          backspaceRemovesValue={false}
-          controlShouldRenderValue={false}
-          hideSelectedOptions={false}
-          isClearable={false}
-          isSearchable={true}
-          menuIsOpen={true}
-          tabSelectsValue={false}
-          components={{ IndicatorSeparator: null }}
-          onChange={onSelectChange}
-          options={options}
-          value={selection}
-          placeholder="Search ..."
-        />
-      ) : null}
+      {meta.error && <Error>{meta.error}</Error>}
     </Wrapper>
   );
 };

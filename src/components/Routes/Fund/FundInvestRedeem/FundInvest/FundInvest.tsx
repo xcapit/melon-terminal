@@ -13,7 +13,7 @@ import { SectionTitle } from '~/storybook/Title/Title';
 import { RequiresFundCreatedAfter } from '~/components/Gates/RequiresFundCreatedAfter/RequiresFundCreatedAfter';
 import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
 import { usePriceFeedUpdateQuery } from '~/components/Layout/PriceFeedUpdate.query';
-import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
+import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
 import { RequiresFundNotShutDown } from '~/components/Gates/RequiresFundNotShutDown/RequiresFundNotShutDown';
 import { UserWhitelist, AssetWhitelist, AssetBlacklist } from '@melonproject/melongql';
@@ -169,22 +169,22 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
               <p>You have a pending investment request:</p>
 
               <p>
-                Requested shares: <TokenValue value={request?.requestedShares} />
+                Requested shares: <TokenValueDisplay value={request?.requestedShares} />
                 <br />
-                Investment amount: <TokenValue value={request?.investmentAmount} /> {symbol}
+                Investment amount: <TokenValueDisplay value={request?.investmentAmount} /> {symbol}
                 <br />
-                Request date: <FormattedDate timestamp={request?.timestamp}></FormattedDate>
+                Request date: <FormattedDate timestamp={request?.timestamp} />
               </p>
 
               <p>
                 Your investment request will be automatically executed after the next price update, which will be at
-                approximately <FormattedDate timestamp={nextUpdate}></FormattedDate>.
+                approximately <FormattedDate timestamp={nextUpdate} />.
               </p>
 
               <p>
                 If you come back during the execution window (which starts at around{' '}
-                <FormattedDate timestamp={nextUpdate}></FormattedDate> and ends at{' '}
-                <FormattedDate timestamp={twentyFourHoursAfterRequest}></FormattedDate>), and your invesment request
+                <FormattedDate timestamp={nextUpdate} /> and ends at{' '}
+                <FormattedDate timestamp={twentyFourHoursAfterRequest} />), and your invesment request
                 hasn't been automatically executed, you will see here the option to execute it yourself.
               </p>
             </>

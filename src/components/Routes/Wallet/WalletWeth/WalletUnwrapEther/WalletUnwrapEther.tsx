@@ -15,7 +15,7 @@ import { Button } from '~/storybook/Button/Button';
 import * as S from './WalletUnwrapEther.styles';
 import { toTokenBaseUnit } from '~/utils/toTokenBaseUnit';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
-import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
+import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
 
 export const WalletUnwrapEther: React.FC = () => {
@@ -63,10 +63,10 @@ export const WalletUnwrapEther: React.FC = () => {
         <form onSubmit={submit}>
           <S.WalletUnwrapEtherBalances>
             <S.WalletUnwrapEtherBalance>
-              <TokenValue value={account.eth!} symbol="ETH" />
+              <TokenValueDisplay value={account.eth!} symbol="ETH" />
             </S.WalletUnwrapEtherBalance>
             <S.WalletUnwrapEtherBalance>
-              <TokenValue value={account.weth!} symbol="WETH" />
+              <TokenValueDisplay value={account.weth!} symbol="WETH" />
             </S.WalletUnwrapEtherBalance>
           </S.WalletUnwrapEtherBalances>
 

@@ -4,7 +4,7 @@ import { useFundHoldingsQuery } from './FundHoldings.query';
 import * as S from './FundHoldings.styles';
 import { SectionTitle } from '~/storybook/Title/Title';
 import { Block } from '~/storybook/Block/Block';
-import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
+import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
 
 export interface FundHoldingsProps {
   address: string;
@@ -38,7 +38,7 @@ export const FundHoldings: React.FC<FundHoldingsProps> = ({ address }) => {
       <SectionTitle>Portfolio Holdings</SectionTitle>
       {nonZeroHoldings.map((holding, key) => (
         <S.Balance key={key}>
-          <TokenValue value={holding.amount} decimals={holding.token!.decimals!} symbol={holding.token?.symbol} />
+          <TokenValueDisplay value={holding.amount} decimals={holding.token!.decimals!} symbol={holding.token?.symbol} />
         </S.Balance>
       ))}
     </Block>

@@ -30,7 +30,7 @@ import { useInvestorTotalExposureQuery } from './InvestorTotalExposure.query';
 import { useCoinAPI } from '~/hooks/useCoinAPI';
 
 import { RequiresFundManager } from '~/components/Gates/RequiresFundManager/RequiresFundManager';
-import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
+import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
 import {
   CheckboxContainer,
   CheckboxInput,
@@ -297,7 +297,7 @@ export const RequestInvestment = forwardRef(
                 <NotificationBar kind="neutral">
                   <NotificationContent>
                     Your balance:{' '}
-                    <TokenValue
+                    <TokenValueDisplay
                       value={allowance?.balance}
                       decimals={asset!.token!.decimals!}
                       symbol={asset?.token?.symbol}

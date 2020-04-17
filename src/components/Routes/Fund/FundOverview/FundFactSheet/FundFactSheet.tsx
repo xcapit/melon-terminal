@@ -13,7 +13,7 @@ import BigNumber from 'bignumber.js';
 import { standardDeviation } from '~/utils/finance';
 import { TwitterLink } from '~/components/Common/TwitterLink/TwitterLink';
 import { useAccount } from '~/hooks/useAccount';
-import { TokenValue } from '~/components/Common/TokenValue/TokenValue';
+import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
 import { range } from 'ramda';
 import { useFundSlug } from '../../FundHeader/FundSlug.query';
 import { NetworkEnum } from '~/types';
@@ -190,28 +190,28 @@ export const FundFactSheet: React.FC<FundFactSheetProps> = ({ address }) => {
         <DictionaryLabel>Gross asset value (GAV)</DictionaryLabel>
         <DictionaryData>
           <span>{numberPadding(gavDigits || 0, maxDigits)}</span>
-          <TokenValue value={accounting?.grossAssetValue} symbol="WETH" decimals={0} />
+          <TokenValueDisplay value={accounting?.grossAssetValue} symbol="WETH" decimals={0} />
         </DictionaryData>
       </DictionaryEntry>
       <DictionaryEntry>
         <DictionaryLabel>Net asset value (NAV)</DictionaryLabel>
         <DictionaryData>
           <span>{numberPadding(navDigits || 0, maxDigits)}</span>
-          <TokenValue value={accounting?.netAssetValue} symbol="WETH" decimals={0} />
+          <TokenValueDisplay value={accounting?.netAssetValue} symbol="WETH" decimals={0} />
         </DictionaryData>
       </DictionaryEntry>
       <DictionaryEntry>
         <DictionaryLabel>Total number of shares</DictionaryLabel>
         <DictionaryData>
           <span>{numberPadding(sharesDigits || 0, maxDigits)}</span>
-          <TokenValue value={shares?.totalSupply} decimals={0} />
+          <TokenValueDisplay value={shares?.totalSupply} decimals={0} />
         </DictionaryData>
       </DictionaryEntry>
       <DictionaryEntry>
         <DictionaryLabel>Share price</DictionaryLabel>
         <DictionaryData>
           <span>{numberPadding(sharePriceDigits || 0, maxDigits)}</span>
-          <TokenValue value={accounting?.sharePrice} symbol="WETH" decimals={0} />
+          <TokenValueDisplay value={accounting?.sharePrice} symbol="WETH" decimals={0} />
         </DictionaryData>
       </DictionaryEntry>
       <DictionaryEntry>

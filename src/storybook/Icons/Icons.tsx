@@ -37,6 +37,7 @@ const availableIcons = {
   SUN: React.lazy(() => import('./svg/Sun')),
   MOON: React.lazy(() => import('./svg/Moon')),
   ETHEREUM: React.lazy(() => import('./svg/Ethereum')),
+  ETHER: React.lazy(() => import('./svg/Ethereum')),
   WALLET: React.lazy(() => import('./svg/Wallet')),
 };
 

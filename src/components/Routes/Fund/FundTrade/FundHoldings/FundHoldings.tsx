@@ -38,7 +38,11 @@ export const FundHoldings: React.FC<FundHoldingsProps> = ({ address }) => {
       <SectionTitle>Portfolio Holdings</SectionTitle>
       {nonZeroHoldings.map((holding, key) => (
         <S.Balance key={key}>
-          <TokenValueDisplay value={holding.amount} decimals={holding.token!.decimals!} symbol={holding.token?.symbol} />
+          <TokenValueDisplay
+            value={holding.amount}
+            decimals={holding.token!.decimals!}
+            symbol={holding.token?.symbol}
+          />
         </S.Balance>
       ))}
     </Block>

@@ -58,15 +58,14 @@ interface WalletWrapEtherFormProps {
 
 const WalletWrapEtherForm: React.FC<WalletWrapEtherFormProps> = ({ transaction, account, environment }) => {
   const initialValues = {
-    quantityEth: new TokenValue(token, account.eth!),
+    quantityEth: TokenValue.fromToken(token, account.eth!),
   };
 
   const validationContext = React.useMemo(
     () => ({
       account,
-      environment,
     }),
-    [account, environment]
+    [account]
   );
 
   const formik = useFormik({

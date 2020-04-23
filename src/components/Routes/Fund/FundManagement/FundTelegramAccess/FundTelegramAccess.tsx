@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Block } from '~/storybook/Block/Block';
 import { SectionTitle } from '~/storybook/Title/Title';
 import { useEnvironment } from '~/hooks/useEnvironment';

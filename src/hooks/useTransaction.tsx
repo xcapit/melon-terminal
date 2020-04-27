@@ -420,10 +420,18 @@ export function useTransaction(environment: DeployedEnvironment, options?: Trans
       return;
     }
 
+    const transaction = state.transaction!;
+    const opts: SendOptions = {
+      gasPrice: new BigNumber(data.gasPrice).multipliedBy('1e9').toFixed(0),
+      ...(state.sendOptions && state.sendOptions.gas && { gas: state.sendOptions.gas }),
+      ...(state.sendOptions && state.sendOptions.amgu && { amgu: state.sendOptions.amgu }),
+      ...(state.sendOptions && state.sendOptions.incentive && { incentive: state.sendOptions.incentive }),
+    };
+
     // on-submit validation
     try {
       const transaction = state.transaction!;
-      await transaction.validate();
+      await Promise.all([transaction.validate(), transaction.checkEthBalance({ from: transaction.from, ...opts })]);
     } catch (error) {
       const handled = await (options?.handleError && options.handleError(error));
       validationError(dispatch, error, handled || undefined);
@@ -432,14 +440,6 @@ export function useTransaction(environment: DeployedEnvironment, options?: Trans
 
     // actual submit
     try {
-      const transaction = state.transaction!;
-      const opts: SendOptions = {
-        gasPrice: new BigNumber(data.gasPrice).multipliedBy('1e9').toFixed(0),
-        ...(state.sendOptions && state.sendOptions.gas && { gas: state.sendOptions.gas }),
-        ...(state.sendOptions && state.sendOptions.amgu && { amgu: state.sendOptions.amgu }),
-        ...(state.sendOptions && state.sendOptions.incentive && { incentive: state.sendOptions.incentive }),
-      };
-
       executionPending(dispatch, opts);
       const tx = transaction.send(opts);
       const receipt = await new Promise<TransactionReceipt>((resolve, reject) => {

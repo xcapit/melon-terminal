@@ -39,7 +39,7 @@ export function findPriceChange(base: BigNumber, comparison?: BigNumber) {
   const compString = comparison.toFixed(8);
   const offset = baseString.length - compString.length;
 
-  for (let i = 0; i < baseString.length; i++) {
+  for (let i = 0; i < baseString.length; i += 1) {
     const current = baseString[i + offset];
 
     if (!current) {

@@ -59,7 +59,7 @@ export const useFundTradeHistoryQuery = (address: string) => {
         const buyAsset = item.assetBought?.id && environment.getToken(item.assetBought?.id);
         const sellAsset = item.assetSold?.id && environment.getToken(item.assetSold?.id);
 
-        let buyAmount = new BigNumber(item.amountBought ?? 0);
+        const buyAmount = new BigNumber(item.amountBought ?? 0);
         const sellAmount = new BigNumber(item.amountSold ?? 0);
 
         const buyQuantity = buyAsset && fromTokenBaseUnit(buyAmount, buyAsset.decimals);
@@ -77,10 +77,10 @@ export const useFundTradeHistoryQuery = (address: string) => {
           buyQuantity,
           sellQuantity,
           price,
+          exchange,
           id: item.id,
           timestamp: item.timestamp,
           methodName: item.methodName,
-          exchange,
         } as Trade;
       }) as Trade[],
     [result.data]

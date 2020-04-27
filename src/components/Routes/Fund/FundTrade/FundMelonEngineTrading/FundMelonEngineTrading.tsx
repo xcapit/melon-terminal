@@ -48,13 +48,13 @@ export const FundMelonEngineTrading: React.FC<FundMelonEngineTradingProps> = pro
     (async () =>
       await validatePolicies({
         environment,
+        setPolicyValidation,
+        value,
         policies: props.policies,
         taker: props.taker,
         maker: props.maker,
         holdings: props.holdings,
         denominationAsset: props.denominationAsset,
-        setPolicyValidation,
-        value,
         quantity: props.quantity,
         trading: props.trading,
       }))();
@@ -63,13 +63,13 @@ export const FundMelonEngineTrading: React.FC<FundMelonEngineTradingProps> = pro
   const submit = async () => {
     await validatePolicies({
       environment,
+      setPolicyValidation,
+      value,
       policies: props.policies,
       taker: props.taker,
       maker: props.maker,
       holdings: props.holdings,
       denominationAsset: props.denominationAsset,
-      setPolicyValidation,
-      value,
       quantity: props.quantity,
       trading: props.trading,
     });

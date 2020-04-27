@@ -146,7 +146,7 @@ export const FundRequestForQuoteTrading: React.FC<FundRequestForQuoteTradingProp
       takerAsset: Yup.string().required('Missing required sell asset.'),
       takerQuantity: Yup.string()
         .required('Missing sell quantity.')
-        .test('valid-number', 'The given value is not a valid number.', function(value) {
+        .test('valid-number', 'The given value is not a valid number.', value => {
           const bn = new BigNumber(value);
           return !bn.isNaN() && !bn.isZero() && bn.isPositive();
         })

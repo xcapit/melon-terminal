@@ -106,12 +106,10 @@ export const FundLiquidityProviderTrading: React.FC<FundLiquidityProviderTrading
       takerAsset: Yup.string().required(),
       takerQuantity: Yup.string()
         .required('Missing sell quantity.')
-        // tslint:disable-next-line
-        .test('valid-number', 'The given value is not a valid number.', function(value) {
+        .test('valid-number', 'The given value is not a valid number.', value => {
           const bn = new BigNumber(value);
           return !bn.isNaN() && !bn.isZero() && bn.isPositive();
         })
-        // tslint:disable-next-line
         .test('balance-too-low', 'Your balance of the token is lower than the provided value.', function(value) {
           const holding = holdingsRef.current.find(item => sameAddress(item.token!.address, this.parent.takerAsset))!;
           const divisor = holding ? new BigNumber(10).exponentiatedBy(holding.token!.decimals!) : new BigNumber('NaN');

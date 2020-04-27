@@ -96,10 +96,11 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   const currentStep = progressToStep(state.progress);
 
   if (error) {
+    // tslint:disable
     error.issueUri = encodeURI(
-      `https://github.com/avantgardefinance/melon-terminal/issues/new?title=Error in transaction "${state.name}";` +
-        `body=` +
-        `Error message: ${error.message}\n` +
+      `https://github.com/avantgardefinance/melon-terminal/issues/new?title=Error in transaction "${state.name}";
+        body=
+        Error message: ${error.message}\n` +
         (fund?.name ? `Fund: ${fund.name}\n` : '') +
         `URL: ${window.location.href}\n` +
         (state.transaction?.contract?.address
@@ -113,6 +114,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
         (connection?.network ? `Network: ${NetworkEnum[connection.network]}` : '') +
         (error?.stack ? `\nStack trace: ${error?.stack}` : '')
     );
+    // tslint:enable
   }
 
   return (

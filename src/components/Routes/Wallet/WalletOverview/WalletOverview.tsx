@@ -57,9 +57,8 @@ export const WalletOverview: React.FC = () => {
   const managedHeader = fundHeadings.map((heading, index) => {
     if (heading.align === 'left') {
       return <HeaderCell key={index}>{heading.name}</HeaderCell>;
-    } else {
-      return <HeaderCellRightAlign key={index}>{heading.name}</HeaderCellRightAlign>;
     }
+    return <HeaderCellRightAlign key={index}>{heading.name}</HeaderCellRightAlign>;
   });
   const managedEmpty = !(managed && managed.length);
   const managedRows = !managedEmpty ? (
@@ -73,9 +72,8 @@ export const WalletOverview: React.FC = () => {
   const investedHeader = redeemHeadings.map((heading, index) => {
     if (heading.align === 'left') {
       return <HeaderCell key={index}>{heading.name}</HeaderCell>;
-    } else {
-      return <HeaderCellRightAlign key={index}>{heading.name}</HeaderCellRightAlign>;
     }
+    return <HeaderCellRightAlign key={index}>{heading.name}</HeaderCellRightAlign>;
   });
   const investedEmpty = !(invested && invested.length);
   const investedRows = !investedEmpty ? (
@@ -89,9 +87,8 @@ export const WalletOverview: React.FC = () => {
   const requestsHeader = requestHeadings.map((heading, index) => {
     if (heading.align === 'left') {
       return <HeaderCell key={index}>{heading.name}</HeaderCell>;
-    } else {
-      return <HeaderCellRightAlign key={index}>{heading.name}</HeaderCellRightAlign>;
     }
+    return <HeaderCellRightAlign key={index}>{heading.name}</HeaderCellRightAlign>;
   });
   const requestsEmpty = !(requests && requests.length);
   const requestsRows = !requestsEmpty ? (

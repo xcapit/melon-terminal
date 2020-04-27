@@ -56,14 +56,18 @@ export const UserWhitelistConfiguration: React.FC<UserWhitelistConfigurationProp
     if (whitelistedUsers && whitelistedUsers.some((address: string) => address && !isAddress(address))) {
       form.setError('userWhitelist', 'invalidFormat', 'Invalid address format');
       return;
-    } else if (whitelistedUsers && whitelistedUsers.some((address: string) => !isAddress(address))) {
+    }
+
+    if (whitelistedUsers && whitelistedUsers.some((address: string) => !isAddress(address))) {
       form.clearError('userWhitelist');
     }
 
     if (preExistingPolicy && removedUsers && removedUsers.some((address: string) => address && !isAddress(address))) {
       form.setError('removeUsers', 'invalidFormat', 'Invalid address format');
       return;
-    } else if (removedUsers && removedUsers.some((address: string) => !isAddress(address))) {
+    }
+
+    if (removedUsers && removedUsers.some((address: string) => !isAddress(address))) {
       form.clearError('removeUsers');
     }
 

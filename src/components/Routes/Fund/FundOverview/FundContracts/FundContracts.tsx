@@ -32,7 +32,7 @@ export const FundContracts: React.FC<FundContractsProps> = ({ address }) => {
     })
     .filter(item => !!item.address);
 
-  addresses.unshift({ name: 'Fund', address, field: 'fund' });
+  addresses.unshift({ address, name: 'Fund', field: 'fund' });
 
   return (
     <Dictionary>

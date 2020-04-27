@@ -76,7 +76,7 @@ const initialValues = {
 };
 
 const validationSchema = Yup.object().shape({
-  userWhitelist: Yup.string().test('address-validation', 'Invalid address format', function(userWhitelist: string) {
+  userWhitelist: Yup.string().test('address-validation', 'Invalid address format', (userWhitelist: string) => {
     const whitelistedUsers = userWhitelist?.replace(/^\s+|\s+$/g, '').split('\n') as string[];
 
     if (whitelistedUsers && whitelistedUsers.some((address: string) => address && !isAddress(address))) {

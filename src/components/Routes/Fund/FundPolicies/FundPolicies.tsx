@@ -17,7 +17,6 @@ import { MaxPositions } from './MaxPositions/MaxPositions';
 import { PriceTolerance } from './PriceTolerance/PriceTolerance';
 import { AssetWhitelist } from './AssetWhitelist/AssetWhitelist';
 import { AssetBlacklist } from './AssetBlacklist/AssetBlacklist';
-import { UserWhitelist } from './UserWhitelist/UserWhitelist';
 import { DeployedEnvironment } from '@melonproject/melonjs';
 import { SectionTitle } from '~/storybook/Title/Title';
 import { Block } from '~/storybook/Block/Block';
@@ -50,7 +49,7 @@ export const FundPoliciesParameters: React.FC<FundPoliciesParametersProps> = pro
     }
 
     case 'UserWhitelist': {
-      return <UserWhitelist />;
+      return <BodyCell>N/A</BodyCell>;
     }
 
     case 'CustomPolicy': {

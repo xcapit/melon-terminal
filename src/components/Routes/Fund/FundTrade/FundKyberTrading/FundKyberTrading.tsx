@@ -15,7 +15,7 @@ import { useTransaction } from '~/hooks/useTransaction';
 import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
 import { toTokenBaseUnit } from '~/utils/toTokenBaseUnit';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
-import { Holding, Token, Policy, MaxConcentration, PriceTolerance } from '@melonproject/melongql';
+import { Holding, Token, Policy } from '@melonproject/melongql';
 import { Subtitle } from '~/storybook/Title/Title';
 import { Button } from '~/storybook/Button/Button';
 import { catchError, map, expand, switchMapTo } from 'rxjs/operators';

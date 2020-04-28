@@ -34,8 +34,8 @@ export const InvestmentAssets: React.FC<InvestmentAssetsProps> = ({ address }) =
   }
 
   const allowedAssets = (details?.fund?.routes?.participation?.allowedAssets || [])
-    .map(item => environment.getToken(item.token!.address!))
-    .filter(item => !!item);
+    .map((item) => environment.getToken(item.token!.address!))
+    .filter((item) => !!item);
 
   return (
     <Block>
@@ -67,8 +67,8 @@ const InvestmentAssetsForm: React.FC<InvestmentAssetsFormProps> = ({
   allowedAssets,
 }) => {
   const tokensOptions = environment.tokens
-    .filter(token => !token.historic)
-    .map(token => ({
+    .filter((token) => !token.historic)
+    .map((token) => ({
       label: `${token.symbol} (${token.name})`,
       value: token.address,
     }));
@@ -87,20 +87,20 @@ const InvestmentAssetsForm: React.FC<InvestmentAssetsFormProps> = ({
   });
 
   const initialValues = {
-    assets: allowedAssets.map(item => item.address),
+    assets: allowedAssets.map((item) => item.address),
   };
 
   const formik = useFormik({
     validationSchema,
     initialValues,
-    onSubmit: data => {
+    onSubmit: (data) => {
       const assetsToAdd = data.assets.filter(
-        selected => selected && !allowedAssets?.some(available => sameAddress(available.address, selected))
+        (selected) => selected && !allowedAssets?.some((available) => sameAddress(available.address, selected))
       );
 
       const assetsToRemove = (allowedAssets || [])
-        .filter(asset => !data.assets.some(selected => sameAddress(selected, asset.address)))
-        .map(item => item.address) as string[];
+        .filter((asset) => !data.assets.some((selected) => sameAddress(selected, asset.address)))
+        .map((item) => item.address) as string[];
 
       setRemoveAssets(assetsToRemove);
       setAddAssets(assetsToAdd);

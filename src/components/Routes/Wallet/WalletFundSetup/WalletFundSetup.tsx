@@ -86,7 +86,7 @@ const validationSchema = Yup.object().shape({
     .required()
     .min(1, 'The fund name must be at least one character.')
     // tslint:disable-next-line
-    .test('nameTest', 'The fund name contains invalid characters.', async function(value) {
+    .test('nameTest', 'The fund name contains invalid characters.', async function (value) {
       if (!value) {
         return true;
       }
@@ -96,7 +96,7 @@ const validationSchema = Yup.object().shape({
       return await registry.isValidFundName(value);
     })
     // tslint:disable-next-line
-    .test('nameTest', 'The fund name is reserved by another manager.', async function(value) {
+    .test('nameTest', 'The fund name is reserved by another manager.', async function (value) {
       if (!value) {
         return true;
       }
@@ -106,22 +106,10 @@ const validationSchema = Yup.object().shape({
       const registry = new Registry(environment, environment.deployment.melon.addr.Registry);
       return await registry.canUseFundName(account.address!, value);
     }),
-  exchanges: Yup.array<string>()
-    .compact()
-    .required()
-    .min(1, 'Select at least one exchange.'),
-  assets: Yup.array<string>()
-    .compact()
-    .required()
-    .min(1, 'Select at least one investment asset.'),
-  managementFee: Yup.number()
-    .required()
-    .min(0, 'Management Fee must be greater or equal to zero.')
-    .max(100),
-  performanceFee: Yup.number()
-    .required()
-    .min(0)
-    .max(100),
+  exchanges: Yup.array<string>().compact().required().min(1, 'Select at least one exchange.'),
+  assets: Yup.array<string>().compact().required().min(1, 'Select at least one investment asset.'),
+  managementFee: Yup.number().required().min(0, 'Management Fee must be greater or equal to zero.').max(100),
+  performanceFee: Yup.number().required().min(0).max(100),
   performanceFeePeriod: Yup.number().min(0),
   termsAndConditions: Yup.boolean().oneOf(
     [true],
@@ -147,16 +135,16 @@ interface WalletFundSetupFormProps {
 
 const WalletFundSetupForm: React.FC<WalletFundSetupFormProps> = ({ transaction, account, environment }) => {
   const exchangeOptions = environment.exchanges
-    .filter(exchange => !exchange.historic)
-    .map(exchange => ({
+    .filter((exchange) => !exchange.historic)
+    .map((exchange) => ({
       label: exchange.name,
       value: exchange.id,
       checked: true,
     }));
 
   const tokensOptions = environment.tokens
-    .filter(token => !token.historic)
-    .map(token => ({
+    .filter((token) => !token.historic)
+    .map((token) => ({
       label: `${token.symbol} (${token.name})`,
       value: token.address,
       checked: true,
@@ -174,14 +162,14 @@ const WalletFundSetupForm: React.FC<WalletFundSetupFormProps> = ({ transaction, 
     validationSchema,
     validationContext,
     initialValues,
-    onSubmit: values => {
+    onSubmit: (values) => {
       const factory = new Version(environment, environment.deployment.melon.addr.Version);
 
       const wethAddress = environment.getToken('WETH')!.address;
-      const assetAddresses = values.assets.map(symbol => environment.getToken(symbol)!.address);
-      const selectedExchanges = values.exchanges.map(id => environment.getExchange(id));
-      const exchangeAddresses = selectedExchanges.map(exchange => exchange.exchange);
-      const adapterAddresses = selectedExchanges.map(exchange => exchange.adapter);
+      const assetAddresses = values.assets.map((symbol) => environment.getToken(symbol)!.address);
+      const selectedExchanges = values.exchanges.map((id) => environment.getExchange(id));
+      const exchangeAddresses = selectedExchanges.map((exchange) => exchange.exchange);
+      const adapterAddresses = selectedExchanges.map((exchange) => exchange.adapter);
 
       const managementFeeAddress = environment.deployment.melon.addr.ManagementFee;
       const performanceFeeAddress = environment.deployment.melon.addr.PerformanceFee;

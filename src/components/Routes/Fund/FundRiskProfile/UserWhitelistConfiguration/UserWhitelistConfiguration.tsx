@@ -34,11 +34,11 @@ export interface UserWhitelistConfigurationProps {
   startTransaction: (tx: Deployment<UserWhitelist> | Transaction<TransactionReceipt>, name: string) => void;
 }
 
-export const UserWhitelistConfiguration: React.FC<UserWhitelistConfigurationProps> = props => {
+export const UserWhitelistConfiguration: React.FC<UserWhitelistConfigurationProps> = (props) => {
   const environment = useEnvironment()!;
   const account = useAccount();
 
-  const preExistingPolicy = props.allPolicies?.find(policy => policy.identifier === 'UserWhitelist') as
+  const preExistingPolicy = props.allPolicies?.find((policy) => policy.identifier === 'UserWhitelist') as
     | FundPolicy
     | undefined;
 
@@ -85,7 +85,7 @@ const validationSchema = Yup.object().shape({
 
     return true;
   }),
-  removeUsers: Yup.string().test('address-validation', 'Invalid address format', function(removeUsers: string) {
+  removeUsers: Yup.string().test('address-validation', 'Invalid address format', function (removeUsers: string) {
     const removedUsers = removeUsers?.replace(/^\s+|\s+$/g, '').split('\n') as string[];
     const preExistingPolicy = (this.options.context as any).preExistingPolicy;
 
@@ -117,7 +117,7 @@ const UserWhitelistConfigurationForm: React.FC<UserWhitelistConfigurationFormPro
     validationSchema,
     validationContext,
     initialValues,
-    onSubmit: async data => {
+    onSubmit: async (data) => {
       const whitelistedUsers = data.userWhitelist!.replace(/^\s+|\s+$/g, '').split('\n') as string[];
       const removedUsers = data.removeUsers?.replace(/^\s+|\s+$/g, '').split('\n') as string[];
 

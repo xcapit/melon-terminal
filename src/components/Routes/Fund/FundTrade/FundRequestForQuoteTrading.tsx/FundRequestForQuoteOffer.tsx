@@ -25,7 +25,7 @@ export interface FundRequestForQuoteOfferProps {
   side?: 'buy' | 'sell';
 }
 
-export const FundRequestForQuoteOffer: React.FC<FundRequestForQuoteOfferProps> = props => {
+export const FundRequestForQuoteOffer: React.FC<FundRequestForQuoteOfferProps> = (props) => {
   const [quote, setQuote] = useState<{
     offer: SignedOrder;
     taker: TokenDefinition;
@@ -85,7 +85,7 @@ export const FundRequestForQuoteOffer: React.FC<FundRequestForQuoteOfferProps> =
     );
 
     const empty$ = Rx.of(new BigNumber(0));
-    const subscription = (active ? observable$ : empty$).subscribe(price => {
+    const subscription = (active ? observable$ : empty$).subscribe((price) => {
       setState(() => ({
         price,
         loading: false,

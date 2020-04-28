@@ -18,15 +18,15 @@ const validationSchema = Yup.object().shape({
     .label('Asset blacklist')
     .compact()
     .min(1, 'Select at least one asset')
-    .test('maxOne', 'You can add maximum one new asset at a time.', function(assetBlacklist: string[]) {
+    .test('maxOne', 'You can add maximum one new asset at a time.', function (assetBlacklist: string[]) {
       const preExistingPolicy = (this.options.context as any).preExistingPolicy as AssetBlacklistPolicy | undefined;
 
       if (!preExistingPolicy) {
         return true;
       }
       const assetsToAdd = assetBlacklist
-        .map(asset => !preExistingPolicy?.assetBlacklist.some(list => list === asset) && asset)
-        .filter(asset => asset);
+        .map((asset) => !preExistingPolicy?.assetBlacklist.some((list) => list === asset) && asset)
+        .filter((asset) => asset);
 
       if (assetsToAdd && assetsToAdd.length > 1) {
         return false;
@@ -43,12 +43,12 @@ export interface AssetBlacklistConfigurationProps {
   startTransaction: (tx: Deployment<AssetBlacklist> | Transaction<TransactionReceipt>, name: string) => void;
 }
 
-export const AssetBlacklistConfiguration: React.FC<AssetBlacklistConfigurationProps> = props => {
+export const AssetBlacklistConfiguration: React.FC<AssetBlacklistConfigurationProps> = (props) => {
   const environment = useEnvironment()!;
   const account = useAccount();
-  const tokens = availableTokens(environment.deployment).filter(token => !token.historic);
+  const tokens = availableTokens(environment.deployment).filter((token) => !token.historic);
 
-  const preExistingPolicy = props.allPolicies?.find(policy => policy.identifier === 'AssetBlacklist') as
+  const preExistingPolicy = props.allPolicies?.find((policy) => policy.identifier === 'AssetBlacklist') as
     | AssetBlacklistPolicy
     | undefined;
 
@@ -59,10 +59,10 @@ export const AssetBlacklistConfiguration: React.FC<AssetBlacklistConfigurationPr
     [preExistingPolicy]
   );
 
-  const options = tokens.map(item => ({
+  const options = tokens.map((item) => ({
     label: `${item.symbol} (${item.name})`,
     value: item.address,
-    disabled: preExistingPolicy && preExistingPolicy?.assetBlacklist.some(address => address === item.address),
+    disabled: preExistingPolicy && preExistingPolicy?.assetBlacklist.some((address) => address === item.address),
   }));
 
   const initialValues = {
@@ -73,10 +73,10 @@ export const AssetBlacklistConfiguration: React.FC<AssetBlacklistConfigurationPr
     validationSchema,
     validationContext,
     initialValues,
-    onSubmit: data => {
+    onSubmit: (data) => {
       const assetsToAdd = data.assetBlacklist
-        .map(asset => !preExistingPolicy?.assetBlacklist.some(list => list === asset) && asset)
-        .filter(asset => asset);
+        .map((asset) => !preExistingPolicy?.assetBlacklist.some((list) => list === asset) && asset)
+        .filter((asset) => asset);
 
       if (preExistingPolicy && assetsToAdd && assetsToAdd[0]) {
         const assetBlackList = new AssetBlacklist(environment, preExistingPolicy.address);

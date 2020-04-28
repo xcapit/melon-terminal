@@ -54,7 +54,7 @@ export const FundInvestorsList: React.FC<FundInvestorsListProps> = ({ address })
             </HeaderRow>
           </thead>
           <tbody>
-            {fundInvestements.map(investement => (
+            {fundInvestements.map((investement) => (
               <BodyRow key={investement.id}>
                 <BodyCell>
                   <EtherscanLink address={investement.owner.id}>{investement.owner.id}</EtherscanLink>

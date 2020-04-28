@@ -45,19 +45,10 @@ const tokens = [
 ] as TokenDefinition[];
 
 const validationSchema = Yup.object({
-  input: Yup.string()
-    .max(15, 'Must be 15 characters or less')
-    .required('Required'),
-  noLabel: Yup.string()
-    .max(15, 'Must be 15 characters or less')
-    .required('Required'),
-  textarea: Yup.string()
-    .max(20, 'Must be 20 characters or less')
-    .required('Required'),
-  checkboxes: Yup.array()
-    .min(1)
-    .max(2)
-    .required(),
+  input: Yup.string().max(15, 'Must be 15 characters or less').required('Required'),
+  noLabel: Yup.string().max(15, 'Must be 15 characters or less').required('Required'),
+  textarea: Yup.string().max(20, 'Must be 20 characters or less').required('Required'),
+  checkboxes: Yup.array().min(1).max(2).required(),
   bigNumber: Yup.mixed()
     .required()
     .test('is-big-number', 'Has to be a big number', (value: BigNumber) => {
@@ -93,7 +84,7 @@ export const Basic = () => {
   const formik = useFormik({
     validationSchema,
     initialValues,
-    onSubmit: values => {
+    onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
   });

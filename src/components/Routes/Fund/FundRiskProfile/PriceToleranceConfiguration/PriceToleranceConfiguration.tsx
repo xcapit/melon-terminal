@@ -12,10 +12,7 @@ import { BlockActions } from '~/storybook/Block/Block';
 import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 
 const validationSchema = Yup.object().shape({
-  priceTolerance: Yup.number()
-    .required()
-    .min(0)
-    .max(100),
+  priceTolerance: Yup.number().required().min(0).max(100),
 });
 
 const initialValues = {
@@ -28,14 +25,14 @@ export interface PriceToleranceConfigurationProps {
   startTransaction: (tx: Deployment<PriceTolerance>, name: string) => void;
 }
 
-export const PriceToleranceConfiguration: React.FC<PriceToleranceConfigurationProps> = props => {
+export const PriceToleranceConfiguration: React.FC<PriceToleranceConfigurationProps> = (props) => {
   const environment = useEnvironment()!;
   const account = useAccount();
 
   const formik = useFormik({
     validationSchema,
     initialValues,
-    onSubmit: async data => {
+    onSubmit: async (data) => {
       const tx = PriceTolerance.deploy(environment, PriceToleranceBytecode, account.address!, data.priceTolerance!);
       props.startTransaction(tx, 'Deploy PriceTolerance Contract');
     },

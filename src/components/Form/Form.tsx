@@ -97,7 +97,7 @@ export interface FormProps {
   formik: FormikContextType<any>;
 }
 
-export const Form: React.FC<React.PropsWithChildren<FormProps>> = props => {
+export const Form: React.FC<React.PropsWithChildren<FormProps>> = (props) => {
   return (
     <FormikProvider value={props.formik}>
       <FormBase>{props.children}</FormBase>

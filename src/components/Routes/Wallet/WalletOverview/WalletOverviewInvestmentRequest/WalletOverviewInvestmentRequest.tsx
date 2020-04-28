@@ -14,7 +14,7 @@ import { TransactionDescription } from '~/components/Common/TransactionModal/Tra
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 
-export const WalletOverviewInvestmentRequest: React.FC<InvestmentRequest> = props => {
+export const WalletOverviewInvestmentRequest: React.FC<InvestmentRequest> = (props) => {
   const environment = useEnvironment()!;
   const account = useAccount();
   const [status, query] = useInvestmentRequestStatusQuery(props.account!, props.address);

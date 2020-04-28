@@ -25,7 +25,7 @@ const validationSchema = Yup.object().shape({
     .label('Asset whitelist')
     .compact()
     .min(1, 'Select at least one asset')
-    .test('max-One', 'You can remove maximum one asset at a time.', function(assetWhitelist: string[]) {
+    .test('max-One', 'You can remove maximum one asset at a time.', function (assetWhitelist: string[]) {
       const preExistingPolicy = (this.options.context as any).preExistingPolicy as AssetWhitelistPolicy | undefined;
 
       if (!preExistingPolicy) {
@@ -33,8 +33,8 @@ const validationSchema = Yup.object().shape({
       }
 
       const assetsToRemove = preExistingPolicy?.assetWhitelist
-        .map(policy => !assetWhitelist.some(list => list === policy) && policy)
-        .filter(asset => asset);
+        .map((policy) => !assetWhitelist.some((list) => list === policy) && policy)
+        .filter((asset) => asset);
 
       if (assetsToRemove && assetsToRemove.length > 1) {
         return false;
@@ -44,12 +44,12 @@ const validationSchema = Yup.object().shape({
     }),
 });
 
-export const AssetWhitelistConfiguration: React.FC<AssetWhitelistConfigurationProps> = props => {
+export const AssetWhitelistConfiguration: React.FC<AssetWhitelistConfigurationProps> = (props) => {
   const environment = useEnvironment()!;
   const account = useAccount();
-  const tokens = availableTokens(environment.deployment).filter(token => !token.historic);
+  const tokens = availableTokens(environment.deployment).filter((token) => !token.historic);
 
-  const preExistingPolicy = props.allPolicies?.find(policy => policy.identifier === 'AssetWhitelist') as
+  const preExistingPolicy = props.allPolicies?.find((policy) => policy.identifier === 'AssetWhitelist') as
     | AssetWhitelistPolicy
     | undefined;
 
@@ -60,10 +60,10 @@ export const AssetWhitelistConfiguration: React.FC<AssetWhitelistConfigurationPr
     [preExistingPolicy]
   );
 
-  const options = tokens.map(item => ({
+  const options = tokens.map((item) => ({
     label: `${item.symbol} (${item.name})`,
     value: item.address,
-    disabled: preExistingPolicy && !preExistingPolicy?.assetWhitelist.some(address => address === item.address),
+    disabled: preExistingPolicy && !preExistingPolicy?.assetWhitelist.some((address) => address === item.address),
   }));
 
   const initialValues = {
@@ -74,10 +74,10 @@ export const AssetWhitelistConfiguration: React.FC<AssetWhitelistConfigurationPr
     validationSchema,
     validationContext,
     initialValues,
-    onSubmit: async data => {
+    onSubmit: async (data) => {
       const assetsToRemove = preExistingPolicy?.assetWhitelist
-        .map(policy => !data.assetWhitelist.some(list => list === policy) && policy)
-        .filter(asset => asset);
+        .map((policy) => !data.assetWhitelist.some((list) => list === policy) && policy)
+        .filter((asset) => asset);
 
       if (preExistingPolicy && assetsToRemove && assetsToRemove[0]) {
         const assetWhiteList = new AssetWhitelist(environment, preExistingPolicy.address);

@@ -35,8 +35,8 @@ export const WalletUnwrapEther: React.FC = () => {
 
 const validationSchema = Yup.object().shape({
   quantityWeth: Yup.mixed()
-    .test('positive', 'Amount of WETH has to be positive', data => data.value?.isGreaterThan(0))
-    .test('balance', 'Not enough WETH in wallet', function({ value }) {
+    .test('positive', 'Amount of WETH has to be positive', (data) => data.value?.isGreaterThan(0))
+    .test('balance', 'Not enough WETH in wallet', function ({ value }) {
       const account = (this.options.context as any).account as AccountContextValue;
       return !!account.weth?.isGreaterThanOrEqualTo(toTokenBaseUnit(value, 18));
     }),
@@ -65,7 +65,7 @@ const WalletUnwrapEtherForm: React.FC<WalletUnwrapEtherFormProps> = ({ transacti
     validationSchema,
     validationContext,
     initialValues,
-    onSubmit: data => {
+    onSubmit: (data) => {
       const token = environment.getToken('WETH')!;
       const weth = new Weth(environment, token.address);
       const tx = weth.withdraw(account.address!, toTokenBaseUnit(data.quantityWeth.value, 18));

@@ -25,7 +25,7 @@ export const WalletOverviewAccountBalance: React.FC<WalletOverviewAccountBalance
   return (
     <Block>
       <SectionTitle>Account Balances</SectionTitle>
-      {balances.map(token => (
+      {balances.map((token) => (
         <S.Balance key={token.symbol}>
           <TokenValueDisplay value={token.balance} decimals={token.decimals} symbol={token.symbol} />
         </S.Balance>

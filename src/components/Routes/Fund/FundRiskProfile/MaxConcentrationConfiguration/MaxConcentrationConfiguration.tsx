@@ -13,11 +13,7 @@ import { Input } from '~/components/Form/Input/Input';
 import { Button } from '~/components/Form/Button/Button';
 
 const validationSchema = Yup.object().shape({
-  maxConcentration: Yup.number()
-    .label('Maximum concentration (%)')
-    .required()
-    .min(0)
-    .max(100),
+  maxConcentration: Yup.number().label('Maximum concentration (%)').required().min(0).max(100),
 });
 
 const initialValues = {
@@ -30,14 +26,14 @@ export interface MaxConcentrationConfigurationProps {
   startTransaction: (tx: Deployment<MaxConcentration>, name: string) => void;
 }
 
-export const MaxConcentrationConfiguration: React.FC<MaxConcentrationConfigurationProps> = props => {
+export const MaxConcentrationConfiguration: React.FC<MaxConcentrationConfigurationProps> = (props) => {
   const environment = useEnvironment()!;
   const account = useAccount();
 
   const formik = useFormik({
     validationSchema,
     initialValues,
-    onSubmit: async data => {
+    onSubmit: async (data) => {
       const tx = MaxConcentration.deploy(
         environment,
         MaxConcentrationBytecode,

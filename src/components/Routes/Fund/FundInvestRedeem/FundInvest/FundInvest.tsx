@@ -33,16 +33,16 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
   const [priceUpdate] = usePriceFeedUpdateQuery();
 
   const denominationAsset = result?.fund?.routes?.accounting?.denominationAsset;
-  const holdings = result?.fund?.routes?.accounting?.holdings?.filter(holding => !holding.amount?.isZero());
+  const holdings = result?.fund?.routes?.accounting?.holdings?.filter((holding) => !holding.amount?.isZero());
 
   const policies = result?.fund?.routes?.policyManager?.policies;
-  const assetWhitelists = policies?.filter(policy => policy.identifier === 'AssetWhitelist') as
+  const assetWhitelists = policies?.filter((policy) => policy.identifier === 'AssetWhitelist') as
     | AssetWhitelist[]
     | undefined;
-  const assetBlacklists = policies?.filter(policy => policy.identifier === 'AssetBlacklist') as
+  const assetBlacklists = policies?.filter((policy) => policy.identifier === 'AssetBlacklist') as
     | AssetBlacklist[]
     | undefined;
-  const userWhitelists = policies?.filter(policy => policy.identifier === 'UserWhitelist') as
+  const userWhitelists = policies?.filter((policy) => policy.identifier === 'UserWhitelist') as
     | UserWhitelist[]
     | undefined;
 
@@ -66,19 +66,19 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
 
   const request = result?.account?.participation?.request;
   const twentyFourHoursAfterRequest = new Date((request?.timestamp?.getTime() || 0) + oneDay);
-  const symbol = environment.tokens.find(token => sameAddress(token.address, request?.investmentAsset))?.symbol;
+  const symbol = environment.tokens.find((token) => sameAddress(token.address, request?.investmentAsset))?.symbol;
 
   const account = result?.account;
   const allowedAssets = result?.fund?.routes?.participation?.allowedAssets
     ?.filter(
-      asset =>
+      (asset) =>
         !assetWhitelists?.length ||
-        assetWhitelists.every(list => list.assetWhitelist?.some(item => sameAddress(item, asset.token?.address)))
+        assetWhitelists.every((list) => list.assetWhitelist?.some((item) => sameAddress(item, asset.token?.address)))
     )
     .filter(
-      asset =>
+      (asset) =>
         !assetBlacklists?.length ||
-        !assetBlacklists.some(list => list.assetBlacklist?.some(item => sameAddress(item, asset.token?.address)))
+        !assetBlacklists.some((list) => list.assetBlacklist?.some((item) => sameAddress(item, asset.token?.address)))
     );
 
   const action = useMemo(() => {
@@ -110,7 +110,7 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
     );
   }
 
-  if (userWhitelists && !userWhitelists.every(list => list.isWhitelisted)) {
+  if (userWhitelists && !userWhitelists.every((list) => list.isWhitelisted)) {
     return (
       <Block>
         <SectionTitle>Invest</SectionTitle>

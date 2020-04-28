@@ -122,11 +122,11 @@ export const FundFactSheet: React.FC<FundFactSheetProps> = ({ address }) => {
 
   const volatility =
     normalizedCalculations &&
-    standardDeviation(normalizedCalculations.map(item => item.logReturn)) * 100 * Math.sqrt(365.25);
+    standardDeviation(normalizedCalculations.map((item) => item.logReturn)) * 100 * Math.sqrt(365.25);
 
   const exchanges = routes?.trading?.exchanges
-    ?.map(exchange => environment?.getExchange(exchange as any))
-    .filter(item => !!item)
+    ?.map((exchange) => environment?.getExchange(exchange as any))
+    .filter((item) => !!item)
     .sort((a, b) => {
       if (a.historic === b.historic) {
         return 0;
@@ -135,12 +135,12 @@ export const FundFactSheet: React.FC<FundFactSheetProps> = ({ address }) => {
       return a.historic ? 1 : -1;
     })
     .filter((item, index, array) => {
-      const found = array.findIndex(inner => sameAddress(item.exchange, inner.exchange));
+      const found = array.findIndex((inner) => sameAddress(item.exchange, inner.exchange));
       return found >= index;
     });
 
   const allowedAssets = routes?.participation?.allowedAssets;
-  const allowedAssetsSymbols = allowedAssets?.map(asset => asset?.token?.symbol);
+  const allowedAssetsSymbols = allowedAssets?.map((asset) => asset?.token?.symbol);
 
   return (
     <Dictionary>

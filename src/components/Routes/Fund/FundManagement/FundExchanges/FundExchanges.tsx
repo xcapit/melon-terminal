@@ -28,7 +28,7 @@ export const FundExchanges: React.FC<ExchangesProps> = ({ address }) => {
 
   const exchanges = useMemo(() => {
     const exchanges = details?.fund?.routes?.trading?.exchanges || [];
-    return exchanges.map(exchange => environment.getExchange(exchange as any)).filter(exchange => !!exchange);
+    return exchanges.map((exchange) => environment.getExchange(exchange as any)).filter((exchange) => !!exchange);
   }, [details?.fund?.routes?.trading?.exchanges]);
 
   const exchangesRef = useRef(exchanges);
@@ -46,12 +46,12 @@ export const FundExchanges: React.FC<ExchangesProps> = ({ address }) => {
   }
 
   const options = environment.exchanges
-    .filter(exchange => !exchange.historic || exchanges?.some(enabled => enabled.id === exchange.id))
-    .map(exchange => ({
+    .filter((exchange) => !exchange.historic || exchanges?.some((enabled) => enabled.id === exchange.id))
+    .map((exchange) => ({
       label: `${exchange.name}${exchange.historic ? ` (deprecated)` : ''}`,
       value: exchange.id,
-      checked: !!exchanges?.some(enabled => enabled.id === exchange.id),
-      disabled: !!exchanges?.some(enabled => enabled.id === exchange.id),
+      checked: !!exchanges?.some((enabled) => enabled.id === exchange.id),
+      disabled: !!exchanges?.some((enabled) => enabled.id === exchange.id),
     }));
 
   return (
@@ -77,13 +77,13 @@ export const FundExchanges: React.FC<ExchangesProps> = ({ address }) => {
 const validationSchema = Yup.object().shape({
   exchanges: Yup.array<string>()
     .compact()
-    .test('at-least-one', "You didn't select a new exchange.", function(value: string[]) {
+    .test('at-least-one', "You didn't select a new exchange.", function (value: string[]) {
       const options = (this.options.context as any).exchangesRef.current as ExchangeDefinition[];
-      return value.some(selected => selected && !options.some((available: any) => available.id === selected))!;
+      return value.some((selected) => selected && !options.some((available: any) => available.id === selected))!;
     })
-    .test('only-one', 'You can only add one exchange at a time.', function(value: string[]) {
+    .test('only-one', 'You can only add one exchange at a time.', function (value: string[]) {
       const options = (this.options.context as any).exchangesRef.current as ExchangeDefinition[];
-      const add = value.filter(selected => selected && !options.some((available: any) => available.id === selected))!;
+      const add = value.filter((selected) => selected && !options.some((available: any) => available.id === selected))!;
       return add.length === 1;
     }),
 });
@@ -124,8 +124,10 @@ const FundExchangesForm: React.FC<FundExchangesFormProps> = ({
     validationSchema,
     validationContext,
     initialValues,
-    onSubmit: data => {
-      const add = data.exchanges.find(selected => selected && !exchanges.some(available => available.id === selected))!;
+    onSubmit: (data) => {
+      const add = data.exchanges.find(
+        (selected) => selected && !exchanges.some((available) => available.id === selected)
+      )!;
       const exchange = environment.getExchange(add);
       const address = details?.fund?.routes?.trading?.address;
       const trading = new Trading(environment, address!);

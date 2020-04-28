@@ -31,7 +31,7 @@ const validationSchema = Yup.object().shape({
   shareQuantity: Yup.mixed<BigNumber>()
     .transform((value, _) => new BigNumber(value))
     .test('positive', 'Number of shares has to be positive', (value: BigNumber) => !!value?.isGreaterThan(0))
-    .test('smallerThanBalance', 'Number of shares has to be equal or less than number of shares owned', function(
+    .test('smallerThanBalance', 'Number of shares has to be equal or less than number of shares owned', function (
       value: BigNumber
     ) {
       const shares = (this.options.context as any).shares as AccountShares;
@@ -74,7 +74,7 @@ export const FundRedeem: React.FC<FundRedeemProps> = ({ address }) => {
     validationSchema,
     validationContext,
     initialValues,
-    onSubmit: async data => {
+    onSubmit: async (data) => {
       if (data.redeemAll) {
         const tx = participationContract.redeem(account.address!);
         transaction.start(tx, 'Redeem all shares');

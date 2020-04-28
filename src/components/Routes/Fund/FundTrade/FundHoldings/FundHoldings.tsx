@@ -13,7 +13,7 @@ export interface FundHoldingsProps {
 export const FundHoldings: React.FC<FundHoldingsProps> = ({ address }) => {
   const [holdings, query] = useFundHoldingsQuery(address);
 
-  const nonZeroHoldings = holdings.filter(holding => !holding.amount?.isZero());
+  const nonZeroHoldings = holdings.filter((holding) => !holding.amount?.isZero());
 
   if (query.loading) {
     return (

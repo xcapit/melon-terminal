@@ -390,9 +390,7 @@ export function useTransaction(environment: DeployedEnvironment, options?: Trans
     mode: 'onSubmit',
     reValidateMode: 'onBlur',
     validationSchema: Yup.object().shape({
-      gasPrice: Yup.number()
-        .required()
-        .max(8000000),
+      gasPrice: Yup.number().required().max(8000000),
     }),
   });
 
@@ -415,7 +413,7 @@ export function useTransaction(environment: DeployedEnvironment, options?: Trans
     dispatch({ type: TransactionProgress.TRANSACTION_ACKNOWLEDGED });
   };
 
-  const submit = form.handleSubmit(async data => {
+  const submit = form.handleSubmit(async (data) => {
     if (!(state.transaction && state.sendOptions)) {
       return;
     }
@@ -443,9 +441,9 @@ export function useTransaction(environment: DeployedEnvironment, options?: Trans
       executionPending(dispatch, opts);
       const tx = transaction.send(opts);
       const receipt = await new Promise<TransactionReceipt>((resolve, reject) => {
-        tx.once('transactionHash', hash => executionReceived(dispatch, hash));
-        tx.once('receipt', receipt => resolve(receipt));
-        tx.once('error', error => reject((error as any).error ? (error as any).error : error));
+        tx.once('transactionHash', (hash) => executionReceived(dispatch, hash));
+        tx.once('receipt', (receipt) => resolve(receipt));
+        tx.once('error', (error) => reject((error as any).error ? (error as any).error : error));
       });
 
       await refetch(receipt.blockNumber);

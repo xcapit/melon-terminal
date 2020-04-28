@@ -89,7 +89,7 @@ const useFilteredFunds = (funds: FundProcessed[], search: string, filter: Filter
     }
 
     const searchString = search.toLowerCase();
-    return funds.filter(fund => {
+    return funds.filter((fund) => {
       const matches = !search || fund.name.toLowerCase().includes(searchString);
       return (
         matches &&
@@ -189,7 +189,7 @@ const ToggleCheckboxContainer = styled(CheckboxContainer)`
 `;
 
 const ToggleCheckboxLabel = styled(CheckboxLabel)`
-  padding-left: ${props => props.theme.spaceUnits.xs};
+  padding-left: ${(props) => props.theme.spaceUnits.xs};
 `;
 
 export const FundOverview: React.FC = () => {
@@ -252,7 +252,7 @@ export const FundOverview: React.FC = () => {
               type="text"
               placeholder="Search"
               value={search}
-              onChange={event => setSearch(event.target.value)}
+              onChange={(event) => setSearch(event.target.value)}
             />
           </GridCol>
 

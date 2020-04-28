@@ -24,7 +24,7 @@ export const CheckboxItem: React.FC<CheckboxProps> = ({ label, ...rest }) => {
   );
 };
 
-export const Checkbox: React.FC<CheckboxProps> = props => {
+export const Checkbox: React.FC<CheckboxProps> = (props) => {
   const [field, meta] = useField({ type: 'checkbox', ...props });
 
   return (

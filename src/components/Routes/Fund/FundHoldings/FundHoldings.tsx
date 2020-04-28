@@ -35,7 +35,7 @@ export const FundHoldings: React.FC<FundHoldingsProps> = ({ address }) => {
     );
   }
 
-  const nonZeroHoldings = holdings.filter(holding => !holding.amount?.isZero());
+  const nonZeroHoldings = holdings.filter((holding) => !holding.amount?.isZero());
 
   const totalValue = nonZeroHoldings.reduce((acc, current) => {
     return acc.plus(current.value || new BigNumber(0));

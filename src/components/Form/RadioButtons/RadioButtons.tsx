@@ -33,7 +33,7 @@ export interface RadioButtonsProps extends RadioButtonProps {
 
 export const RadioButtons: React.FC<RadioButtonsProps> = ({ options, ...props }) => {
   const [field, meta] = useField({ type: 'radio', ...props });
-  const children = options.map(item => {
+  const children = options.map((item) => {
     const key = `${item.label}:${item.value}`;
     const checked = meta.value === item.value;
     return <RadioButton key={key} {...meta} {...field} {...props} {...item} checked={checked} />;

@@ -24,43 +24,43 @@ export interface FundLiquidityProviderTradingProps {
   policies?: Policy[];
 }
 
-export const FundLiquidityProviderTrading: React.FC<FundLiquidityProviderTradingProps> = props => {
+export const FundLiquidityProviderTrading: React.FC<FundLiquidityProviderTradingProps> = (props) => {
   const environment = useEnvironment()!;
 
-  const assetWhitelists = props.policies?.filter(policy => policy.identifier === 'AssetWhitelist') as
+  const assetWhitelists = props.policies?.filter((policy) => policy.identifier === 'AssetWhitelist') as
     | AssetWhitelist[]
     | undefined;
-  const assetBlacklists = props.policies?.filter(policy => policy.identifier === 'AssetBlacklist') as
+  const assetBlacklists = props.policies?.filter((policy) => policy.identifier === 'AssetBlacklist') as
     | AssetBlacklist[]
     | undefined;
-  const maxPositionsPolicies = props.policies?.filter(policy => policy.identifier === 'MaxPositions') as
+  const maxPositionsPolicies = props.policies?.filter((policy) => policy.identifier === 'MaxPositions') as
     | MaxPositions[]
     | undefined;
 
-  const nonZeroHoldings = props.holdings.filter(holding => !holding.amount?.isZero());
+  const nonZeroHoldings = props.holdings.filter((holding) => !holding.amount?.isZero());
 
   const takerOptions = environment.tokens
-    .filter(item => !item.historic)
-    .map(token => ({
+    .filter((item) => !item.historic)
+    .map((token) => ({
       value: token.address,
       label: token.symbol,
     }));
 
   const makerOptions = environment.tokens
-    .filter(item => !item.historic)
+    .filter((item) => !item.historic)
     .filter(
-      asset =>
+      (asset) =>
         sameAddress(asset.address, props.denominationAsset?.address) ||
         !assetWhitelists?.length ||
-        assetWhitelists.every(list => list.assetWhitelist?.some(item => sameAddress(item, asset.address)))
+        assetWhitelists.every((list) => list.assetWhitelist?.some((item) => sameAddress(item, asset.address)))
     )
     .filter(
-      asset =>
+      (asset) =>
         sameAddress(asset.address, props.denominationAsset?.address) ||
         !assetBlacklists?.length ||
-        !assetBlacklists.some(list => list.assetBlacklist?.some(item => sameAddress(item, asset.address)))
+        !assetBlacklists.some((list) => list.assetBlacklist?.some((item) => sameAddress(item, asset.address)))
     )
-    .map(token => ({
+    .map((token) => ({
       value: token.address,
       label: token.symbol,
     }));
@@ -110,7 +110,7 @@ export const FundLiquidityProviderTrading: React.FC<FundLiquidityProviderTrading
 const validationSchema = Yup.object().shape({
   makerAsset: Yup.string()
     .required()
-    .test('maxPositions', 'Investing with this asset would violate the maximum number of positions policy', function(
+    .test('maxPositions', 'Investing with this asset would violate the maximum number of positions policy', function (
       value: string
     ) {
       const maxPositionsPolicies = (this.options.context as any).maxPositionsPolicies as MaxPositions[] | undefined;
@@ -123,10 +123,10 @@ const validationSchema = Yup.object().shape({
         // new investment is in denomination asset
         sameAddress(denominationAsset?.address, value) ||
         // already existing token
-        !!nonZeroHoldings?.some(holding => sameAddress(holding.token?.address, value)) ||
+        !!nonZeroHoldings?.some((holding) => sameAddress(holding.token?.address, value)) ||
         // max positions larger than holdings (so new token would still fit)
         maxPositionsPolicies.every(
-          policy => policy.maxPositions && nonZeroHoldings && policy.maxPositions > nonZeroHoldings?.length
+          (policy) => policy.maxPositions && nonZeroHoldings && policy.maxPositions > nonZeroHoldings?.length
         )
       );
     }),
@@ -134,13 +134,13 @@ const validationSchema = Yup.object().shape({
   takerQuantity: Yup.mixed()
     .required('Missing sell quantity.')
     // tslint:disable-next-line
-    .test('valid-number', 'The given value is not a valid number.', function(value) {
+    .test('valid-number', 'The given value is not a valid number.', function (value) {
       return !value.isNaN() && !value.isZero() && value.isPositive();
     })
     // tslint:disable-next-line
-    .test('balance-too-low', 'Your balance of the token is lower than the provided value.', function(value) {
+    .test('balance-too-low', 'Your balance of the token is lower than the provided value.', function (value) {
       const holdings = (this.options.context as any).holdings as Holding[];
-      const holding = holdings.find(item => sameAddress(item.token!.address, this.parent.takerAsset))!;
+      const holding = holdings.find((item) => sameAddress(item.token!.address, this.parent.takerAsset))!;
       const divisor = holding ? new BigNumber(10).exponentiatedBy(holding.token!.decimals!) : new BigNumber('NaN');
       const balance = holding ? holding.amount!.dividedBy(divisor) : new BigNumber('NaN');
       return new BigNumber(value).isLessThanOrEqualTo(balance);
@@ -192,7 +192,7 @@ const FundLiquidityProviderTradingForm: React.FC<FundLiquidityProviderTradingFor
   const weth = environment.getToken('WETH');
 
   const exchanges = props.exchanges
-    .map(exchange => {
+    .map((exchange) => {
       if (exchange.id === ExchangeIdentifier.KyberNetwork) {
         return [exchange, FundKyberTrading];
       }
@@ -211,7 +211,7 @@ const FundLiquidityProviderTradingForm: React.FC<FundLiquidityProviderTradingFor
 
       return null;
     })
-    .filter(value => !!value) as [ExchangeDefinition, React.ElementType][];
+    .filter((value) => !!value) as [ExchangeDefinition, React.ElementType][];
 
   return (
     <Form formik={formik}>

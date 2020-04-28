@@ -63,7 +63,7 @@ export const FundInvestmentHistoryList: React.FC<FundInvestmentHistoryListProps>
             </HeaderRow>
           </thead>
           <tbody>
-            {fundInvestment.map(investment => {
+            {fundInvestment.map((investment) => {
               return (
                 <BodyRow key={investment.id}>
                   <BodyCell>

@@ -7,7 +7,7 @@ export interface InputProps extends GenericInputProps {
   label?: string;
 }
 
-export const Input: React.FC<InputProps> = props => {
+export const Input: React.FC<InputProps> = (props) => {
   const [field, meta] = useField({ type: 'text', ...props });
   if (props.type === 'hidden') {
     return <input {...field} {...props} />;
@@ -16,7 +16,7 @@ export const Input: React.FC<InputProps> = props => {
   return <InputWidget {...meta} {...field} {...props} />;
 };
 
-export const InputWidget: React.FC<InputProps> = props => {
+export const InputWidget: React.FC<InputProps> = (props) => {
   const { label, ...rest } = props;
 
   return (

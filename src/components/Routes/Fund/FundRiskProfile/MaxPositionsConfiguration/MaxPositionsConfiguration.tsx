@@ -12,10 +12,7 @@ import { BlockActions } from '~/storybook/Block/Block';
 import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 
 const validationSchema = Yup.object().shape({
-  maxPositions: Yup.number()
-    .required()
-    .min(0)
-    .integer(),
+  maxPositions: Yup.number().required().min(0).integer(),
 });
 
 const initialValues = {
@@ -28,14 +25,14 @@ export interface MaxPositionsConfigurationProps {
   startTransaction: (tx: Deployment<MaxPositions>, name: string) => void;
 }
 
-export const MaxPositionsConfiguration: React.FC<MaxPositionsConfigurationProps> = props => {
+export const MaxPositionsConfiguration: React.FC<MaxPositionsConfigurationProps> = (props) => {
   const environment = useEnvironment()!;
   const account = useAccount();
 
   const formik = useFormik({
     validationSchema,
     initialValues,
-    onSubmit: async data => {
+    onSubmit: async (data) => {
       const tx = MaxPositions.deploy(environment, MaxPositionsBytecode, account.address!, data.maxPositions!);
       props.startTransaction(tx, 'Deploy MaxPositions Contract');
     },

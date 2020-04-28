@@ -64,7 +64,7 @@ export const useFundTradeHistoryQuery = (address: string) => {
 
         const buyQuantity = buyAsset && fromTokenBaseUnit(buyAmount, buyAsset.decimals);
         const sellQuantity = sellAsset && fromTokenBaseUnit(sellAmount, sellAsset.decimals);
-        const exchange = environment.exchanges.find(exchange => sameAddress(exchange.exchange, item.exchange?.id));
+        const exchange = environment.exchanges.find((exchange) => sameAddress(exchange.exchange, item.exchange?.id));
 
         const price =
           sellQuantity && !sellQuantity.isZero() && buyQuantity && !buyQuantity?.isZero()

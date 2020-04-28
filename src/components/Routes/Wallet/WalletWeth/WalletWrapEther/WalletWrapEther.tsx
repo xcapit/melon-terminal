@@ -43,8 +43,8 @@ export const WalletWrapEther: React.FC = () => {
 
 const validationSchema = Yup.object().shape({
   quantityEth: Yup.mixed()
-    .test('positive', 'Amount of ETH has to be positive', data => data.value?.isGreaterThan(0))
-    .test('balance', 'Not enough ETH in wallet', function({ value }) {
+    .test('positive', 'Amount of ETH has to be positive', (data) => data.value?.isGreaterThan(0))
+    .test('balance', 'Not enough ETH in wallet', function ({ value }) {
       const account = (this.options.context as any).account as AccountContextValue;
       return !!account.eth?.isGreaterThanOrEqualTo(toTokenBaseUnit(value, 18));
     }),
@@ -72,7 +72,7 @@ const WalletWrapEtherForm: React.FC<WalletWrapEtherFormProps> = ({ transaction, 
     validationSchema,
     validationContext,
     initialValues,
-    onSubmit: data => {
+    onSubmit: (data) => {
       const token = environment.getToken('WETH')!;
       const weth = new Weth(environment, token.address);
       const tx = weth.deposit(account.address!, toTokenBaseUnit(data.quantityEth.value, 18));

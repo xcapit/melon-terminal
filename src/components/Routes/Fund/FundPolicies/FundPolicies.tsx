@@ -26,7 +26,7 @@ export interface FundPoliciesParametersProps {
   environment: DeployedEnvironment;
 }
 
-export const FundPoliciesParameters: React.FC<FundPoliciesParametersProps> = props => {
+export const FundPoliciesParameters: React.FC<FundPoliciesParametersProps> = (props) => {
   switch (props.policy.type) {
     case 'MaxConcentration': {
       return <MaxConcentration policy={props.policy as MaxConcentrationPolicy} />;
@@ -94,7 +94,7 @@ export const FundPolicies: React.FC<FundPoliciesProps> = ({ address }) => {
               </HeaderRow>
             </thead>
             <tbody>
-              {policies.map(policy => (
+              {policies.map((policy) => (
                 <BodyRow key={policy.address}>
                   <BodyCell>{policy.identifier}</BodyCell>
                   <FundPoliciesParameters policy={policy} environment={environment} />

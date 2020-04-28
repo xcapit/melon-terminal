@@ -23,7 +23,7 @@ export const InputWidget: React.FC<InputProps> = (props) => {
     <Wrapper>
       {label && <Label>{label}</Label>}
       <InputField {...rest} />
-      {rest.error && <Error>{rest.error}</Error>}
+      {rest.touched && rest.error && <Error>{rest.error}</Error>}
     </Wrapper>
   );
 };

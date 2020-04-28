@@ -83,7 +83,7 @@ export const WalletFundSetup: React.FC = () => {
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
-    .required()
+    .required('This is a required field.')
     .min(1, 'The fund name must be at least one character.')
     // tslint:disable-next-line
     .test('nameTest', 'The fund name contains invalid characters.', async function (value) {
@@ -106,26 +106,25 @@ const validationSchema = Yup.object().shape({
       const registry = new Registry(environment, environment.deployment.melon.addr.Registry);
       return await registry.canUseFundName(account.address!, value);
     }),
-  exchanges: Yup.array<string>().compact().required().min(1, 'Select at least one exchange.'),
-  assets: Yup.array<string>().compact().required().min(1, 'Select at least one investment asset.'),
-  managementFee: Yup.number().required().min(0, 'Management Fee must be greater or equal to zero.').max(100),
-  performanceFee: Yup.number().required().min(0).max(100),
+  exchanges: Yup.array<string>()
+    .compact()
+    .required('This is a required field.')
+    .min(1, 'Select at least one exchange.'),
+  assets: Yup.array<string>()
+    .compact()
+    .required('This is a required field.')
+    .min(1, 'Select at least one investment asset.'),
+  managementFee: Yup.number()
+    .required('This is a required field.')
+    .min(0, 'Management Fee must be greater or equal to zero.')
+    .max(100),
+  performanceFee: Yup.number().required('This is a required field.').min(0).max(100),
   performanceFeePeriod: Yup.number().min(0),
   termsAndConditions: Yup.boolean().oneOf(
     [true],
-    'You need to accept the Terms and conditions before you can continue.'
+    'You need to accept the terms and conditions before you can continue.'
   ),
 });
-
-const initialValues: WalletFundSetupForm = {
-  name: '',
-  exchanges: [],
-  assets: [],
-  managementFee: 1,
-  performanceFee: 10,
-  performanceFeePeriod: 90,
-  termsAndConditions: false,
-};
 
 interface WalletFundSetupFormProps {
   environment: DeployedEnvironment;
@@ -157,6 +156,16 @@ const WalletFundSetupForm: React.FC<WalletFundSetupFormProps> = ({ transaction, 
     }),
     [account, environment]
   );
+
+  const initialValues: WalletFundSetupForm = {
+    name: '',
+    exchanges: exchangeOptions.map((item) => item.value),
+    assets: tokensOptions.map((item) => item.value),
+    managementFee: 1,
+    performanceFee: 10,
+    performanceFeePeriod: 90,
+    termsAndConditions: false,
+  };
 
   const formik = useFormik({
     validationSchema,

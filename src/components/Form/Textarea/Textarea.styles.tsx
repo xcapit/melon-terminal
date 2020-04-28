@@ -25,7 +25,7 @@ export const TextareaInput = styled.textarea<GenericTextareaProps>`
     `}
 
   ${(props) => {
-    if (props.error) {
+    if (props.touched && props.error) {
       return css`
         border-color: ${(props) => props.theme.statusColors.primaryLoss};
       `;

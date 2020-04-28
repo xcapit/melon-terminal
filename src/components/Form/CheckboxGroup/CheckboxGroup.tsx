@@ -78,7 +78,7 @@ export const CheckboxGroup: React.FC<CheckboxGroupProps> = (props) => {
         }}
       </FieldArray>
 
-      {typeof meta.error === 'string' && <Error>{meta.error}</Error>}
+      {typeof meta.error === 'string' && meta.touched && <Error>{meta.error}</Error>}
     </Wrapper>
   );
 };

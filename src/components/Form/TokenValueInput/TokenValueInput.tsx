@@ -55,7 +55,7 @@ export const TokenValueInput: React.FC<TokenValueInputProps> = ({ token, label, 
         />
       </S.InputContainer>
 
-      {meta.error && <Error>{meta.error}</Error>}
+      {meta.touched && meta.error && <Error>{meta.error}</Error>}
     </Wrapper>
   );
 };

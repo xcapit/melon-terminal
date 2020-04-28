@@ -43,7 +43,7 @@ export const RadioButtons: React.FC<RadioButtonsProps> = ({ options, ...props })
     <Wrapper>
       {props.label && <Label>{props.label}</Label>}
       {children}
-      {meta.error && <Error>{meta.error}</Error>}
+      {meta.touched && meta.error && <Error>{meta.error}</Error>}
     </Wrapper>
   );
 };

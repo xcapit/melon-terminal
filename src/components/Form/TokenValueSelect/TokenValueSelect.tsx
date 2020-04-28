@@ -115,7 +115,8 @@ export const TokenValueSelect: React.FC<TokenValueSelectProps> = ({ tokens, labe
           placeholder="Search ..."
         />
       ) : null}
-      {meta.error && <Error>{meta.error}</Error>}
+
+      {meta.touched && meta.error && <Error>{meta.error}</Error>}
     </Wrapper>
   );
 };

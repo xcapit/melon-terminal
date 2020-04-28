@@ -62,7 +62,7 @@ export const SelectWidget: React.FC<SelectProps> = ({ label, ...props }) => {
     <Wrapper>
       {label && <Label>{label}</Label>}
       <SelectField {...props} />
-      {props.error && <Error>{props.error}</Error>}
+      {props.touched && props.error && <Error>{props.error}</Error>}
     </Wrapper>
   );
 };

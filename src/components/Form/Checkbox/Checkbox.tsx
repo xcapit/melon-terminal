@@ -19,7 +19,7 @@ export const CheckboxItem: React.FC<CheckboxProps> = ({ label, ...rest }) => {
       </CheckboxMask>
 
       {label && <CheckboxLabel htmlFor={id}>{label}</CheckboxLabel>}
-      {rest.error && <Error>{rest.error}</Error>}
+      {rest.touched && rest.error && <Error>{rest.error}</Error>}
     </CheckboxContainer>
   );
 };

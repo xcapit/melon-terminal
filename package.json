@@ -37,7 +37,6 @@
     "@melonproject/melonjs": "^1.0.3",
     "@popperjs/core": "^2.3.3",
     "@styled-icons/fa-solid": "^10.0.0",
-    "@walletconnect/web3-provider": "^1.0.0-beta.47",
     "apollo-cache-inmemory": "^1.6.3",
     "apollo-client": "^2.6.4",
     "apollo-link": "^1.2.14",

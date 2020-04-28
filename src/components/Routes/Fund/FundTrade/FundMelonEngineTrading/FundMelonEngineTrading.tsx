@@ -27,7 +27,7 @@ export interface FundMelonEngineTradingProps {
   active: boolean;
 }
 
-export const FundMelonEngineTrading: React.FC<FundMelonEngineTradingProps> = (props) => {
+export const FundMelonEngineTrading: React.FC<FundMelonEngineTradingProps> = props => {
   const [price, liquid, query] = useMelonEngineTradingQuery();
   const environment = useEnvironment()!;
   const account = useAccount()!;
@@ -78,7 +78,7 @@ export const FundMelonEngineTrading: React.FC<FundMelonEngineTradingProps> = (pr
     }
 
     const trading = new Trading(environment, props.trading);
-    const adapter = await MelonEngineTradingAdapter.create(environment, props.exchange.exchange, trading);
+    const adapter = await MelonEngineTradingAdapter.create(environment, props.exchange.adapter, trading);
     const tx = adapter.takeOrder(account.address!, {
       makerAsset: props.maker.address,
       takerAsset: props.taker.address,

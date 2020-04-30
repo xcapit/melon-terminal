@@ -24,7 +24,7 @@ export const TokenValueSelect: React.FC<TokenValueSelectProps> = ({ tokens, labe
   const toggleOpen = React.useCallback(() => setOpen(!open), [open, setOpen]);
 
   const options = React.useMemo<SelectOption[]>(() => {
-    return tokens.map(item => ({
+    return tokens.map((item) => ({
       value: item.address,
       label: item.symbol,
       icon: item.symbol,
@@ -33,7 +33,7 @@ export const TokenValueSelect: React.FC<TokenValueSelectProps> = ({ tokens, labe
   }, [tokens]);
 
   const selection = React.useMemo(() => {
-    return options.find(option => sameAddress(option.value, field.value?.token.address));
+    return options.find((option) => sameAddress(option.value, field.value?.token.address));
   }, [options, field.value]);
 
   const number = React.useMemo(() => {

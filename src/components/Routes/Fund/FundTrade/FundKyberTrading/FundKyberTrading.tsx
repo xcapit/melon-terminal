@@ -23,6 +23,7 @@ import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNu
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
 import { InputError } from '~/storybook/Input/Input.styles';
 import { validatePolicies } from '../FundLiquidityProviderTrading/validatePolicies';
+import { Label } from '~/components/Form/Form';
 
 export interface FundKyberTradingProps {
   trading: string;
@@ -72,7 +73,6 @@ export const FundKyberTrading: React.FC<FundKyberTradingProps> = (props) => {
       const srcToken = sameAddress(props.taker.address, weth.address) ? kyberEth : props.taker.address;
       const destToken = sameAddress(props.maker.address, weth.address) ? kyberEth : props.maker.address;
       const srcQty = toTokenBaseUnit(props.quantity, props.taker.decimals);
-
       const expected = await contract.getExpectedRate(srcToken, destToken, srcQty);
 
       return expected.expectedRate;
@@ -150,10 +150,10 @@ export const FundKyberTrading: React.FC<FundKyberTradingProps> = (props) => {
 
   return (
     <>
-      <Subtitle>
+      <Label>
         Kyber Network (<FormattedNumber value={1} suffix={state.taker.symbol} decimals={0} /> ={' '}
         <FormattedNumber value={rate} suffix={state.maker.symbol} />)
-      </Subtitle>
+      </Label>
 
       <Button
         type="button"

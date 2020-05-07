@@ -1,10 +1,7 @@
 import React from 'react';
 import { ExchangeIdentifier } from '@melonproject/melonjs';
-import { RequiresFundManager } from '~/components/Gates/RequiresFundManager/RequiresFundManager';
 import { Grid, GridRow, GridCol } from '~/storybook/Grid/Grid';
 import { FundHoldings } from '~/components/Routes/Fund/FundTrade/FundHoldings/FundHoldings';
-import { RequiresFundNotShutDown } from '~/components/Gates/RequiresFundNotShutDown/RequiresFundNotShutDown';
-import { RequiresFundDeployedWithCurrentVersion } from '~/components/Gates/RequiresFundDeployedWithCurrentVersion/RequiresFundDeployedWithCurrentVersion';
 import { FundRequestForQuoteTrading } from './FundRequestForQuoteTrading.tsx/FundRequestForQuoteTrading';
 import { FundLiquidityProviderTrading } from '~/components/Routes/Fund/FundTrade/FundLiquidityProviderTrading/FundLiquidityProviderTrading';
 import { FundOrderbookTrading } from '~/components/Routes/Fund/FundTrade/FundOrderbookTrading/FundOrderbookTrading';
@@ -43,56 +40,52 @@ export const FundTrade: React.FC<FundTradeProps> = ({ address }) => {
   return (
     <Grid>
       {!loading && (!!providers.length || !!markets.length) && (
-        <RequiresFundManager fallback={false}>
-          <RequiresFundDeployedWithCurrentVersion address={address} fallback={false}>
-            <RequiresFundNotShutDown fallback={false}>
-              <GridRow>
-                <GridCol>
-                  <FundHoldings address={address} />
-                </GridCol>
-              </GridRow>
-              {!!markets.length && !!trading && (
-                <GridRow>
-                  <GridCol>
-                    <FundOrderbookTrading
-                      trading={trading}
-                      denominationAsset={denominationAsset}
-                      exchanges={markets}
-                      policies={policies}
-                      holdings={holdings}
-                    />
-                  </GridCol>
-                </GridRow>
-              )}
-              {!!providers.length && !!trading && (
-                <GridRow>
-                  <GridCol>
-                    <FundLiquidityProviderTrading
-                      trading={trading}
-                      denominationAsset={denominationAsset}
-                      exchanges={providers}
-                      policies={policies}
-                      holdings={holdings}
-                    />
-                  </GridCol>
-                </GridRow>
-              )}
-              {!!rfq && !!trading && (
-                <GridRow>
-                  <GridCol>
-                    <FundRequestForQuoteTrading
-                      trading={trading}
-                      denominationAsset={denominationAsset}
-                      exchange={rfq}
-                      policies={policies}
-                      holdings={holdings}
-                    />
-                  </GridCol>
-                </GridRow>
-              )}
-            </RequiresFundNotShutDown>
-          </RequiresFundDeployedWithCurrentVersion>
-        </RequiresFundManager>
+        <>
+          <GridRow>
+            <GridCol>
+              <FundHoldings address={address} />
+            </GridCol>
+          </GridRow>
+          {!!markets.length && !!trading && (
+            <GridRow>
+              <GridCol>
+                <FundOrderbookTrading
+                  trading={trading}
+                  denominationAsset={denominationAsset}
+                  exchanges={markets}
+                  policies={policies}
+                  holdings={holdings}
+                />
+              </GridCol>
+            </GridRow>
+          )}
+          {!!providers.length && !!trading && (
+            <GridRow>
+              <GridCol>
+                <FundLiquidityProviderTrading
+                  trading={trading}
+                  denominationAsset={denominationAsset}
+                  exchanges={providers}
+                  policies={policies}
+                  holdings={holdings}
+                />
+              </GridCol>
+            </GridRow>
+          )}
+          {!!rfq && !!trading && (
+            <GridRow>
+              <GridCol>
+                <FundRequestForQuoteTrading
+                  trading={trading}
+                  denominationAsset={denominationAsset}
+                  exchange={rfq}
+                  policies={policies}
+                  holdings={holdings}
+                />
+              </GridCol>
+            </GridRow>
+          )}
+        </>
       )}
 
       <GridRow>

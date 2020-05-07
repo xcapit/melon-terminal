@@ -14,6 +14,7 @@ export interface TokenValueSelectProps {
   label?: string;
   tokens: TokenDefinition[];
   disabled?: boolean;
+  placeholder?: string;
 }
 
 export const TokenValueSelect: React.FC<TokenValueSelectProps> = ({ tokens, label, disabled, ...props }) => {
@@ -92,7 +93,7 @@ export const TokenValueSelect: React.FC<TokenValueSelectProps> = ({ tokens, labe
           onValueChange={onValueChange}
           isAllowed={isAllowed}
           disabled={!field.value || disabled}
-          placeholder={field.value ? 'Enter a value ...' : undefined}
+          placeholder={field.value ? (props.placeholder ? props.placeholder : 'Enter a value ...') : undefined}
         />
       </S.InputContainer>
 

@@ -10,7 +10,7 @@ import BigNumber from 'bignumber.js';
 import React from 'react';
 import * as Yup from 'yup';
 import { Form, useFormik, Wrapper } from '~/components/Form/Form';
-import { TokenValue } from '~/components/Form/TokenValueSelect/TokenValue';
+import { TokenValue } from '~/TokenValue';
 import { TokenValueSelect } from '~/components/Form/TokenValueSelect/TokenValueSelect';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { Block } from '~/storybook/Block/Block';
@@ -192,7 +192,7 @@ const FundLiquidityProviderTradingForm: React.FC<FundLiquidityProviderTradingFor
       }
 
       if (exchange.id === ExchangeIdentifier.MelonEngine) {
-        if (formik.values.makerAsset === weth && formik.values.takerAsset === mln) {
+        if (formik.values.makerAsset.token === weth && formik.values.takerAsset.token === mln) {
           return [exchange, FundMelonEngineTrading];
         }
 

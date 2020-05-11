@@ -11,7 +11,7 @@ import { useFormik, Form } from './Form';
 import { Select } from './Select/Select';
 import { BigNumberInput } from './BigNumberInput/BigNumberInput';
 import { RadioButtons } from './RadioButtons/RadioButtons';
-import { TokenValue } from './TokenValueSelect/TokenValue';
+import { TokenValue } from '~/TokenValue';
 import { TokenValueSelect } from './TokenValueSelect/TokenValueSelect';
 import { TokenValueInput } from './TokenValueInput/TokenValueInput';
 

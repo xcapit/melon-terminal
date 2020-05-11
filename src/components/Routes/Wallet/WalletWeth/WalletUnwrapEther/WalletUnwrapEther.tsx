@@ -14,7 +14,7 @@ import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenVa
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
 import { Form, useFormik } from '~/components/Form/Form';
 import { TokenValueInput } from '~/components/Form/TokenValueInput/TokenValueInput';
-import { TokenValue } from '~/components/Form/TokenValueSelect/TokenValue';
+import { TokenValue } from '~/TokenValue';
 import { AccountContextValue } from '~/components/Contexts/Account/Account';
 import * as S from './WalletUnwrapEther.styles';
 

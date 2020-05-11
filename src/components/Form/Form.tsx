@@ -82,7 +82,7 @@ export function useFormik<TValues extends FormikValues = FormikValues, TContext 
     }) as Schema<any>;
   }, [validationContext, $$validationSchema]);
 
-  const formik = useFormikBase({ ...rest, validate, validationSchema } as any);
+  const formik = useFormikBase({ ...rest, validate, validationSchema } as FormikConfigBase<TValues>);
   useUpdateEffect(() => {
     if (!!validateOnValidationChange) {
       formik.validateForm();

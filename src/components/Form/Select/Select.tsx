@@ -15,7 +15,7 @@ import { Icons, IconName } from '~/storybook/Icons/Icons';
 import * as S from './Select.styles';
 
 export interface SelectOption {
-  value: string;
+  value: string | number;
   label: string;
   description?: string;
   icon?: string;
@@ -79,6 +79,7 @@ export const SelectField: React.FC<SelectProps> = ({ Component = SelectBase, ...
   return (
     <Component
       {...props}
+      isDisabled={props.disabled ?? props.isDisabled}
       components={{ Option, SingleValue, MultiValue, ...props.components }}
       hasDescriptions={hasDescriptions}
       hasIcons={hasIcons}

@@ -5,7 +5,7 @@ import { TokenDefinition } from '@melonproject/melonjs';
 import { useField, Wrapper, Error, Label } from '~/components/Form/Form';
 import { SelectLabel } from '~/components/Form/Select/Select';
 import { BigNumberInputField } from '~/components/Form/BigNumberInput/BigNumberInput';
-import { TokenValue } from '../TokenValueSelect/TokenValue';
+import { TokenValue } from '~/TokenValue';
 import * as S from './TokenValueInput.styles';
 
 export interface TokenValueInputProps {
@@ -13,10 +13,17 @@ export interface TokenValueInputProps {
   label?: string;
   token: TokenDefinition;
   disabled?: boolean;
+  noIcon?: boolean;
+  onChange?: (value: TokenValue, before?: TokenValue) => void;
 }
 
-export const TokenValueInput: React.FC<TokenValueInputProps> = ({ token, label, ...props }) => {
-  const [{ onChange, ...field }, meta, { setValue }] = useField(props.name);
+export const TokenValueInput: React.FC<TokenValueInputProps> = ({
+  token,
+  label,
+  onChange: onChangeFeedback,
+  ...props
+}) => {
+  const [{ onChange, ...field }, meta, { setValue }] = useField<TokenValue | undefined>(props.name);
 
   const number = React.useMemo(() => {
     if (!field.value) {
@@ -29,21 +36,28 @@ export const TokenValueInput: React.FC<TokenValueInputProps> = ({ token, label, 
 
   const onValueChange = React.useCallback(
     (values: NumberFormatValues) => {
-      if (!values.value) {
-        return setValue(new TokenValue(token));
+      const before = field.value;
+      const value = !values.value ? new TokenValue(token) : new TokenValue(token, values.value);
+
+      if (before?.value?.comparedTo(value.value ?? '') === 0) {
+        return;
       }
-      setValue(new TokenValue(token, new BigNumber(values.value)));
+
+      setValue(new TokenValue(token, values.value));
+      onChangeFeedback?.(value, before);
     },
-    [token, setValue]
+    [field.value, token, setValue, onChange]
   );
 
   return (
     <Wrapper>
       <Label>{label}</Label>
       <S.InputContainer>
-        <S.TokenWrapper>
-          <SelectLabel icon={token.symbol} label={token.symbol} />
-        </S.TokenWrapper>
+        {props.noIcon || (
+          <S.TokenWrapper>
+            <SelectLabel icon={token.symbol} label={token.symbol} />
+          </S.TokenWrapper>
+        )}
 
         <BigNumberInputField
           {...meta}

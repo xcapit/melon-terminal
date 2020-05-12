@@ -13,13 +13,13 @@ import { EtherscanLink } from '../EtherscanLink/EtherscanLink';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 import { BigNumber } from 'bignumber.js';
-import { useCoinAPI } from '~/hooks/useCoinAPI';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { NetworkEnum } from '~/types';
 import { TokenValueDisplay } from '../TokenValueDisplay/TokenValueDisplay';
 import { ScrollableTable } from '~/storybook/Table/Table';
 import { useFund } from '~/hooks/useFund';
 import { useConnectionState } from '~/hooks/useConnectionState';
+import { useTokenRates } from '~/components/Contexts/Rates/Rates';
 
 function progressToStep(progress: number) {
   if (progress >= TransactionProgress.EXECUTION_FINISHED) {
@@ -57,8 +57,9 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   const gas = state.ethGasStation;
   const defaultGasPrice = state.defaultGasPrice;
 
-  const coinApi = useCoinAPI();
   const environment = useEnvironment()!;
+  const rates = useTokenRates('ETH');
+  const rate = rates.USD;
 
   const fund = useFund();
   const connection = useConnectionState();
@@ -81,13 +82,13 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   const formGasPrice = new BigNumber(form.watch('gasPrice') ?? defaultGasPrice);
   const usedGasPrice = new BigNumber(state.sendOptions?.gasPrice ?? 'NaN');
   const gasPriceEth = new BigNumber(options?.gas ?? 'NaN').multipliedBy('1e9').multipliedBy(formGasPrice);
-  const gasPriceUsd = gasPriceEth.multipliedBy(coinApi.data.rate);
+  const gasPriceUsd = gasPriceEth.multipliedBy(rate);
 
-  const amguUsd = options?.amgu?.multipliedBy(coinApi.data.rate) ?? new BigNumber('NaN');
-  const incentiveUsd = options?.incentive?.multipliedBy(coinApi.data.rate) ?? new BigNumber('NaN');
+  const amguUsd = options?.amgu?.multipliedBy(rate) ?? new BigNumber('NaN');
+  const incentiveUsd = options?.incentive?.multipliedBy(rate) ?? new BigNumber('NaN');
 
   const totalEth = gasPriceEth?.plus(options?.amgu ?? 0).plus(options?.incentive ?? 0);
-  const totalUsd = totalEth.multipliedBy(coinApi.data.rate);
+  const totalUsd = totalEth.multipliedBy(rate);
 
   const setGasPrice = (value: number = 0) => {
     form.setValue('gasPrice', value);
@@ -307,9 +308,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
                               {' ('}
                               <FormattedNumber
                                 value={fromTokenBaseUnit(
-                                  new BigNumber(receipt.gasUsed)
-                                    .multipliedBy(usedGasPrice)
-                                    .multipliedBy(coinApi.data.rate),
+                                  new BigNumber(receipt.gasUsed).multipliedBy(usedGasPrice).multipliedBy(rate),
                                   18
                                 )}
                                 suffix="USD"

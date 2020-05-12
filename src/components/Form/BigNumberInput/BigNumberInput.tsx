@@ -28,7 +28,7 @@ export const BigNumberInput: React.FC<BigNumberInputProps> = ({ label, ...props 
   return (
     <Wrapper>
       {label && <Label>{label}</Label>}
-      <BigNumberInputField customInput={InputWidget} onValueChange={onValueChange} {...meta} {...field} {...props} />
+      <BigNumberInputField onValueChange={onValueChange} {...meta} {...field} {...props} />
       {meta.touched && meta.error && <Error>{meta.error}</Error>}
     </Wrapper>
   );

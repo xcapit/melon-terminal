@@ -1,6 +1,6 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { useEnvironment } from '~/hooks/useEnvironment';
-import { TransactionHookValues, TransactionFormValues } from '~/hooks/useTransaction';
+import { TransactionHookValues } from '~/hooks/useTransaction';
 import { Participation, Transaction } from '@melonproject/melonjs';
 import { useAccount } from '~/hooks/useAccount';
 import { Button } from '~/storybook/Button/Button';
@@ -10,7 +10,7 @@ import { TransactionRef } from '~/components/Routes/Fund/FundInvestRedeem/FundIn
 export interface ExecuteRequestProps {
   participationAddress: string;
   currentShares: BigNumber;
-  transaction: TransactionHookValues<TransactionFormValues>;
+  transaction: TransactionHookValues;
 }
 
 export const ExecuteRequest = forwardRef((props: ExecuteRequestProps, ref: React.Ref<TransactionRef | undefined>) => {

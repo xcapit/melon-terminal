@@ -37,8 +37,8 @@ export class BigNumberSchema extends Yup.mixed<BigNumber> implements Yup.Schema<
   }
 
   protected compare(boundary: BigNumber.Value | Yup.Ref, fn: (value: BigNumber, compare: BigNumber) => boolean) {
-    return function (this: Yup.TestContext, value?: TokenValue) {
-      if (value?.value == null) {
+    return function (this: Yup.TestContext, value?: BigNumber.Value) {
+      if (value == null) {
         return true;
       }
 
@@ -47,7 +47,8 @@ export class BigNumberSchema extends Yup.mixed<BigNumber> implements Yup.Schema<
         return false;
       }
 
-      return fn(value.value, resolved);
+      const bn = BigNumber.isBigNumber(value) ? value : new BigNumber(value);
+      return fn(bn, resolved);
     };
   }
 

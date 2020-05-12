@@ -11,7 +11,7 @@ import { TokenValueSelect } from '~/components/Form/TokenValueSelect/TokenValueS
 import { useAccountAllowanceQuery } from '~/components/Routes/Fund/FundInvestRedeem/RequestInvestment/AccountAllowance.query';
 import { useAccount } from '~/hooks/useAccount';
 import { useEnvironment } from '~/hooks/useEnvironment';
-import { TransactionFormValues, TransactionHookValues } from '~/hooks/useTransaction';
+import { TransactionHookValues } from '~/hooks/useTransaction';
 import { BlockActions } from '~/storybook/Block/Block';
 import { Button } from '~/storybook/Button/Button';
 import { TokenValue } from '~/TokenValue';
@@ -29,7 +29,7 @@ export interface RequestInvestmentProps {
   participationAddress: string;
   investableAssets: TokenValue[];
   currentShares: BigNumber;
-  transaction: TransactionHookValues<TransactionFormValues>;
+  transaction: TransactionHookValues;
 }
 
 const validationSchema = Yup.object({

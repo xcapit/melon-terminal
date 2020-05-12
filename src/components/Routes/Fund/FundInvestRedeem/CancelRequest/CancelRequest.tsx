@@ -2,12 +2,12 @@ import React from 'react';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { useAccount } from '~/hooks/useAccount';
 import { Participation } from '@melonproject/melonjs';
-import { TransactionHookValues, TransactionFormValues } from '~/hooks/useTransaction';
+import { TransactionHookValues } from '~/hooks/useTransaction';
 import { Button } from '~/storybook/Button/Button';
 
 export interface CancelRequestProps {
   participationAddress: string;
-  transaction: TransactionHookValues<TransactionFormValues>;
+  transaction: TransactionHookValues;
 }
 
 export const CancelRequest: React.FC<CancelRequestProps> = (props) => {

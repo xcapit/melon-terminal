@@ -17,10 +17,6 @@ const columns: Column<RowData>[] = [
   {
     Header: 'Name',
     accessor: 'name',
-    filter: (rows, columnIds, filterValue) => {
-      return rows;
-    },
-    Filter: (props) => <input />,
   },
   {
     Header: 'Inception',

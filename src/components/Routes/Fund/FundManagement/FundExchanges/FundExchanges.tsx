@@ -108,7 +108,7 @@ const FundExchangesForm: React.FC<FundExchangesFormProps> = ({
   transaction,
 }) => {
   const initialValues = {
-    exchanges: [],
+    exchanges: exchanges.map((item) => item.id),
   };
 
   const validationContext = React.useMemo(

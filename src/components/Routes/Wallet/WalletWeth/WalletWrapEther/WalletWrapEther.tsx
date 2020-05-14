@@ -99,7 +99,7 @@ const WalletWrapEtherForm: React.FC<WalletWrapEtherFormProps> = ({ transaction, 
             <TokenValueDisplay value={account.weth!} symbol="WETH" />
           </S.WalletWrapEtherBalance>
         </S.WalletWrapEtherBalances>
-        <TokenValueInput name="quantityEth" label="Quantity" token={token} />
+        <TokenValueInput name="quantityEth" label="Quantity" />
 
         {showNotification && (
           <NotificationBar kind="warning">

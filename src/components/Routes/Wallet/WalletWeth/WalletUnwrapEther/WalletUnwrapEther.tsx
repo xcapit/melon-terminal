@@ -88,7 +88,7 @@ const WalletUnwrapEtherForm: React.FC<WalletUnwrapEtherFormProps> = ({ transacti
             <TokenValueDisplay value={account.weth!} symbol="WETH" />
           </S.WalletUnwrapEtherBalance>
         </S.WalletUnwrapEtherBalances>
-        <TokenValueInput name="quantityWeth" label="Quantity" token={token} />
+        <TokenValueInput name="quantityWeth" label="Quantity" />
         <BlockActions>
           <Button type="submit">Unwrap Ether</Button>
         </BlockActions>

@@ -129,7 +129,6 @@ export const FundRedeem: React.FC<FundRedeemProps> = ({ address }) => {
             <TokenValueInput
               name="shareQuantity"
               label="Number of shares to redeem"
-              token={sharesToken}
               noIcon={true}
               disabled={query.loading || formik.values.redeemAll}
             />

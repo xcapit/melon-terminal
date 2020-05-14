@@ -22,8 +22,9 @@ import { catchError, map, expand, switchMapTo } from 'rxjs/operators';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
 import { InputError } from '~/storybook/Input/Input.styles';
-import { validatePolicies } from '../FundLiquidityProviderTrading/validatePolicies';
+import { validatePolicies } from '../validatePolicies';
 import { Label } from '~/components/Form/Form';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 
 export interface FundKyberTradingProps {
   trading: string;
@@ -102,34 +103,18 @@ export const FundKyberTrading: React.FC<FundKyberTradingProps> = (props) => {
   const loading = state.state === 'loading';
   const ready = !loading && valid;
 
-  useEffect(() => {
-    (async () =>
-      await validatePolicies({
-        environment,
-        setPolicyValidation,
-        value,
-        policies: props.policies,
-        taker: props.taker,
-        maker: props.maker,
-        holdings: props.holdings,
-        denominationAsset: props.denominationAsset,
-        quantity: props.quantity,
-        trading: props.trading,
-      }))();
-  }, [state]);
-
   const submit = async () => {
     await validatePolicies({
       environment,
       setPolicyValidation,
-      value,
+      makerAmount: value,
       policies: props.policies,
       taker: props.taker,
       maker: props.maker,
       holdings: props.holdings,
       denominationAsset: props.denominationAsset,
-      quantity: props.quantity,
-      trading: props.trading,
+      takerAmount: props.quantity,
+      tradingAddress: props.trading,
     });
     if (!policyValidation.valid) {
       return;
@@ -171,6 +156,11 @@ export const FundKyberTrading: React.FC<FundKyberTradingProps> = (props) => {
           'No Offer'
         )}
       </Button>
+      {!policyValidation.valid && (
+        <NotificationBar kind="error">
+          <NotificationContent>{policyValidation.message}</NotificationContent>
+        </NotificationBar>
+      )}
 
       {policyValidation.valid || <InputError>{policyValidation.message}</InputError>}
 

@@ -117,7 +117,7 @@ export const Basic = () => {
       <BigNumberInput name="bigNumber" label="BigNumber" />
       <RadioButtons label="Radio Button" name="radioGroup" options={options} />
       <TokenValueSelect label="Token value Select" name="tokenValue" tokens={tokens} />
-      <TokenValueInput label="Token value Input" name="tokenValueInput" token={tokens[0]} />
+      <TokenValueInput label="Token value Input" name="tokenValueInput" />
       <Button type="submit">Submit</Button>
     </Form>
   );

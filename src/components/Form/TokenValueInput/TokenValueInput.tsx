@@ -11,18 +11,13 @@ import * as S from './TokenValueInput.styles';
 export interface TokenValueInputProps {
   name: string;
   label?: string;
-  token: TokenDefinition;
+  // token: TokenDefinition;
   disabled?: boolean;
   noIcon?: boolean;
   onChange?: (value: TokenValue, before?: TokenValue) => void;
 }
 
-export const TokenValueInput: React.FC<TokenValueInputProps> = ({
-  token,
-  label,
-  onChange: onChangeFeedback,
-  ...props
-}) => {
+export const TokenValueInput: React.FC<TokenValueInputProps> = ({ label, onChange: onChangeFeedback, ...props }) => {
   const [{ onChange, ...field }, meta, { setValue }] = useField<TokenValue | undefined>(props.name);
 
   const number = React.useMemo(() => {
@@ -32,6 +27,10 @@ export const TokenValueInput: React.FC<TokenValueInputProps> = ({
 
     const value = field.value.value;
     return (BigNumber.isBigNumber(value) ? value.toFixed() : value) as string;
+  }, [field.value]);
+
+  const token = React.useMemo(() => {
+    return field.value?.token ? field.value.token : ({} as TokenDefinition);
   }, [field.value]);
 
   const onValueChange = React.useCallback(
@@ -46,19 +45,13 @@ export const TokenValueInput: React.FC<TokenValueInputProps> = ({
       setValue(new TokenValue(token, values.value));
       onChangeFeedback?.(value, before);
     },
-    [field.value, token, setValue, onChange]
+    [field.value, setValue, onChange]
   );
 
   return (
     <Wrapper>
       <Label>{label}</Label>
       <S.InputContainer>
-        {props.noIcon || (
-          <S.TokenWrapper>
-            <SelectLabel icon={token.symbol} label={token.symbol} />
-          </S.TokenWrapper>
-        )}
-
         <BigNumberInputField
           {...meta}
           {...field}
@@ -68,6 +61,12 @@ export const TokenValueInput: React.FC<TokenValueInputProps> = ({
           onValueChange={onValueChange}
           placeholder={field.value ? 'Enter a value ...' : undefined}
         />
+
+        {props.noIcon || (
+          <S.TokenWrapper>
+            <SelectLabel icon={token.symbol} label={token.symbol} />
+          </S.TokenWrapper>
+        )}
       </S.InputContainer>
 
       {meta.touched && meta.error && <Error>{meta.error}</Error>}

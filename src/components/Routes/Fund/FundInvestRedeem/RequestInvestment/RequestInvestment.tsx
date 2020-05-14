@@ -211,7 +211,6 @@ export const RequestInvestment = React.forwardRef(
       },
     }));
 
-    // TODO: Check for form errors
     const valid = Object.keys(formik.errors).length === 0;
 
     const loading = currentExposureQuery.loading || currentAllowanceQuery.loading;
@@ -228,7 +227,6 @@ export const RequestInvestment = React.forwardRef(
         <TokenValueInput
           name="requestedShares"
           label="Number of shares"
-          token={sharesToken}
           noIcon={true}
           disabled={loading}
           onChange={handleRequestedSharesChange}

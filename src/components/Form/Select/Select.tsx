@@ -14,8 +14,8 @@ import { useField, Wrapper, Label, Error } from '~/components/Form/Form';
 import { Icons, IconName } from '~/storybook/Icons/Icons';
 import * as S from './Select.styles';
 
-export interface SelectOption {
-  value: string | number;
+export interface SelectOption<TValue = string | number> {
+  value: TValue;
   label: string;
   description?: string;
   icon?: string;
@@ -99,7 +99,10 @@ export const SelectLabel: React.FC<SelectLabelProps> = (props) => (
         <Icons name={props.icon as IconName} size="small" />
       </S.SelectIcon>
     ) : null}
-    <S.SelectLabel>{props.label}</S.SelectLabel>
+    <S.SelectLabel>
+      {props.label}
+      {props.label.length === 3 && <>&nbsp;</>}
+    </S.SelectLabel>
   </S.SelectWrapper>
 );
 

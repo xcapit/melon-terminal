@@ -4,10 +4,11 @@ import { TokenDefinition, sameAddress } from '@melonproject/melonjs';
 import { ValueType, components } from 'react-select';
 import { NumberFormatValues } from 'react-number-format';
 import { BigNumberInputField } from '~/components/Form/BigNumberInput/BigNumberInput';
-import { SelectField, SelectOption, SelectLabel } from '~/components/Form/Select/Select';
-import { useField, Wrapper, Error, Label } from '~/components/Form/Form';
+import { SelectField, SelectOption, SelectLabel, SelectProps } from '~/components/Form/Select/Select';
+import { useField, Wrapper, Error, Label, FormikFieldProps } from '~/components/Form/Form';
 import { TokenValue } from '~/TokenValue';
-import * as S from './TokenValueSelect.style';
+import { useClickOutside } from '~/hooks/useClickOutside';
+import * as S from './TokenValueSelect.styles';
 
 export interface TokenValueSelectProps {
   name: string;
@@ -18,138 +19,217 @@ export interface TokenValueSelectProps {
   onChange?: (after: TokenValue, before?: TokenValue) => void;
 }
 
-export interface TokenValueSelectOptions extends SelectOption {
-  value: string;
+export interface TokenSelectOption extends SelectOption<string> {
+  token: TokenDefinition;
 }
 
-export const TokenValueSelect: React.FC<TokenValueSelectProps> = ({
-  tokens,
-  label,
-  disabled,
-  onChange: onChangeFeedback,
+export const TokenValueSelect: React.FC<TokenValueSelectProps> = ({ label, ...props }) => {
+  const [{ onChange: onChangeInternal, ...field }, meta, helpers] = useField<TokenValue | undefined>(props.name);
+
+  return (
+    <Wrapper>
+      <Label>{label}</Label>
+      <TokenValueSelectField {...helpers} {...meta} {...field} {...props} />
+      {meta.touched && meta.error && <Error>{meta.error}</Error>}
+    </Wrapper>
+  );
+};
+
+type TokenValueSelectFieldBaseProps = TokenValueSelectProps &
+  Omit<FormikFieldProps<TokenValue | undefined>, 'onChange'>;
+
+export interface TokenValueSelectFieldProps extends TokenValueSelectFieldBaseProps {
+  tokens: TokenDefinition[];
+  inputRef?: React.MutableRefObject<any>;
+}
+
+export const TokenValueSelectField: React.FC<TokenValueSelectFieldProps> = ({
+  children,
+  value,
+  setValue,
+  setTouched,
+  setError,
+  onChange,
+  inputRef: providedInputRef,
   ...props
 }) => {
-  const [{ onChange, ...field }, meta, { setValue, setTouched }] = useField<TokenValue | undefined>(props.name);
-  const inputRef = React.useRef<undefined | HTMLInputElement>();
+  const inputRef = providedInputRef ?? React.useRef<any>();
+  const selectRef = React.useRef<any>();
+  const triggerRef = React.useRef<any>();
   const [open, setOpen] = React.useState(false);
-  const toggleOpen = React.useCallback(() => setOpen(!open), [open, setOpen]);
 
-  const options = React.useMemo<TokenValueSelectOptions[]>(() => {
-    return tokens.map((item) => ({
-      value: item.address,
-      label: item.symbol,
-      description: item.name,
-      icon: item.symbol,
-      token: item,
-    }));
-  }, [tokens]);
+  const handleClickOutside = React.useCallback(() => open && setOpen(false), [open, setOpen]);
+  useClickOutside([selectRef, triggerRef], handleClickOutside);
 
-  const selection = React.useMemo(() => {
-    return options.find((option) => sameAddress(option.value, field.value?.token.address));
-  }, [options, field.value]);
+  React.useEffect(() => {
+    if (open && props.disabled) {
+      setOpen(false);
+    }
+  }, [props.disabled, open, setOpen]);
 
   const number = React.useMemo(() => {
-    if (!field.value) {
+    if (!value) {
       return;
     }
 
-    const value = field.value.value;
+    const number = value.value;
+    return (BigNumber.isBigNumber(number) ? number.toFixed() : number) as string;
+  }, [value]);
 
-    return (BigNumber.isBigNumber(value) ? value.toFixed() : value) as string;
-  }, [field.value]);
-
-  const onSelectChange = React.useCallback(
+  const handleTokenChange = React.useCallback(
     (option: ValueType<SelectOption>) => {
       if (Array.isArray(option)) {
         return;
       }
 
-      const value = new TokenValue((option as SelectOption).token as TokenDefinition, field.value?.value);
-      const before = field.value;
+      const before = value;
+      const after = new TokenValue((option as SelectOption).token, value?.value);
 
-      setValue(value);
-      setTouched(true);
       setOpen(false);
-      onChangeFeedback?.(value, before);
+      setValue(after);
+      setTouched(true);
+      onChange?.(after, before);
 
       // Focus the big number input field after selecting a token.
       setTimeout(() => {
         inputRef.current?.focus();
       });
     },
-    [field.value, setValue, setOpen, onChangeFeedback]
+    [value, setValue, onChange, setOpen]
   );
 
-  const isAllowed = React.useCallback(() => !!field.value, [field.value]);
+  const isAllowed = React.useCallback(() => !!value, [value]);
 
-  const onValueChange = React.useCallback(
+  const handleNumberChange = React.useCallback(
     (values: NumberFormatValues) => {
-      if (!field.value) {
+      if (!value) {
         return;
       }
 
-      const before = field.value;
-      const value = field.value!.setValue(values.value);
-
-      if (before?.value?.comparedTo(value.value ?? '') === 0) {
+      const before = value;
+      const after = value!.setValue(values.value);
+      if (before?.value?.comparedTo(after.value ?? '') === 0) {
         return;
       }
 
-      setValue(value);
-      onChangeFeedback?.(value, before);
+      setValue(after);
+      onChange?.(after, before);
     },
-    [field.value, setValue, onChangeFeedback]
+    [value, setValue, onChange]
   );
 
   return (
-    <Wrapper>
-      <Label>{label}</Label>
+    <>
       <S.InputContainer>
         <BigNumberInputField
-          {...meta}
-          {...field}
           {...props}
           getInputRef={inputRef}
           value={number}
-          decimalScale={selection?.token.decimals}
-          onValueChange={onValueChange}
+          decimalScale={value?.token.decimals}
+          onValueChange={handleNumberChange}
           isAllowed={isAllowed}
-          disabled={!field.value || disabled}
-          placeholder={field.value ? (props.placeholder ? props.placeholder : 'Enter a value ...') : undefined}
+          disabled={!value || props.disabled}
+          placeholder={value ? (props.placeholder ? props.placeholder : 'Enter a value ...') : undefined}
         />
 
-        <S.SelectTrigger disabled={disabled} onClick={toggleOpen}>
-          {selection ? <SelectLabel icon={selection.icon} label={selection.label} /> : 'Select a token ...'}{' '}
-          <S.Dropdown>
-            <components.DownChevron />
-          </S.Dropdown>
-        </S.SelectTrigger>
+        <TokenSelectTrigger
+          triggerRef={triggerRef}
+          disabled={props.disabled}
+          token={value?.token}
+          open={open}
+          toggle={setOpen}
+        />
+
+        {children}
       </S.InputContainer>
 
-      {open && !disabled ? (
-        <S.SelectField>
-          <SelectField
-            {...meta}
-            {...field}
-            {...props}
-            autoFocus={true}
-            backspaceRemovesValue={false}
-            controlShouldRenderValue={false}
-            hideSelectedOptions={false}
-            isClearable={false}
-            isSearchable={true}
-            isDisabled={disabled}
-            menuIsOpen={true}
-            tabSelectsValue={false}
-            components={{ IndicatorSeparator: null }}
-            onChange={onSelectChange}
-            options={options}
-            value={selection}
-            placeholder="Search ..."
-          />
-        </S.SelectField>
-      ) : null}
-      {meta.touched && meta.error && <Error>{meta.error}</Error>}
-    </Wrapper>
+      <TokenSelectInput
+        selectRef={selectRef}
+        name={`${props.name}Token`}
+        tokens={props.tokens}
+        selected={value?.token}
+        open={open}
+        onChange={handleTokenChange}
+      />
+    </>
+  );
+};
+
+export interface TokenSelectTriggerProps {
+  triggerRef: React.MutableRefObject<any>;
+  token?: TokenDefinition;
+  disabled?: boolean;
+  open?: boolean;
+  toggle: (open: boolean) => void;
+}
+
+export const TokenSelectTrigger: React.FC<TokenSelectTriggerProps> = (props) => {
+  const handleClick = React.useCallback(() => !props.disabled && props.toggle(!props.open), [
+    props.open,
+    props.disabled,
+  ]);
+
+  return (
+    <S.SelectTrigger disabled={props.disabled} ref={props.triggerRef} onClick={handleClick}>
+      {props.token ? <SelectLabel icon={props.token.symbol} label={props.token.symbol} /> : 'Select a token ...'}{' '}
+      <S.Dropdown>
+        <components.DownChevron />
+      </S.Dropdown>
+    </S.SelectTrigger>
+  );
+};
+
+export interface TokenSelectInputProps extends Omit<Omit<SelectProps<TokenSelectOption>, 'options'>, 'value'> {
+  name: string;
+  tokens: TokenDefinition[];
+  open?: boolean;
+  selected?: TokenDefinition;
+  disabled?: boolean;
+  selectRef: React.MutableRefObject<any>;
+}
+
+export const TokenSelectInput: React.FC<TokenSelectInputProps> = ({
+  selectRef,
+  open,
+  disabled,
+  selected,
+  ...props
+}) => {
+  const options = React.useMemo<TokenSelectOption[]>(() => {
+    return props.tokens.map((item) => ({
+      value: item.address,
+      label: item.symbol,
+      description: item.name,
+      icon: item.symbol,
+      token: item,
+    }));
+  }, [props.tokens]);
+
+  const selection = React.useMemo(() => {
+    return options.find((option) => sameAddress(option.value, selected?.address));
+  }, [options, selected]);
+
+  if (!open) {
+    return null;
+  }
+
+  return (
+    <S.SelectField ref={selectRef}>
+      <SelectField
+        autoFocus={true}
+        backspaceRemovesValue={false}
+        controlShouldRenderValue={false}
+        hideSelectedOptions={false}
+        isClearable={false}
+        isSearchable={true}
+        menuIsOpen={true}
+        tabSelectsValue={false}
+        components={{ IndicatorSeparator: null }}
+        placeholder="Search ..."
+        {...props}
+        options={options}
+        value={selection}
+      />
+    </S.SelectField>
   );
 };

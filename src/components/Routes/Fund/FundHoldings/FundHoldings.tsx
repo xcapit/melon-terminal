@@ -12,7 +12,7 @@ import {
   BodyCellRightAlign,
   BodyRow,
   HeaderRow,
-} from '~/storybook/Table/Table';
+} from '~/components/Common/Table/Table';
 import { SectionTitle } from '~/storybook/Title/Title';
 import { Block } from '~/storybook/Block/Block';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';

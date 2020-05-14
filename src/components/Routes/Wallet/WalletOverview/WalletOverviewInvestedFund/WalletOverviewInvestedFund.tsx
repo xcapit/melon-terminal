@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router';
 import { Fund } from '~/components/Routes/Wallet/WalletOverview/FundParticipationOverview.query';
-import { BodyCell, BodyRowHover, BodyCellRightAlign } from '~/storybook/Table/Table';
+import { BodyCell, BodyRowHover, BodyCellRightAlign } from '~/components/Common/Table/Table';
 import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
 import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
 import { getNetworkName } from '~/config';

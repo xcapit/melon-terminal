@@ -1,6 +1,6 @@
 import React from 'react';
 import { PriceTolerancePolicy } from './FundPolicies.query';
-import { BodyCell } from '~/storybook/Table/Table';
+import { BodyCell } from '~/components/Common/Table/Table';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import BigNumber from 'bignumber.js';
 

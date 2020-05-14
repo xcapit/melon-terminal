@@ -1,7 +1,7 @@
 import React from 'react';
 import { Participation } from '@melonproject/melonjs';
 import { InvestmentRequest } from '~/components/Routes/Wallet/WalletOverview/FundParticipationOverview.query';
-import { BodyCell, BodyRow, BodyCellRightAlign } from '~/storybook/Table/Table';
+import { BodyCell, BodyRow, BodyCellRightAlign } from '~/components/Common/Table/Table';
 import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
 import { useInvestmentRequestStatusQuery } from '~/components/Routes/Wallet/WalletOverview/WalletOverviewInvestmentRequest/InvestmentRequestStatus.query';
 import { Button } from '~/components/Form/Button/Button.styles';

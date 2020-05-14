@@ -17,7 +17,7 @@ import {
   Table,
   HeaderRow,
   HeaderCellRightAlign,
-} from '~/storybook/Table/Table';
+} from '~/components/Common/Table/Table';
 import { useVersionQuery } from '~/components/Layout/Version.query';
 
 const fundHeadings = [

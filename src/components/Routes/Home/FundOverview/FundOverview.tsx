@@ -21,7 +21,7 @@ import {
   BodyRow,
   BodyCell,
   BodyRowHover,
-} from '~/storybook/Table/Table';
+} from '~/components/Common/Table/Table';
 import styled from 'styled-components';
 import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
 import { getNetworkName } from '~/config';

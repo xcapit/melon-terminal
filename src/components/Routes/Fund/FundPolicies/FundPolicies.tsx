@@ -10,7 +10,15 @@ import {
   AssetBlacklistPolicy,
 } from '~/components/Routes/Fund/FundPolicies/FundPolicies.query';
 import { useEnvironment } from '~/hooks/useEnvironment';
-import { ScrollableTable, Table, HeaderCell, HeaderRow, BodyCell, BodyRow, NoEntries } from '~/storybook/Table/Table';
+import {
+  ScrollableTable,
+  Table,
+  HeaderCell,
+  HeaderRow,
+  BodyCell,
+  BodyRow,
+  NoEntries,
+} from '~/components/Common/Table/Table';
 import { MaxConcentration } from './MaxConcentration/MaxConcentration';
 import { CustomPolicy } from './CustomPolicy/CustomPolicy';
 import { MaxPositions } from './MaxPositions/MaxPositions';

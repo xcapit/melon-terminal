@@ -1,6 +1,6 @@
 import React from 'react';
 import { AssetWhitelistPolicy } from './FundPolicies.query';
-import { BodyCell } from '~/storybook/Table/Table';
+import { BodyCell } from '~/components/Common/Table/Table';
 import { DeployedEnvironment } from '@melonproject/melonjs';
 
 interface AssetWhitelistProps {

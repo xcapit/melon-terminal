@@ -1,0 +1,18 @@
+query FundOverview {
+  funds(first: 1000) {
+    id
+    name
+    inception
+    portfolio {
+      id
+      holdings {
+        id
+        quantity
+        asset {
+          id
+          symbol
+        }
+      }
+    }
+  }
+}

@@ -10,7 +10,7 @@ import {
   NoEntries,
   HeaderCellRightAlign,
   BodyCellRightAlign,
-} from '~/storybook/Table/Table';
+} from '~/components/Common/Table/Table';
 import { Block } from '~/storybook/Block/Block';
 import { SectionTitle } from '~/storybook/Title/Title';
 import { useFundTradeHistoryQuery } from './FundTradeHistory.query';

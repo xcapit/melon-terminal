@@ -15,7 +15,7 @@ import { BigNumber } from 'bignumber.js';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { NetworkEnum } from '~/types';
 import { TokenValueDisplay } from '../TokenValueDisplay/TokenValueDisplay';
-import { ScrollableTable } from '~/storybook/Table/Table';
+import { ScrollableTable } from '~/components/Common/Table/Table';
 import { useFund } from '~/hooks/useFund';
 import { useConnectionState } from '~/hooks/useConnectionState';
 import { Form, useFormik } from '~/components/Form/Form';

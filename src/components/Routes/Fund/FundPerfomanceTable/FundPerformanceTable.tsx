@@ -10,7 +10,7 @@ import {
   BodyRow,
   HeaderCellRightAlign,
   BodyCellRightAlign,
-} from '~/storybook/Table/Table';
+} from '~/components/Common/Table/Table';
 import { Spinner } from '~/storybook/Spinner/Spinner';
 import { Block } from '~/storybook/Block/Block';
 import { SectionTitle } from '~/storybook/Title/Title';

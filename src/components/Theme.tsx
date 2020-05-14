@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { ThemeProvider as ThemeProviderBase } from 'styled-components';
 import { Reset } from 'styled-reset';
+import { Helmet } from 'react-helmet';
 import { BaseModalBackground, ModalProvider } from 'styled-react-modal';
 import { light as lightTheme, dark as darkTheme, Global } from '~/theme';
 
@@ -53,13 +54,38 @@ const SwitchableTheme: React.FC = ({ children }) => {
 };
 
 export interface ThemeProviderProps {
+  tailwind?: boolean;
   dark?: boolean;
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = (props) => {
+  if (props.tailwind) {
+    return (
+      <DarkModeProvider override={props.dark}>
+        <Tailwind>{props.children}</Tailwind>
+      </DarkModeProvider>
+    );
+  }
+
   return (
     <DarkModeProvider override={props.dark}>
       <SwitchableTheme>{props.children}</SwitchableTheme>
     </DarkModeProvider>
+  );
+};
+
+export const Tailwind: React.FC = (props) => {
+  const [dark] = useDarkMode();
+  const current = dark ? darkTheme : lightTheme;
+
+  return (
+    <>
+      <Helmet>
+        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+        <link rel="stylesheet" href="/styles.css" />
+      </Helmet>
+
+      <ThemeProviderBase theme={current}>{props.children}</ThemeProviderBase>
+    </>
   );
 };

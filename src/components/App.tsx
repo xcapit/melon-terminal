@@ -5,6 +5,7 @@ import { ApolloProvider } from './Contexts/Apollo/Apollo';
 import { ConnectionProvider } from './Contexts/Connection/Connection';
 import { RatesProvider } from './Contexts/Rates/Rates';
 import { AccountProvider } from './Contexts/Account/Account';
+import { SubgraphProvider } from './Contexts/Subgraph/Subgraph';
 
 // NOTE: Imported using root relative import to allow overrides with webpack.
 import { AppRouter } from '~/components/AppRouter';
@@ -30,8 +31,8 @@ if (coinbase.supported()) {
 }
 
 const AppComponent = () => (
-  <ThemeProvider>
-    <ConnectionProvider methods={methods} default={start} disconnect={anonymous}>
+  <ConnectionProvider methods={methods} default={start} disconnect={anonymous}>
+    <SubgraphProvider>
       <ApolloProvider>
         <AccountProvider>
           <RatesProvider>
@@ -41,8 +42,8 @@ const AppComponent = () => (
           </RatesProvider>
         </AccountProvider>
       </ApolloProvider>
-    </ConnectionProvider>
-  </ThemeProvider>
+    </SubgraphProvider>
+  </ConnectionProvider>
 );
 
 export const App = AppComponent;

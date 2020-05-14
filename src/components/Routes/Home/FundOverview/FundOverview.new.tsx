@@ -1,5 +1,5 @@
 import React from 'react';
-import { Column, useTable, useSortBy, usePagination, useFilters } from 'react-table';
+import { Column, useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
 import { useFundOverviewQuery } from './FundOverview.queries';
 import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
 import { CommonTable } from '~/components/Common/Table/Table';
@@ -17,6 +17,10 @@ const columns: Column<RowData>[] = [
   {
     Header: 'Name',
     accessor: 'name',
+    filter: (rows, columnIds, filterValue) => {
+      return rows;
+    },
+    Filter: (props) => <input />,
   },
   {
     Header: 'Inception',
@@ -68,8 +72,16 @@ function useTableDate() {
 
 export const FundOverview: React.FC = () => {
   const data = useTableDate();
-  const pageCount = Math.ceil(data.length % 20);
-  const table = useTable({ columns, data, pageCount }, useSortBy, usePagination);
+  const table = useTable(
+    {
+      columns,
+      data,
+      pageCount: Math.ceil(data.length % 20),
+    },
+    useGlobalFilter,
+    useSortBy,
+    usePagination
+  );
 
   return <CommonTable table={table} />;
 };

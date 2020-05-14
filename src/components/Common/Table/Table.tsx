@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { TableInstance } from 'react-table';
+import { TableInstance, useAsyncDebounce, usePagination, useGlobalFilter, useSortBy } from 'react-table';
 
 export interface ScrollableTableProps {
   maxHeight?: string;
@@ -112,19 +112,22 @@ export interface CommonTableProps<TData extends object = any> {
 }
 
 export function CommonTable<TData extends object>(props: CommonTableProps<TData>) {
+  const hasPagination = props.table.plugins.includes(usePagination);
+  const hasSortBy = props.table.plugins.includes(useSortBy);
+  const hasGlobalFilter = props.table.plugins.includes(useGlobalFilter);
+
   const header = props.table.headerGroups.map((headerGroup) => (
     <HeaderRow {...headerGroup.getHeaderGroupProps()}>
       {headerGroup.headers.map((column) => (
-        <HeaderCell {...column.getHeaderProps(column.getSortByToggleProps())}>
+        <HeaderCell {...column.getHeaderProps(hasSortBy ? column.getSortByToggleProps() : undefined)}>
           {column.render('Header')}
-          <span>{column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}</span>
+          {hasSortBy ? <span>{column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}</span> : null}
         </HeaderCell>
       ))}
     </HeaderRow>
   ));
 
-  const paginated = typeof props.table.page !== 'undefined';
-  const rows = paginated ? props.table.page : props.table.rows;
+  const rows = hasPagination ? props.table.page : props.table.rows;
   const body = rows.map((row) => {
     props.table.prepareRow(row);
 
@@ -137,8 +140,28 @@ export function CommonTable<TData extends object>(props: CommonTableProps<TData>
     );
   });
 
-  const pagination = paginated ? (
-    <div className="pagination">
+  const pagination = hasPagination ? <TablePagination<TData> table={props.table} /> : null;
+  const filter = hasGlobalFilter ? <TableGlobalFilter<TData> table={props.table} /> : null;
+
+  return (
+    <>
+      {filter}
+
+      <Table {...props.table.getTableProps()}>
+        <TableHeader>{header}</TableHeader>
+        <TableBody {...props.table.getTableBodyProps()}>{body}</TableBody>
+      </Table>
+
+      {pagination}
+    </>
+  );
+}
+
+export interface TablePaginationProps<TData extends object = any> extends CommonTableProps<TData> {}
+
+export function TablePagination<TData extends object>(props: TablePaginationProps<TData>) {
+  return (
+    <div>
       <button onClick={() => props.table.gotoPage(0)} disabled={!props.table.canPreviousPage}>
         {'<<'}
       </button>{' '}
@@ -158,16 +181,33 @@ export function CommonTable<TData extends object>(props: CommonTableProps<TData>
         </strong>{' '}
       </span>
     </div>
-  ) : null;
+  );
+}
+
+export interface TableGlobalFilterProps<TData extends object = any> extends CommonTableProps<TData> {}
+
+export function TableGlobalFilter<TData extends object>(props: TableGlobalFilterProps<TData>) {
+  const count = props.table.preGlobalFilteredRows.length;
+  const [value, setValue] = React.useState(props.table.state.globalFilter);
+  const onChange = useAsyncDebounce((value) => {
+    props.table.setGlobalFilter(value || undefined);
+  }, 200);
 
   return (
-    <>
-      <Table {...props.table.getTableProps()}>
-        <TableHeader>{header}</TableHeader>
-        <TableBody {...props.table.getTableBodyProps()}>{body}</TableBody>
-      </Table>
-
-      {pagination}
-    </>
+    <span>
+      Search:{' '}
+      <input
+        value={value || ''}
+        onChange={(e) => {
+          setValue(e.target.value);
+          onChange(e.target.value);
+        }}
+        placeholder={`${count} records...`}
+        style={{
+          fontSize: '1.1rem',
+          border: '0',
+        }}
+      />
+    </span>
   );
 }

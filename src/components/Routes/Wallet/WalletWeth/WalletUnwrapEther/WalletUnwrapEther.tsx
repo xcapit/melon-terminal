@@ -8,7 +8,7 @@ import { useAccount } from '~/hooks/useAccount';
 import { Block, BlockActions } from '~/storybook/Block/Block';
 import { Title } from '~/storybook/Title/Title';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
-import { Button } from '~/storybook/Button/Button';
+import { Button } from '~/components/Form/Button/Button';
 import { toTokenBaseUnit } from '~/utils/toTokenBaseUnit';
 import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';

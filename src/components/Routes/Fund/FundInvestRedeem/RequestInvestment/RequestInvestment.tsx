@@ -13,7 +13,7 @@ import { useAccount } from '~/hooks/useAccount';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { TransactionHookValues } from '~/hooks/useTransaction';
 import { BlockActions } from '~/storybook/Block/Block';
-import { Button } from '~/storybook/Button/Button';
+import { Button } from '~/components/Form/Button/Button';
 import { TokenValue } from '~/TokenValue';
 import { bigNumberSchema, tokenValueSchema } from '~/utils/formValidation';
 import { sharesToken } from '~/utils/sharesToken';

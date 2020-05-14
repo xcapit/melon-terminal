@@ -206,7 +206,7 @@ const FundLiquidityProviderTradingForm: React.FC<FundLiquidityProviderTradingFor
             <SectionTitle>Choose your pool and swap</SectionTitle>
             {!!(exchanges && exchanges.length) &&
               exchanges.map(([exchange, Component]) => (
-                <GridRow key={exchange.id}>
+                <GridRow key={exchange.id} noGap={true}>
                   <GridCol>
                     <Wrapper>
                       <Component

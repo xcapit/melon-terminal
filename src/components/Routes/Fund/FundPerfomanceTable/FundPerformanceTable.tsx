@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useMemo } from 'react';
-
+import styled from 'styled-components';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import {
   ScrollableTable,
@@ -16,9 +16,8 @@ import { Block } from '~/storybook/Block/Block';
 import { SectionTitle } from '~/storybook/Title/Title';
 import { useFundPerformanceQuery } from './FundPerformance.query';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
-import styled from 'styled-components';
-import { Dropdown } from '~/storybook/Dropdown/Dropdown';
-import { Button } from '~/storybook/Button/Button.styles';
+import { SelectWidget } from '~/components/Form/Select/Select';
+import { Button } from '~/components/Form/Button/Button.styles';
 
 export interface FundPerformanceTableProps {
   address: string;
@@ -39,21 +38,17 @@ export const FundPerformanceTable: React.FC<FundPerformanceTableProps> = ({ addr
   const tokens = useEnvironment()!
     .tokens.filter((token) => !excludedTokens.includes(token.symbol))
     .map((token) => ({
-      name: token.symbol,
+      label: token.symbol,
       value: token.symbol,
     }));
 
   const [selectedTokens, setSelectedTokens] = useState(() =>
-    tokens.filter((token) => startingTokens.includes(token.name)).map((token) => token.name)
+    tokens.filter((token) => startingTokens.includes(token.label)).map((token) => token.label)
   );
 
-  const unselectedTokens = useMemo(
-    () =>
-      tokens
-        .filter((token) => !selectedTokens.includes(token.name))
-        .concat({ name: 'Choose an asset to compare', value: '' }),
-    [selectedTokens]
-  );
+  const unselectedTokens = useMemo(() => {
+    return tokens.filter((token) => !selectedTokens.includes(token.label));
+  }, [selectedTokens]);
 
   const [fund, assets, query] = useFundPerformanceQuery(address, selectedTokens);
 
@@ -166,7 +161,13 @@ export const FundPerformanceTable: React.FC<FundPerformanceTableProps> = ({ addr
         </ScrollableTable>
       )}
       {unselectedTokens.length > 1 && (
-        <Dropdown options={unselectedTokens} onChange={(event) => toggleTokenSelection(event?.target.value)} value="" />
+        <SelectWidget
+          name="token"
+          placeholder="Select an asset to compare"
+          options={unselectedTokens}
+          onChange={(value) => value && toggleTokenSelection((value as any).value)}
+          value={null}
+        />
       )}
       <TableDescription>Fund share price and assets benchmarked against ETH</TableDescription>
     </Block>

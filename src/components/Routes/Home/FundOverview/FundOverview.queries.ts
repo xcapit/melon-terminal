@@ -8,7 +8,8 @@ export type FundOverviewQueryVariables = {};
 
 export type FundOverviewQuery = { __typename?: 'Query' } & {
   funds: Array<
-    { __typename?: 'Fund' } & Pick<Types.Fund, 'id' | 'name' | 'inception'> & {
+    { __typename?: 'Fund' } & Pick<Types.Fund, 'id' | 'name' | 'inception' | 'active'> & {
+        version: { __typename?: 'Version' } & Pick<Types.Version, 'id' | 'name'>;
         portfolio: { __typename?: 'Portfolio' } & Pick<Types.Portfolio, 'id'> & {
             holdings: Array<
               { __typename?: 'Holding' } & Pick<Types.Holding, 'id' | 'quantity'> & {
@@ -26,6 +27,11 @@ export const FundOverviewDocument = gql`
       id
       name
       inception
+      active
+      version {
+        id
+        name
+      }
       portfolio {
         id
         holdings {

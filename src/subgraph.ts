@@ -4098,6 +4098,7 @@ export enum UserWhitelistPolicyOrderBy {
 export type Version = {
   __typename?: 'Version';
   id: Scalars['ID'];
+  name: Scalars['String'];
   funds: Array<Fund>;
   events: Array<Event>;
   assets: Array<Asset>;
@@ -4145,6 +4146,20 @@ export type VersionFilter = {
   id_lte?: Maybe<Scalars['ID']>;
   id_in?: Maybe<Array<Scalars['ID']>>;
   id_not_in?: Maybe<Array<Scalars['ID']>>;
+  name?: Maybe<Scalars['String']>;
+  name_not?: Maybe<Scalars['String']>;
+  name_gt?: Maybe<Scalars['String']>;
+  name_lt?: Maybe<Scalars['String']>;
+  name_gte?: Maybe<Scalars['String']>;
+  name_lte?: Maybe<Scalars['String']>;
+  name_in?: Maybe<Array<Scalars['String']>>;
+  name_not_in?: Maybe<Array<Scalars['String']>>;
+  name_contains?: Maybe<Scalars['String']>;
+  name_not_contains?: Maybe<Scalars['String']>;
+  name_starts_with?: Maybe<Scalars['String']>;
+  name_not_starts_with?: Maybe<Scalars['String']>;
+  name_ends_with?: Maybe<Scalars['String']>;
+  name_not_ends_with?: Maybe<Scalars['String']>;
   assets?: Maybe<Array<Scalars['String']>>;
   assets_not?: Maybe<Array<Scalars['String']>>;
   assets_contains?: Maybe<Array<Scalars['String']>>;
@@ -4157,6 +4172,7 @@ export type VersionFilter = {
 
 export enum VersionOrderBy {
   ID = 'id',
+  NAME = 'name',
   FUNDS = 'funds',
   EVENTS = 'events',
   ASSETS = 'assets',

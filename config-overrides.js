@@ -71,6 +71,7 @@ module.exports = override(
       'process.env.MELON_TESTNET': JSON.stringify(testnet),
       ...(mainnet && {
         'process.env.MELON_MAINNET_SUBGRAPH': JSON.stringify(process.env.MELON_MAINNET_SUBGRAPH),
+        'process.env.MELON_MAINNET_SUBGRAPH_NEW': JSON.stringify(process.env.MELON_MAINNET_SUBGRAPH_NEW),
         'process.env.MELON_MAINNET_PROVIDER': JSON.stringify(process.env.MELON_MAINNET_PROVIDER),
         ...(!mainnetDeploymentAlias && {
           'process.env.MELON_MAINNET_DEPLOYMENT': JSON.stringify(process.env.MELON_MAINNET_DEPLOYMENT),
@@ -78,6 +79,7 @@ module.exports = override(
       }),
       ...(rinkeby && {
         'process.env.MELON_RINKEBY_SUBGRAPH': JSON.stringify(process.env.MELON_RINKEBY_SUBGRAPH),
+        'process.env.MELON_RINKEBY_SUBGRAPH_NEW': JSON.stringify(process.env.MELON_RINKEBY_SUBGRAPH_NEW),
         'process.env.MELON_RINKEBY_PROVIDER': JSON.stringify(process.env.MELON_RINKEBY_PROVIDER),
         ...(!rinkebyDeploymentAlias && {
           'process.env.MELON_RINKEBY_DEPLOYMENT': JSON.stringify(process.env.MELON_RINKEBY_DEPLOYMENT),
@@ -85,6 +87,7 @@ module.exports = override(
       }),
       ...(kovan && {
         'process.env.MELON_KOVAN_SUBGRAPH': JSON.stringify(process.env.MELON_KOVAN_SUBGRAPH),
+        'process.env.MELON_KOVAN_SUBGRAPH_NEW': JSON.stringify(process.env.MELON_KOVAN_SUBGRAPH_NEW),
         'process.env.MELON_KOVAN_PROVIDER': JSON.stringify(process.env.MELON_KOVAN_PROVIDER),
         ...(!kovanDeploymentAlias && {
           'process.env.MELON_KOVAN_DEPLOYMENT': JSON.stringify(process.env.MELON_KOVAN_DEPLOYMENT),
@@ -92,6 +95,7 @@ module.exports = override(
       }),
       ...(testnet && {
         'process.env.MELON_TESTNET_SUBGRAPH': JSON.stringify(process.env.MELON_TESTNET_SUBGRAPH),
+        'process.env.MELON_TESTNET_SUBGRAPH_NEW': JSON.stringify(process.env.MELON_TESTNET_SUBGRAPH_NEW),
         'process.env.MELON_TESTNET_PROVIDER': JSON.stringify(process.env.MELON_TESTNET_PROVIDER),
         ...(!testnetDeploymentAlias && {
           'process.env.MELON_TESTNET_DEPLOYMENT': JSON.stringify(process.env.MELON_TESTNET_DEPLOYMENT),

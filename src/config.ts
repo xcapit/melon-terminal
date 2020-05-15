@@ -1,11 +1,13 @@
 import { NetworkEnum } from './types';
 import { DeploymentOutput, TokenDefinition, ExchangeDefinition, PolicyDefinition } from '@melonproject/melonjs';
+import { useConnectionState } from './hooks/useConnectionState';
 
 export interface Config {
   supported: boolean;
   label: string;
   name: string;
   subgraph: string;
+  subgraphNew: string;
   provider: string;
   deployment: () => Promise<DeploymentOutput>;
   tokens?: TokenDefinition[];
@@ -24,6 +26,11 @@ export function getConfig(network?: NetworkEnum) {
   }
 
   return undefined;
+}
+
+export function useConfig() {
+  const connection = useConnectionState();
+  return getConfig(connection.network);
 }
 
 export function getNetworkLabel(network?: NetworkEnum) {
@@ -54,6 +61,7 @@ export const config: ConfigMap = {
     name: 'mainnet',
     supported: !!JSON.parse(process.env.MELON_MAINNET),
     subgraph: process.env.MELON_MAINNET_SUBGRAPH,
+    subgraphNew: process.env.MELON_MAINNET_SUBGRAPH_NEW,
     provider: process.env.MELON_MAINNET_PROVIDER,
     deployment: async () => {
       // @ts-ignore
@@ -174,6 +182,7 @@ export const config: ConfigMap = {
     name: 'kovan',
     supported: !!JSON.parse(process.env.MELON_KOVAN),
     subgraph: process.env.MELON_KOVAN_SUBGRAPH,
+    subgraphNew: process.env.MELON_KOVAN_SUBGRAPH_NEW,
     provider: process.env.MELON_KOVAN_PROVIDER,
     deployment: async () => {
       // @ts-ignore
@@ -185,6 +194,7 @@ export const config: ConfigMap = {
     name: 'rinkeby',
     supported: !!JSON.parse(process.env.MELON_RINKEBY),
     subgraph: process.env.MELON_RINKEBY_SUBGRAPH,
+    subgraphNew: process.env.MELON_RINKEBY_SUBGRAPH_NEW,
     provider: process.env.MELON_RINKEBY_PROVIDER,
     deployment: async () => {
       // @ts-ignore
@@ -196,6 +206,7 @@ export const config: ConfigMap = {
     name: 'testnet',
     supported: !!JSON.parse(process.env.MELON_TESTNET),
     subgraph: process.env.MELON_TESTNET_SUBGRAPH,
+    subgraphNew: process.env.MELON_TESTNET_SUBGRAPH_NEW,
     provider: process.env.MELON_TESTNET_PROVIDER,
     deployment: async () => {
       // @ts-ignore

@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { ThemeProvider } from './Theme';
 import { ApolloProvider } from './Contexts/Apollo/Apollo';
 import { ConnectionProvider } from './Contexts/Connection/Connection';
 import { RatesProvider } from './Contexts/Rates/Rates';

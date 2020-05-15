@@ -1,5 +1,5 @@
 documents: src/**/*.graphql
-schema: https://api.thegraph.com/subgraphs/name/melonproject/melon-dev
+schema: http://localhost:8000/subgraphs/name/melonproject/melon-dev
 config:
   namingConvention:
     transformUnderscore: true

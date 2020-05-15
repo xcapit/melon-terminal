@@ -1,16 +1,24 @@
 import React from 'react';
-import { Column, useTable, useSortBy, usePagination, useGlobalFilter } from 'react-table';
+import { Column, useTable, useSortBy, usePagination, useGlobalFilter, TableOptions, Row, Cell } from 'react-table';
 import { useFundOverviewQuery } from './FundOverview.queries';
 import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
 import { CommonTable } from '~/components/Common/Table/Table';
 import { TokenValue } from '~/TokenValue';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
+import BigNumber from 'bignumber.js';
+import { useRatesOrThrow } from '~/components/Contexts/Rates/Rates';
+import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 
 type RowData = {
   name: string;
   inception: Date;
+  version: string;
   holdings: TokenValue[];
+  eth: BigNumber;
+  usd: BigNumber;
+  btc: BigNumber;
+  active: boolean;
 };
 
 const columns: Column<RowData>[] = [
@@ -22,11 +30,12 @@ const columns: Column<RowData>[] = [
     Header: 'Inception',
     accessor: 'inception',
     sortType: 'datetime',
-    Cell: (cell) => <FormattedDate timestamp={cell.value} />,
+    Cell: (cell) => <FormattedDate timestamp={cell.value} format="yyyy/MM/dd" />,
   },
   {
     Header: 'Portfolio',
     accessor: 'holdings',
+    disableSortBy: true,
     Cell: (cell) => (
       <ul>
         {cell.value.map((item) => (
@@ -37,30 +46,81 @@ const columns: Column<RowData>[] = [
       </ul>
     ),
   },
+  {
+    id: 'aum',
+    Header: 'AUM',
+    sortType: (a, b) => b.original.eth.comparedTo(a.original.eth),
+    Cell: (cell: Cell<RowData>) => (
+      <>
+        <FormattedNumber value={cell.row.original.eth} suffix="ETH" />
+        <br />
+        <FormattedNumber value={cell.row.original.btc} suffix="BTC" />
+        <br />
+        <FormattedNumber value={cell.row.original.usd} suffix="USD" />
+      </>
+    ),
+  },
   // {
-  //   Header: 'Protocol',
-  //   accessor: 'version',
+  //   Header: 'AUM [ETH]',
+  //   accessor: 'eth',
+  //   sortType: (rowA, rowB, columnId) => {
+  //     const a = rowA.values[columnId] as BigNumber;
+  //     const b = rowB.values[columnId] as BigNumber;
+  //     return b.comparedTo(a);
+  //   },
+  //   Cell: (cell) => <FormattedNumber value={cell.value} suffix="ETH" />,
   // },
-  // {
-  //   Header: 'Status',
-  //   accessor: 'status',
-  // },
+  {
+    Header: 'Protocol',
+    accessor: 'version',
+  },
+  {
+    Header: 'Status',
+    accessor: 'active',
+    sortType: 'basic',
+    Cell: (cell) => (cell.value ? 'Active' : 'Inactive'),
+  },
 ];
 
 function useTableDate() {
   const [result] = useFundOverviewQuery();
-
+  const rates = useRatesOrThrow();
   const environment = useEnvironment()!;
   const data = React.useMemo(() => {
     const funds = result.data?.funds ?? [];
-    return funds.map<RowData>((item) => ({
-      name: item.name,
-      inception: item.inception as Date,
-      holdings: item.portfolio.holdings.map((item) => {
+    return funds.map<RowData>((item) => {
+      const holdings = item.portfolio.holdings.map((item) => {
         const token = environment.getToken(item.asset.symbol);
-        return new TokenValue(token, item.quantity);
-      }),
-    }));
+        const quantity = item.quantity;
+        return new TokenValue(token, quantity);
+      });
+
+      const eth = holdings.reduce<BigNumber>((carry, current) => {
+        const rate = rates[current.token.symbol]?.ETH ?? 0;
+        return carry.plus(current.value!.multipliedBy(rate));
+      }, new BigNumber(0));
+
+      const usd = holdings.reduce<BigNumber>((carry, current) => {
+        const rate = rates[current.token.symbol]?.USD ?? 0;
+        return carry.plus(current.value!.multipliedBy(rate));
+      }, new BigNumber(0));
+
+      const btc = holdings.reduce<BigNumber>((carry, current) => {
+        const rate = rates[current.token.symbol]?.BTC ?? 0;
+        return carry.plus(current.value!.multipliedBy(rate));
+      }, new BigNumber(0));
+
+      return {
+        name: item.name,
+        inception: item.inception as Date,
+        version: item.version.name,
+        active: item.active,
+        holdings,
+        eth,
+        usd,
+        btc,
+      };
+    });
   }, [result.data]);
 
   return data;
@@ -68,16 +128,17 @@ function useTableDate() {
 
 export const FundOverview: React.FC = () => {
   const data = useTableDate();
-  const table = useTable(
-    {
+  const options: TableOptions<RowData> = React.useMemo(
+    () => ({
       columns,
       data,
       pageCount: Math.ceil(data.length % 20),
-    },
-    useGlobalFilter,
-    useSortBy,
-    usePagination
+      defaultCanSort: true,
+    }),
+    [data]
   );
+
+  const table = useTable(options, useGlobalFilter, useSortBy, usePagination);
 
   return <CommonTable table={table} />;
 };

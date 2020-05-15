@@ -3,6 +3,13 @@ query FundOverview {
     id
     name
     inception
+    active
+
+    version {
+      id
+      name
+    }
+
     portfolio {
       id
       holdings {

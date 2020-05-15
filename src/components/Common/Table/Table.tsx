@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { TableInstance, useAsyncDebounce, usePagination, useGlobalFilter, useSortBy } from 'react-table';
+import { TableInstance, useAsyncDebounce, usePagination, useGlobalFilter, useSortBy, SortByFn } from 'react-table';
 
 export interface ScrollableTableProps {
   maxHeight?: string;

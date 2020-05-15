@@ -29,7 +29,6 @@ export const ComponentsControl = styled.div`
     border-style: solid;
     border-width: 1px;
     background: ${(props) => props.theme.mainColors.primary};
-    color: #ffffff;
     box-shadow: inset 1px 4px 4px rgba(200, 200, 200, 0.25);
   }
   &.melon__control:active {

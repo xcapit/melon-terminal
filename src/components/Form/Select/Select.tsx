@@ -1,21 +1,20 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import {
+  ActionMeta,
+  components,
+  ControlProps,
   default as SelectBase,
-  Props as SelectPropsBase,
+  MultiValueProps,
   OptionProps,
   OptionsType,
-  ActionMeta,
-  ValueType,
-  components,
-  MultiValueProps,
+  Props as SelectPropsBase,
   SingleValueProps,
-  ControlProps,
-  MenuProps,
+  ValueType,
 } from 'react-select';
-import { useField, Wrapper, Label, Error } from '~/components/Form/Form';
-import { Icons, IconName } from '~/storybook/Icons/Icons';
+import { MenuListProps, MenuListComponentProps } from 'react-select/src/components/Menu';
+import { Error, Label, useField, Wrapper } from '~/components/Form/Form';
+import { IconName, Icons } from '~/storybook/Icons/Icons';
 import * as S from './Select.styles';
-import { MenuListProps, MenuPortalProps } from 'react-select/src/components/Menu';
 
 export interface SelectOption<TValue = string | number> {
   value: TValue;
@@ -154,10 +153,12 @@ const MultiValue: React.FC<MultiValueProps<SelectOption>> = (props) => (
 
 const Control: React.FC<ControlProps<SelectOption>> = (props) => (
   <S.ComponentsControl>
-    <components.Control {...props}></components.Control>{' '}
+    <components.Control {...props} />
   </S.ComponentsControl>
 );
 
-const MenuList: React.FC<MenuListProps> = ({ innerRef, children }) => (
-  <S.ComponentsMenuList {...innerRef}>{children}</S.ComponentsMenuList>
+const MenuList: React.FC<MenuListComponentProps<SelectOption>> = (props) => (
+  <S.ComponentsMenuList>
+    <components.MenuList {...props} />
+  </S.ComponentsMenuList>
 );

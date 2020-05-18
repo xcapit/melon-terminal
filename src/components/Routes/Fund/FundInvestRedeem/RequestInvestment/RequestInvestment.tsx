@@ -246,13 +246,15 @@ export const RequestInvestment = React.forwardRef(
           onChange={handleInvestmentChange}
         />
 
-        <Select
-          name="premiumPercentage"
-          label="Maximum premium to current share price"
-          options={premiumOptions}
-          disabled={loading}
-          onChange={handlePremiumChange}
-        />
+        {initialPremium > 0 && (
+          <Select
+            name="premiumPercentage"
+            label="Maximum premium to current share price"
+            options={premiumOptions}
+            disabled={loading}
+            onChange={handlePremiumChange}
+          />
+        )}
 
         {formik.values.acknowledgeLimitRequired && (
           <>
@@ -297,16 +299,10 @@ export const RequestInvestment = React.forwardRef(
           <NotificationContent>
             <p style={{ textAlign: 'left', fontWeight: 'bold' }}>Investment summary</p>
             <p style={{ textAlign: 'left' }}>
-              You are requesting an investment of <TokenValueDisplay value={formik.values.requestedShares} /> at a
-              maximum price of <TokenValueDisplay value={maxSharePrice} /> per share. This is a{' '}
-              {formik.values.premiumPercentage * 100}% premium to the current share price of{' '}
-              <TokenValueDisplay value={shareCostInAsset} />.
+              You are sumitting an investment request of <TokenValueDisplay value={formik.values.requestedShares} />{' '}
+              with limit price of <TokenValueDisplay value={maxSharePrice} /> per share.
             </p>
-            <p style={{ textAlign: 'left' }}>
-              Your investment request will be executed at the share price that is valid after the next price update. If
-              the share price at that point in time is higher than your maximum share price, your investment request
-              will not be executed.
-            </p>
+            <p style={{ textAlign: 'left' }}>Your investment request will be filled at at next price update.</p>
           </NotificationContent>
         </NotificationBar>
 

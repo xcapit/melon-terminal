@@ -302,10 +302,10 @@ export const RequestInvestment = React.forwardRef(
           <NotificationContent>
             <p style={{ textAlign: 'left', fontWeight: 'bold' }}>Investment summary</p>
             <p style={{ textAlign: 'left' }}>
-              You are sumitting an investment request of <TokenValueDisplay value={formik.values.requestedShares} />{' '}
+              You are submitting an investment request of <TokenValueDisplay value={formik.values.requestedShares} />{' '}
               with limit price of <TokenValueDisplay value={maxSharePrice} /> per share.
             </p>
-            <p style={{ textAlign: 'left' }}>Your investment request will be filled at at next price update.</p>
+            <p style={{ textAlign: 'left' }}>Your investment request will be filled at the next price update.</p>
           </NotificationContent>
         </NotificationBar>
 

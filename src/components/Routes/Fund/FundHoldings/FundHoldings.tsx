@@ -83,15 +83,17 @@ export const FundHoldings: React.FC<FundHoldingsProps> = ({ address }) => {
                   </S.HoldingName>
                 </BodyCell>
                 <BodyCellRightAlign>
-                  <FormattedNumber value={holding.token?.price} />
-                  <br />
+                  <TokenValueDisplay value={holding.token?.price} decimals={0} />
                   {holding.token?.symbol && (
-                    <FormattedNumber
-                      value={assetDailyChange[holding.token.symbol]}
-                      colorize={true}
-                      decimals={2}
-                      suffix="%"
-                    />
+                    <>
+                      <br />
+                      <FormattedNumber
+                        value={assetDailyChange[holding.token.symbol]}
+                        colorize={true}
+                        decimals={2}
+                        suffix="%"
+                      />
+                    </>
                   )}
                 </BodyCellRightAlign>
                 <BodyCellRightAlign>

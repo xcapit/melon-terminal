@@ -200,6 +200,7 @@ export const dark = {
     orderbookLight: 'limegreen',
     hover: 'rgba(0, 0, 0, 0.2)',
   },
+
   logoColors: logoColorsDarkMode,
   ...theme,
 };

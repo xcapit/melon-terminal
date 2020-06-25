@@ -2,7 +2,6 @@ import React, { Dispatch, SetStateAction } from 'react';
 import * as S from './ZoomControl.styles';
 import { subDays, subWeeks, subMonths, startOfYear } from 'date-fns';
 import { findCorrectFromTime } from '~/utils/priceServiceDates';
-import { useTheme } from 'styled-components';
 
 export interface Serie {
   id: string;
@@ -16,7 +15,7 @@ export interface Datum {
   y: number | string;
 }
 
-interface clickHandlerParams {
+interface ClickHandlerParams {
   queryType: 'depth' | 'date';
   depthQueryValue?: Depth;
   dateQueryValue?: number;
@@ -44,21 +43,21 @@ export interface ZoomControlProps {
 }
 
 function useWindowSize() {
-  function getSize() {
-    return {
-      width: window.innerWidth,
-      height: window.innerHeight,
-    };
-  }
-
-  const [windowSize, setWindowSize] = React.useState(getSize);
+  const [windowSize, setWindowSize] = React.useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
   React.useEffect(() => {
     function handleResize() {
-      setWindowSize(getSize());
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
     }
-    return window.addEventListener('resize', handleResize);
-  });
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return windowSize;
 }
@@ -91,7 +90,8 @@ export const ZoomControl: React.FC<ZoomControlProps> = (props) => {
 
     return options.map((item) => ({
       ...item,
-      disabled: fundInceptionDate && item.timestamp ? item.timestamp < fundInceptionDate : undefined,
+      disabled:
+        props.fundInceptionDate && item.timestamp ? item.timestamp < props.fundInceptionDate.getTime() : undefined,
     }));
   }, [props.depth, props.queryFromDate]);
 
@@ -111,7 +111,7 @@ export const ZoomControl: React.FC<ZoomControlProps> = (props) => {
     return false;
   };
 
-  function clickHandler(params: clickHandlerParams) {
+  function clickHandler(params: ClickHandlerParams) {
     if (params.queryType === 'depth' && params.depthQueryValue) {
       props.setDepth(params.depthQueryValue);
     } else {
@@ -129,7 +129,7 @@ export const ZoomControl: React.FC<ZoomControlProps> = (props) => {
 
         {options.map((item, index) => {
           const queryValue = item.type === 'depth' ? 'depthQueryValue' : 'dateQueryValue';
-          const clickParams: clickHandlerParams = {
+          const clickParams: ClickHandlerParams = {
             queryType: item.type,
             [queryValue]: item.value,
             buttonLabel: item.label,

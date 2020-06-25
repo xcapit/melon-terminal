@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import * as S from './ZoomControl.styles';
 import { subDays, subWeeks, subMonths, startOfYear } from 'date-fns';
 import { findCorrectFromTime } from '~/utils/priceServiceDates';
+import { useTheme } from 'styled-components';
 
 export interface Serie {
   id: string;
@@ -42,9 +43,31 @@ export interface ZoomControlProps {
   fundInceptionDate: Date | undefined;
 }
 
+function useWindowSize() {
+  function getSize() {
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
+  }
+
+  const [windowSize, setWindowSize] = React.useState(getSize);
+
+  React.useEffect(() => {
+    function handleResize() {
+      setWindowSize(getSize());
+    }
+    return window.addEventListener('resize', handleResize);
+  });
+
+  return windowSize;
+}
+
 export const ZoomControl: React.FC<ZoomControlProps> = (props) => {
   const today = new Date();
   const fundInceptionDate: undefined | number = props.fundInceptionDate && props.fundInceptionDate.getTime();
+
+  const windowSize = useWindowSize();
 
   const options = React.useMemo<ZoomOption[]>(() => {
     const options: ZoomOption[] = [
@@ -102,7 +125,8 @@ export const ZoomControl: React.FC<ZoomControlProps> = (props) => {
   return (
     <>
       <S.ControlBox>
-        Zoom:<span></span>
+        {windowSize.width > 500 ? 'Zoom: ' : null}
+
         {options.map((item, index) => {
           const queryValue = item.type === 'depth' ? 'depthQueryValue' : 'dateQueryValue';
           const clickParams: clickHandlerParams = {
@@ -110,18 +134,32 @@ export const ZoomControl: React.FC<ZoomControlProps> = (props) => {
             [queryValue]: item.value,
             buttonLabel: item.label,
           };
-
-          return (
-            <S.ChartButton
-              kind={checkActive(item) ? 'success' : 'secondary'}
-              disabled={item.disabled}
-              size="small"
-              key={index}
-              onClick={() => clickHandler(clickParams)}
-            >
-              {item.label}
-            </S.ChartButton>
-          );
+          if (windowSize.width! > 400) {
+            return (
+              <S.ChartButton
+                kind={checkActive(item) ? 'success' : 'secondary'}
+                disabled={item.disabled}
+                size="small"
+                key={index}
+                onClick={() => clickHandler(clickParams)}
+              >
+                {item.label}
+              </S.ChartButton>
+            );
+          }
+          if (item.label !== '3m' && item.label !== '1y') {
+            return (
+              <S.ChartButton
+                kind={checkActive(item) ? 'success' : 'secondary'}
+                disabled={item.disabled}
+                size="small"
+                key={index}
+                onClick={() => clickHandler(clickParams)}
+              >
+                {item.label}
+              </S.ChartButton>
+            );
+          }
         })}
       </S.ControlBox>
     </>

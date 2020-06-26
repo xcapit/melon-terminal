@@ -24,7 +24,7 @@ export const RequiresFundDeployedWithCurrentVersion: React.FC<RequiresFundDeploy
     return loader || null;
   }
 
-  if (fundVersion?.address === environment.deployment.melon.addr.Version) {
+  if (!fundVersion || fundVersion?.address === environment.deployment.melon.addr.Version) {
     return <>{children}</>;
   }
 

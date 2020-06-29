@@ -43,7 +43,10 @@ const validationSchema = Yup.object({
   premiumPercentage: Yup.number().required().min(0),
   etherBalance: bigNumberSchema()
     .required()
-    .gte('1.4e16', 'Your ether balance is not sufficient to pay for the transaction cost.'),
+    .gte(
+      '1.4e16',
+      'Your ether balance is not sufficient to pay for the costs of this transaction. Please add some ETH to your wallet.'
+    ),
   tokenBalance: tokenValueSchema().required(),
   tokenAllowance: tokenValueSchema().required(),
   requestedShares: tokenValueSchema().required().gt(0, 'Number of shares has to be positive.'),
@@ -227,6 +230,8 @@ export const RequestInvestment = React.forwardRef(
       investmentAmount.value?.dividedBy(requestedShares.value!)
     );
 
+    console.log(formik.errors);
+
     return (
       <Form formik={formik}>
         <TokenValueInput
@@ -325,6 +330,12 @@ export const RequestInvestment = React.forwardRef(
         </NotificationBar>
 
         <Checkbox disabled={loading} name="termsAndConditions" label="I accept the terms and conditions." />
+
+        {formik.errors.etherBalance && (
+          <NotificationBar kind="error">
+            <NotificationContent style={{ textAlign: 'left' }}>{formik.errors.etherBalance}</NotificationContent>
+          </NotificationBar>
+        )}
 
         <BlockActions>
           <Button type="submit" disabled={loading}>

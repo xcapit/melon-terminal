@@ -230,8 +230,6 @@ export const RequestInvestment = React.forwardRef(
       investmentAmount.value?.dividedBy(requestedShares.value!)
     );
 
-    console.log(formik.errors);
-
     return (
       <Form formik={formik}>
         <TokenValueInput

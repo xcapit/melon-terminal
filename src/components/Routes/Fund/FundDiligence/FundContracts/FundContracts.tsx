@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react';
 import { useFundDetailsQuery } from '../FundDetails.query';
 import { Spinner } from '~/storybook/Spinner/Spinner';
-import { SectionTitle } from '~/storybook/Title/Title';
 import { Dictionary, DictionaryEntry, DictionaryLabel, DictionaryData } from '~/storybook/Dictionary/Dictionary';
 import { EtherscanLink } from '~/components/Common/EtherscanLink/EtherscanLink';
+import { Block } from '~/storybook/Block/Block';
 
 export interface FundContractsProps {
   address: string;
@@ -23,6 +23,12 @@ export const FundContracts: React.FC<FundContractsProps> = ({ address }) => {
     { name: 'Registry', field: 'registry' },
     { name: 'Version', field: 'version' },
   ];
+  if (query.loading) {
+    return <Spinner />;
+  }
+  if (!fund) {
+    return null;
+  }
 
   const routes = fund?.routes;
   const addresses = contracts
@@ -34,28 +40,27 @@ export const FundContracts: React.FC<FundContractsProps> = ({ address }) => {
 
   addresses.unshift({ address, name: 'Fund', field: 'fund' });
 
-  return (
-    <Dictionary>
-      <SectionTitle>Fund Contracts</SectionTitle>
-      {query.loading && <Spinner />}
+  const version = routes?.version;
 
+  return (
+    <Block>
+      <DictionaryEntry>
+        <DictionaryLabel>Manager Address</DictionaryLabel>
+        <DictionaryData>
+          <EtherscanLink address={fund.manager} />
+        </DictionaryData>
+      </DictionaryEntry>
       {!query.loading &&
         addresses.map((a) => (
           <Fragment key={a.address}>
             <DictionaryEntry>
-              <DictionaryLabel>{a.name}</DictionaryLabel>
+              <DictionaryLabel>{a.name} Address</DictionaryLabel>
               <DictionaryData>
                 <EtherscanLink address={a.address} />
               </DictionaryData>
             </DictionaryEntry>
-            {(a.name === 'Fund' || a.name === 'Vault') && (
-              <DictionaryEntry>
-                <DictionaryLabel>&nbsp;</DictionaryLabel>
-                <DictionaryData>&nbsp;</DictionaryData>
-              </DictionaryEntry>
-            )}
           </Fragment>
         ))}
-    </Dictionary>
+    </Block>
   );
 };

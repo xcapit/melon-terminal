@@ -7,6 +7,7 @@ export interface HeadlineProps {
   title: string;
   text?: React.ReactNode;
   icon?: 'WALLET' | 'ETHEREUM';
+  badges?: JSX.Element[];
 }
 
 export const Headline: React.FC<HeadlineProps> = (props) => {
@@ -18,7 +19,12 @@ export const Headline: React.FC<HeadlineProps> = (props) => {
         </H.HeadlineIcon>
       )}
       <H.HeadlineText>
-        <Title>{props.title}</Title>
+        <Title>
+          {props.title}{' '}
+          {props.badges?.map((badge) => (
+            <>{badge} </>
+          ))}
+        </Title>
         {props.text && <H.HeadlineSideInfo>{props.text}</H.HeadlineSideInfo>}
       </H.HeadlineText>
     </H.Headline>

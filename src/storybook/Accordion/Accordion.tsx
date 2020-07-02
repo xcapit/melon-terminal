@@ -10,7 +10,8 @@ export interface AccordionBarProps {
 export const AccordionSectionContent = styled(BarContent)<AccordionBarProps>`
   justify-content: space-between;
   align-items: center;
-  margin-bottom: ${(props) => props.theme.spaceUnits.m};
+  padding: ${(props) => props.theme.spaceUnits.s};
+  margin-bottom: ${(props) => props.theme.spaceUnits.s};
   ${(props) => {
     if (props.active) {
       return css`

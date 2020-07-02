@@ -26,11 +26,6 @@ export const FundInvestRedeem: React.FC<FundInvestProps> = ({ address }) => {
           </GridCol>
         </GridRow>
       </RequiresAccount>
-      <GridRow>
-        <GridCol xs={12} sm={12}>
-          <FundInvestmentHistoryList address={address} />
-        </GridCol>
-      </GridRow>
     </Grid>
   );
 };

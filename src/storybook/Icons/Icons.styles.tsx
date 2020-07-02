@@ -8,7 +8,7 @@ export interface IconProps {
 
 export const IconsWrapper = styled.div<IconProps>`
   position: relative;
-  display: block;
+  display: inline;
 
   ${(props) =>
     props.size &&
@@ -32,8 +32,10 @@ export const IconsWrapper = styled.div<IconProps>`
       `}
 
   svg {
-    fill: ${(props) => props.colored && props.theme.mainColors.textColor};
-    display: block;
+    g {
+      fill: ${(props) => props.colored && props.theme.mainColors.textColor};
+    }
+    display: inline;
     overflow: visible;
     ${(props) =>
       props.size &&

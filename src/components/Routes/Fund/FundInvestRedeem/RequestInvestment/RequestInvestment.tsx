@@ -64,6 +64,8 @@ export const RequestInvestment = React.forwardRef(
     const environment = useEnvironment()!;
     const [nextTransaction, setNextTransaction] = React.useState<Transaction>();
 
+    const wethToken = environment.getToken('WETH');
+
     const participationAddress = props.participationAddress;
     const initialPremium = props.currentShares.isZero() ? 0 : 0.1;
     const initialInvestment = React.useMemo(() => {
@@ -247,14 +249,14 @@ export const RequestInvestment = React.forwardRef(
             onChange={handleRequestedSharesChange}
           />
         </>
-
         <TokenValueSelect
           name="investmentAmount"
           label={
             <FormLabelWithTooltip
               label={
                 <>
-                  Amount and asset (your wallet's balance: <TokenValueDisplay value={tokenBalance} />)
+                  Amount and asset (your wallet's balance:&nbsp;
+                  <TokenValueDisplay value={tokenBalance} />)
                 </>
               }
               tooltipPlacement="auto"
@@ -265,6 +267,15 @@ export const RequestInvestment = React.forwardRef(
           disabled={loading}
           onChange={handleInvestmentChange}
         />
+
+        {investmentAmount.token.address === wethToken.address && (
+          <NotificationBar kind="neutral">
+            <NotificationContent style={{ textAlign: 'left' }}>
+              {' '}
+              <a href="/wallet/weth">Convert your ETH into WETH.</a>
+            </NotificationContent>
+          </NotificationBar>
+        )}
 
         {initialPremium > 0 && (
           <Select
@@ -281,7 +292,6 @@ export const RequestInvestment = React.forwardRef(
             onChange={handlePremiumChange}
           />
         )}
-
         {formik.values.acknowledgeLimitRequired && (
           <>
             <NotificationBar kind="error">
@@ -298,7 +308,6 @@ export const RequestInvestment = React.forwardRef(
             />
           </>
         )}
-
         {initialPremium > formik.values.premiumPercentage && (
           <>
             <NotificationBar kind="warning">
@@ -320,7 +329,6 @@ export const RequestInvestment = React.forwardRef(
             </NotificationBar>
           </>
         )}
-
         <NotificationBar kind="neutral">
           <NotificationContent>
             <p style={{ textAlign: 'left', fontWeight: 'bold' }}>Investment summary</p>
@@ -331,7 +339,6 @@ export const RequestInvestment = React.forwardRef(
             <p style={{ textAlign: 'left' }}>Your investment request will be filled at the next price update.</p>
           </NotificationContent>
         </NotificationBar>
-
         <SectionTitle>Terms and Conditions</SectionTitle>
         <NotificationBar kind="neutral">
           <NotificationContent style={{ textAlign: 'left' }}>
@@ -346,15 +353,12 @@ export const RequestInvestment = React.forwardRef(
             CONDITIONS WHICH MAY HAVE BEEN COMMUNICATED INDEPENDENTLY OF THE PROTOCOL.
           </NotificationContent>
         </NotificationBar>
-
         <Checkbox disabled={loading} name="termsAndConditions" label="I accept the terms and conditions." />
-
         {formik.errors.etherBalance && (
           <NotificationBar kind="error">
             <NotificationContent style={{ textAlign: 'left' }}>{formik.errors.etherBalance}</NotificationContent>
           </NotificationBar>
         )}
-
         <BlockActions>
           <Button type="submit" disabled={loading}>
             Invest

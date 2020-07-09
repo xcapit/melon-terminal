@@ -9,9 +9,9 @@ import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 import { Block } from '~/storybook/Block/Block';
 
 import styled from 'styled-components';
-import { GiInfo } from 'react-icons/gi';
 import { useHistory } from 'react-router';
 import { Tooltip } from '~/storybook/Tooltip/Tooltip';
+import { Button } from '~/components/Form/Button/Button';
 
 export const MetricsAUM = styled.div`
   width: 100%;
@@ -44,6 +44,7 @@ export const FundMetrics: React.FC = () => {
   const [metrics, metricsQuery] = useFundMetricsQuery();
   const [currency, setCurrency] = useState('USD');
   const rates = useTokenRates('ETH');
+  const history = useHistory();
 
   if (metricsQuery.loading || !metrics) {
     return (
@@ -67,12 +68,7 @@ export const FundMetrics: React.FC = () => {
   return (
     <Block>
       <SectionTitle>
-        Network Metrics{' '}
-        <Tooltip value="All network metrics are available on monitoring.melon.network">
-          <a href="https://monitoring.melon.network">
-            <GiInfo />
-          </a>
-        </Tooltip>
+        Network Metrics <a href="https://monitoring.melon.network">Melon Monitoring...</a>
       </SectionTitle>
       <Grid>
         <GridRow>

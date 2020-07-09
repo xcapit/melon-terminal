@@ -26,10 +26,11 @@ const Toolbar = styled.div`
 const Search = styled.div`
   float: left;
   min-width: 200px;
+  margin-right: 10px;
 `;
 
 const FilterAndSort = styled.div`
-  float: right;
+  float: left;
   display: inline-block;
   vertical-align: top;
   height: 40px;
@@ -37,23 +38,23 @@ const FilterAndSort = styled.div`
 `;
 
 const SortLabel = styled.div`
-  float: right;
-  padding: 10px;
+  float: left;
+  padding: 10px 10px 10px 0;
   display: inline-block;
   vertical-align: top;
 `;
 
-const Sort = styled.div`
-  float: right;
-  min-width: 200px;
-  max-width: 400px;
-  height: 25px;
-  display: inline-block;
-  vertical-align: top;
-`;
+// const Sort = styled.div`
+//   float: left;
+//   min-width: 200px;
+//   max-width: 400px;
+//   height: 25px;
+//   display: inline-block;
+//   vertical-align: top;
+// `;
 
 const FilterIcon = styled.div`
-  float: right;
+  float: left;
   padding-top: 10px;
   padding-bottom: 10px;
   cursor: pointer;
@@ -159,6 +160,7 @@ export function TableGlobalFilter<TData extends object>(props: TableGlobalFilter
   return (
     <>
       <Toolbar>
+        <SortLabel>Search: </SortLabel>
         <Search>
           <InputField
             name="search"
@@ -171,10 +173,10 @@ export function TableGlobalFilter<TData extends object>(props: TableGlobalFilter
           />
         </Search>
         <FilterAndSort>
+          <SortLabel>Filters: </SortLabel>
           <FilterIcon>
             <FaFilter onClick={() => setShowFilters(!showFilters)} size="1.5rem" />
           </FilterIcon>
-          <SortLabel>Filters: </SortLabel>
           {/* <Sort>
             <SelectField
               name="sort"

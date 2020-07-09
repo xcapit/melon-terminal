@@ -45,7 +45,7 @@ export type IconName = keyof typeof availableIcons;
 
 export type IconsProps = React.ComponentProps<typeof S.IconsWrapper> & {
   name: IconName;
-  size?: 'normal' | 'small';
+  size?: 'normal' | 'medium' | 'small';
   pointer?: boolean;
 };
 

@@ -10,6 +10,7 @@ import { SectionTitle } from '~/storybook/Title/Title';
 import { useTableData } from '../FundOverview/FundOverview';
 import { FundBadgeDirectory } from './FundBadgeDirectory';
 import { MdClose } from 'react-icons/md';
+import { Button } from '~/components/Form/Button/Button';
 
 const BadgeIcon = styled.div`
   padding: 2px 10px 0px 2px;
@@ -66,11 +67,17 @@ export const FundLeaderboard: React.FC = (props) => {
       <SectionTitle>
         {!showDirectory ? (
           <>
-            Melon Leaderboard <GiInfo onClick={() => setShowDirectory(!showDirectory)} style={{ cursor: 'pointer' }} />
+            Melon Leaderboard
+            <Button size="extrasmall" kind="secondary" onClick={() => setShowDirectory(!showDirectory)}>
+              Badges
+            </Button>
           </>
         ) : (
           <>
-            Badges <MdClose onClick={() => setShowDirectory(!showDirectory)} />
+            Badges
+            <Button size="extrasmall" kind="secondary" onClick={() => setShowDirectory(!showDirectory)}>
+              Leaderboard
+            </Button>
           </>
         )}
       </SectionTitle>

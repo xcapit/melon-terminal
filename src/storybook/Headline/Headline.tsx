@@ -4,7 +4,7 @@ import * as H from './Headline.styles';
 import { Icons } from '../Icons/Icons';
 
 export interface HeadlineProps {
-  title: string;
+  title: string | React.ReactNode;
   text?: React.ReactNode;
   icon?: 'WALLET' | 'ETHEREUM';
   badges?: JSX.Element[];

@@ -94,23 +94,67 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
           textAlign: 'left',
         },
       },
+      cellProps: {
+        style: {
+          textAlign: 'left',
+          verticalAlign: 'top',
+        },
+      },
 
       Cell: (cell) => (
         <span>
           {cell.value}
           <br />
-          {cell.row.original.top5AUM && <GiCaesar color="rgb(133,213,202)" title="Top 5 fund by AUM" />}{' '}
-          {cell.row.original.top5YTD && <GiSpartanHelmet color="rgb(133,213,202)" title="Top 5 performance YTD" />}{' '}
-          {cell.row.original.top5MTD && <GiPegasus color="rgb(133,213,202)" title="Top 5 performance MTD" />}{' '}
-          {cell.row.original.top5Recent && <GiStorkDelivery color="rgb(133,213,202)" title="5 most recent funds" />}{' '}
-          {cell.row.original.top5Investments && (
-            <GiChariot color="rgb(133,213,202)" title="5 funds with most investors" />
+          {cell.row.original.top5AUM && (
+            <Tooltip value="Top 5 fund by AUM">
+              <GiCaesar color="rgb(133,213,202)" size={20} />
+            </Tooltip>
           )}{' '}
-          {cell.row.original.largeFund && <GiWingfoot color="rgb(133,213,202)" title="Large fund (> 100 ETH)" />}{' '}
-          {cell.row.original.underperformingFund && <GiIcarus color="rgb(255,141,136)" title="Underperforming fund" />}{' '}
-          {cell.row.original.tinyFund && <GiMedusaHead color="rgb(255,141,136)" title="Tiny fund (< 1 ETH)" />}{' '}
-          {cell.row.original.userWhitelist && <GiPalisade color="grey" title="Fund operates a user whitelist" />}{' '}
-          {cell.row.original.closed && <GiPadlock color="grey" title="Fund is closed for investment" />}{' '}
+          {cell.row.original.top5YTD && (
+            <Tooltip value="Top 5 performance YTD">
+              <GiSpartanHelmet color="rgb(133,213,202)" size={20} />
+            </Tooltip>
+          )}{' '}
+          {cell.row.original.top5MTD && (
+            <Tooltip value="Top 5 performance MTD">
+              <GiPegasus color="rgb(133,213,202)" size={20} />
+            </Tooltip>
+          )}{' '}
+          {cell.row.original.top5Recent && (
+            <Tooltip value="5 most recent funds">
+              <GiStorkDelivery color="rgb(133,213,202)" size={20} />
+            </Tooltip>
+          )}{' '}
+          {cell.row.original.top5Investments && (
+            <Tooltip value="5 funds with most investors">
+              <GiChariot color="rgb(133,213,202)" size={20} />
+            </Tooltip>
+          )}{' '}
+          {cell.row.original.largeFund && (
+            <Tooltip value="Large fund (> 100 ETH)">
+              <GiWingfoot color="rgb(133,213,202)" size={20} />
+            </Tooltip>
+          )}{' '}
+          {cell.row.original.underperformingFund && (
+            <Tooltip value="Underperforming fund">
+              <GiIcarus color="rgb(255,141,136)" size={20} />
+            </Tooltip>
+          )}{' '}
+          {cell.row.original.tinyFund && (
+            <Tooltip value="Tiny fund (< 1 ETH)">
+              <GiMedusaHead color="rgb(255,141,136)" size={20} />
+            </Tooltip>
+          )}{' '}
+          {cell.row.original.userWhitelist && (
+            <Tooltip value="Fund operates a user whitelist">
+              <GiPalisade color="grey" size={20} />
+            </Tooltip>
+          )}{' '}
+          {cell.row.original.closed && (
+            <Tooltip value="Fund is closed for investment">
+              <GiPadlock color="grey" size={20} />
+            </Tooltip>
+          )}{' '}
         </span>
       ),
     },
@@ -139,6 +183,7 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       cellProps: {
         style: {
           textAlign: 'right',
+          verticalAlign: 'top',
         },
       },
       headerProps: {
@@ -165,7 +210,7 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
               >
                 <Icons
                   name={holding.token.symbol as IconName}
-                  size="small"
+                  size="medium"
                   colored={coloredIcons.some((icon) => icon === holding.token.symbol)}
                 />{' '}
               </Tooltip>
@@ -177,7 +222,8 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       cellProps: {
         style: {
           textAlign: 'left',
-          maxWidth: '100px',
+          // maxWidth: '120px',
+          verticalAlign: 'top',
         },
       },
       headerProps: {
@@ -204,6 +250,7 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       cellProps: {
         style: {
           textAlign: 'right',
+          verticalAlign: 'top',
         },
       },
       headerProps: {
@@ -225,6 +272,7 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       cellProps: {
         style: {
           textAlign: 'right',
+          verticalAlign: 'top',
         },
       },
       headerProps: {
@@ -245,6 +293,7 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       cellProps: {
         style: {
           textAlign: 'right',
+          verticalAlign: 'top',
         },
       },
       headerProps: {
@@ -265,6 +314,7 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       cellProps: {
         style: {
           textAlign: 'right',
+          verticalAlign: 'top',
         },
       },
       headerProps: {
@@ -612,7 +662,7 @@ export const FundOverview: React.FC = () => {
   if (data.length === 0) {
     return (
       <Block>
-        <SectionTitle> Melon Fund Universe</SectionTitle>
+        <SectionTitle>Melon Fund Universe</SectionTitle>
         <Spinner />
       </Block>
     );
@@ -621,7 +671,7 @@ export const FundOverview: React.FC = () => {
   return (
     <>
       <Block>
-        <SectionTitle> Melon Fund Universe</SectionTitle>
+        <SectionTitle>Melon Fund Universe</SectionTitle>
         <ScrollableTable>
           <CommonTable table={table} globalFilter={filter} />
         </ScrollableTable>

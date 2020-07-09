@@ -28,6 +28,7 @@ import { Button } from '~/components/Form/Button/Button';
 import { useHistory } from 'react-router';
 import { useConnectionState } from '~/hooks/useConnectionState';
 import { getNetworkName } from '~/config';
+import { Tooltip } from '~/storybook/Tooltip/Tooltip';
 
 export interface FundHeaderProps {
   address: string;
@@ -60,22 +61,80 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
   const SlugComponent = <CopyToClipboard text={slugUrl} value={`https://${slugUrl}`} />;
 
   const badges = [];
-  fundData?.top5AUM && badges.push(<GiCaesar color="rgb(133,213,202)" title="Top 5 fund by AUM" />);
-  fundData?.top5YTD && badges.push(<GiSpartanHelmet color="rgb(133,213,202)" title="Top 5 performance YTD" />);
-  fundData?.top5MTD && badges.push(<GiPegasus color="rgb(133,213,202)" title="Top 5 performance MTD" />);
+  fundData?.top5AUM &&
+    badges.push(
+      <Tooltip value="Top 5 fund by AUM">
+        <GiCaesar color="rgb(133,213,202)" size={20} />
+      </Tooltip>
+    );
+  fundData?.top5YTD &&
+    badges.push(
+      <Tooltip value="Top 5 performance YTD">
+        <GiSpartanHelmet color="rgb(133,213,202)" size={20} />
+      </Tooltip>
+    );
+  fundData?.top5MTD &&
+    badges.push(
+      <Tooltip value="Top 5 performance MTD">
+        <GiPegasus color="rgb(133,213,202)" size={20} />
+      </Tooltip>
+    );
   fundData?.top5Recent &&
-    badges.push(<GiStorkDelivery color="rgb(133,213,202)" title="Top 5 funds with most investors" />);
-  fundData?.top5Investments && badges.push(<GiChariot color="rgb(133,213,202)" title="5 funds with most investors" />);
-  fundData?.largeFund && badges.push(<GiWingfoot color="rgb(133,213,202)" title="Fund managing more than 100 ETH" />);
-  fundData?.underperformingFund && badges.push(<GiIcarus color="rgb(255,141,136)" title="Underperforming fund" />);
-  fundData?.tinyFund && badges.push(<GiMedusaHead color="rgb(255,141,136)" title="Tiny fund" />);
-  fundData?.userWhitelist && badges.push(<GiPalisade color="grey" title="Fund operates a user whitelist" />);
-  fundData?.closed && badges.push(<GiPadlock color="grey" title="Fund is closed for investment" />);
+    badges.push(
+      <Tooltip value="5 most recent funds">
+        <GiStorkDelivery color="rgb(133,213,202)" size={20} />
+      </Tooltip>
+    );
+  fundData?.top5Investments &&
+    badges.push(
+      <Tooltip value="5 funds with most investors">
+        <GiChariot color="rgb(133,213,202)" size={20} />
+      </Tooltip>
+    );
+  fundData?.largeFund &&
+    badges.push(
+      <Tooltip value="Large fund (> 100 ETH)">
+        <GiWingfoot color="rgb(133,213,202)" size={20} />
+      </Tooltip>
+    );
+  fundData?.underperformingFund &&
+    badges.push(
+      <Tooltip value="Underperforming fund">
+        <GiIcarus color="rgb(255,141,136)" size={20} />
+      </Tooltip>
+    );
+  fundData?.tinyFund &&
+    badges.push(
+      <Tooltip value="Tiny fund (< 1 ETH)">
+        <GiMedusaHead color="rgb(255,141,136)" size={20} />
+      </Tooltip>
+    );
+  fundData?.userWhitelist &&
+    badges.push(
+      <Tooltip value="Fund operates a user whitelist">
+        <GiPalisade color="grey" size={20} />
+      </Tooltip>
+    );
+  fundData?.closed &&
+    badges.push(
+      <Tooltip value="Fund is closed for investment">
+        <GiPadlock color="grey" size={20} />
+      </Tooltip>
+    );
 
   return (
     <Bar>
       <BarContent justify="between">
-        <Headline title={fund.name} text={SlugComponent} icon="ETHEREUM" badges={badges} />
+        <Headline
+          title={
+            <span onClick={() => history.push(`/${prefix}/fund/${address}`)} style={{ cursor: 'pointer' }}>
+              {fund.name}
+            </span>
+          }
+          text={SlugComponent}
+          icon="ETHEREUM"
+          badges={badges}
+        />
         <RequiresFundSetupComplete fallback={false}>
           <DataBlockSection>
             <DataBlock label="Share price">

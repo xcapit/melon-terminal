@@ -27,6 +27,8 @@ const connect = (): Rx.Observable<ConnectionAction> => {
 
   const eth = new Eth(ethereum, undefined, {
     transactionConfirmationBlocks: 1,
+    transactionPollingTimeout: Infinity,
+    transactionBlockTimeout: Infinity,
   });
 
   const enable$ = Rx.defer(() => ethereum.enable() as Promise<string[]>).pipe(startWith([]));

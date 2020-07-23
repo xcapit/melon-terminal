@@ -25,6 +25,8 @@ const connect = () => {
     const provider = fm.getProvider();
     const eth = new Eth(provider as any, undefined, {
       transactionConfirmationBlocks: 1,
+      transactionPollingTimeout: Infinity,
+      transactionBlockTimeout: Infinity,
     });
 
     return { eth, provider, unsubscribe: () => fm.user.logout() };

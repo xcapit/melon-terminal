@@ -22,6 +22,8 @@ const connect = (): Rx.Observable<ConnectionAction> => {
     const provider = new HttpProvider('http://127.0.0.1:8545');
     const eth = new Eth(provider, undefined, {
       transactionConfirmationBlocks: 1,
+      transactionPollingTimeout: Infinity,
+      transactionBlockTimeout: Infinity,
     });
 
     return { eth, unsubscribe: () => provider.disconnect() };

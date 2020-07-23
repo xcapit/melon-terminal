@@ -41,7 +41,7 @@ export const FundRequestForQuoteOffer: React.FC<FundRequestForQuoteOfferProps> =
     loading: false,
   }));
 
-  const [policyValidation, setPolicyValidation] = useState({ valid: true, message: '' });
+  const [errors, setErrors] = React.useState<string[]>([]);
 
   const environment = useEnvironment()!;
   const account = useAccount()!;
@@ -128,9 +128,8 @@ export const FundRequestForQuoteOffer: React.FC<FundRequestForQuoteOfferProps> =
         const taker = assetDataUtils.decodeERC20AssetData(offer.takerAssetData).tokenAddress;
         const maker = assetDataUtils.decodeERC20AssetData(offer.makerAssetData).tokenAddress;
 
-        await validatePolicies({
+        const errors = await validatePolicies({
           environment,
-          setPolicyValidation,
           policies: props.policies,
           taker: environment.getToken(taker)!,
           maker: environment.getToken(maker)!,
@@ -140,7 +139,8 @@ export const FundRequestForQuoteOffer: React.FC<FundRequestForQuoteOfferProps> =
           denominationAsset: props.denominationAsset,
           tradingAddress: props.trading,
         });
-        if (!policyValidation.valid) {
+        setErrors(errors);
+        if (errors.length) {
           return;
         }
 
@@ -172,7 +172,7 @@ export const FundRequestForQuoteOffer: React.FC<FundRequestForQuoteOfferProps> =
       return;
     }
 
-    if (!policyValidation.valid) {
+    if (errors.length) {
       return;
     }
 
@@ -203,9 +203,9 @@ export const FundRequestForQuoteOffer: React.FC<FundRequestForQuoteOfferProps> =
           ? `Buy ${state.price.multipliedBy(props.amount!).toFixed(4)} ${props.symbol}`
           : 'No Offer'}
       </Button>
-      {!policyValidation.valid && (
+      {!!errors.length && (
         <NotificationBar kind="error">
-          <NotificationContent>{policyValidation.message}</NotificationContent>
+          <NotificationContent>{errors.join('\n')}</NotificationContent>
         </NotificationBar>
       )}
 

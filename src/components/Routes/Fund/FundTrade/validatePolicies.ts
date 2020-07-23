@@ -21,16 +21,11 @@ interface ValidatePoliciesArguments {
   maker: TokenDefinition;
   takerAmount: BigNumber;
   makerAmount: BigNumber;
-  setPolicyValidation: React.Dispatch<
-    React.SetStateAction<{
-      valid: boolean;
-      message: string;
-    }>
-  >;
   denominationAsset?: Token;
 }
 
 export const validatePolicies = async (args: ValidatePoliciesArguments) => {
+  const errors: string[] = [];
   const assetWhitelists = args.policies?.filter((policy) => policy.identifier === 'AssetWhitelist') as
     | AssetWhitelist[]
     | undefined;
@@ -55,64 +50,46 @@ export const validatePolicies = async (args: ValidatePoliciesArguments) => {
   ) as BigNumber;
 
   // Asset Whitelist
-  if (!assetWhitelists?.length) {
-    args.setPolicyValidation({ valid: true, message: 'mssg' });
-  } else {
+  if (assetWhitelists?.length) {
     const valid = assetWhitelists.every((list) =>
       list.assetWhitelist?.some((item) => sameAddress(item, args.maker.address))
     );
 
     if (!valid) {
-      args.setPolicyValidation({
-        valid: false,
-        message: 'This investment would violate the asset whitelist policy',
-      });
-      return;
+      errors.push('This investment would violate the asset whitelist policy');
     }
   }
 
   // Asset Blacklist
-  if (!assetBlacklists?.length) {
-    args.setPolicyValidation({ valid: true, message: '' });
-  } else {
+  if (assetBlacklists?.length) {
     const valid = !assetBlacklists.some((list) =>
       list.assetBlacklist?.some((item) => sameAddress(item, args.maker.address))
     );
 
     if (!valid) {
-      args.setPolicyValidation({
-        valid: false,
-        message: 'This investment would violate the asset blacklist policy',
-      });
-      return;
+      errors.push('This investment would violate the asset blacklist policy');
     }
   }
 
   // Max Positions Policies
-  if (!maxPositionsPolicies?.length || sameAddress(args.maker.address, args.denominationAsset?.address)) {
-    args.setPolicyValidation({ valid: true, message: '' });
-  } else {
+  if (!(!maxPositionsPolicies?.length || sameAddress(args.maker.address, args.denominationAsset?.address))) {
+    const taker = nonZeroHoldings?.find((holding) => sameAddress(holding.token?.address, args.taker.address));
+    const count = taker?.amount?.isLessThanOrEqualTo(toTokenBaseUnit(args.takerAmount, args.taker.decimals))
+      ? nonZeroHoldings?.length - 1
+      : nonZeroHoldings?.length;
     const valid =
       // already existing token
       !!nonZeroHoldings?.some((holding) => sameAddress(holding.token?.address, args.maker.address)) ||
       // max positions larger than holdings (so new token would still fit)
-      maxPositionsPolicies.every(
-        (policy) => policy.maxPositions && nonZeroHoldings && policy.maxPositions > nonZeroHoldings?.length
-      );
+      maxPositionsPolicies.every((policy) => policy.maxPositions && nonZeroHoldings && policy.maxPositions > count);
 
     if (!valid) {
-      args.setPolicyValidation({
-        valid: false,
-        message: 'This investment would violate the maximum number of positions policy',
-      });
-      return;
+      errors.push('This investment would violate the maximum number of positions policy');
     }
   }
 
   // Max Concentration Policies
-  if (!maxConcentrationPolicies?.length || sameAddress(args.maker.address, args.denominationAsset?.address)) {
-    args.setPolicyValidation({ valid: true, message: '' });
-  } else {
+  if (!(!maxConcentrationPolicies?.length || sameAddress(args.maker.address, args.denominationAsset?.address))) {
     const investmentAsset = args.holdings?.find((holding) => sameAddress(holding.token?.address, args.maker.address));
     const investmentAmountInDenominationAsset = new BigNumber(args.makerAmount)
       .multipliedBy(investmentAsset?.token?.price || new BigNumber(0))
@@ -127,18 +104,12 @@ export const validatePolicies = async (args: ValidatePoliciesArguments) => {
     );
 
     if (!valid) {
-      args.setPolicyValidation({
-        valid: false,
-        message: 'This investment would violate the maximum concentration policy.',
-      });
-      return;
+      errors.push('This investment would violate the maximum concentration policy');
     }
   }
 
   // Price Tolerance Policies
-  if (!priceTolerancePolicies?.length) {
-    args.setPolicyValidation({ valid: true, message: '' });
-  } else {
+  if (priceTolerancePolicies?.length) {
     const trading = new Trading(args.environment, args.tradingAddress);
     const priceSourceAddress = await trading.getPriceSource();
     const priceSource = new IPriceSource(args.environment, priceSourceAddress);
@@ -160,10 +131,9 @@ export const validatePolicies = async (args: ValidatePoliciesArguments) => {
     );
 
     if (!valid) {
-      args.setPolicyValidation({
-        valid: false,
-        message: 'This investment would violate the price tolerance policy.',
-      });
+      errors.push('This investment would violate the price tolerance policy');
     }
   }
+
+  return errors;
 };

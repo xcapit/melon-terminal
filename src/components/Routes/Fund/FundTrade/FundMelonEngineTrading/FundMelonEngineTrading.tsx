@@ -14,6 +14,7 @@ import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNu
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
 import { validatePolicies } from '../validatePolicies';
 import { Error } from '~/components/Form/Form';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 
 export interface FundMelonEngineTradingProps {
   trading: string;
@@ -32,8 +33,7 @@ export const FundMelonEngineTrading: React.FC<FundMelonEngineTradingProps> = (pr
   const environment = useEnvironment()!;
   const account = useAccount()!;
   const transaction = useTransaction(environment);
-
-  const [policyValidation, setPolicyValidation] = useState({ valid: true, message: '' });
+  const [errors, setErrors] = React.useState<string[]>([]);
 
   const loading = query.loading;
   const value = props.quantity.multipliedBy(price ?? new BigNumber('NaN'));
@@ -41,29 +41,9 @@ export const FundMelonEngineTrading: React.FC<FundMelonEngineTradingProps> = (pr
   const rate = valid ? price : new BigNumber('NaN');
   const ready = !loading && valid;
 
-  useEffect(() => {
-    if (rate.isNaN()) {
-      return;
-    }
-    (async () =>
-      await validatePolicies({
-        environment,
-        setPolicyValidation,
-        makerAmount: value,
-        policies: props.policies,
-        taker: props.taker,
-        maker: props.maker,
-        holdings: props.holdings,
-        denominationAsset: props.denominationAsset,
-        takerAmount: props.quantity,
-        tradingAddress: props.trading,
-      }))();
-  }, [props.quantity]);
-
   const submit = async () => {
-    await validatePolicies({
+    const errors = await validatePolicies({
       environment,
-      setPolicyValidation,
       makerAmount: value,
       policies: props.policies,
       taker: props.taker,
@@ -73,7 +53,10 @@ export const FundMelonEngineTrading: React.FC<FundMelonEngineTradingProps> = (pr
       takerAmount: props.quantity,
       tradingAddress: props.trading,
     });
-    if (!policyValidation.valid) {
+
+    setErrors(errors);
+
+    if (errors.length) {
       return;
     }
 
@@ -108,7 +91,11 @@ export const FundMelonEngineTrading: React.FC<FundMelonEngineTradingProps> = (pr
         )}
       </Button>
 
-      {policyValidation.valid || <Error>{policyValidation.message}</Error>}
+      {!!errors.length && (
+        <NotificationBar kind="error">
+          <NotificationContent>{errors.join('\n')}</NotificationContent>
+        </NotificationBar>
+      )}
 
       <TransactionModal transaction={transaction}>
         <TransactionDescription title="Take order on the Melon engine">

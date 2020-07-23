@@ -85,7 +85,7 @@ export const FundOrderbookMarketForm: React.FC<FundOrderbookMarketFormProps> = (
     handleError: () => 'The order may have been taken before it was confirmed. Please try again.',
   });
 
-  const [policyValidation, setPolicyValidation] = useState({ valid: true, message: '' });
+  const [errors, setErrors] = React.useState<string[]>([]);
 
   const nonZeroHoldings = useMemo(() => props.holdings.filter((holding) => !holding.amount?.isZero()), [
     props.holdings,
@@ -140,9 +140,8 @@ export const FundOrderbookMarketForm: React.FC<FundOrderbookMarketFormProps> = (
   }, [takerBalance]);
 
   const submit = async () => {
-    await validatePolicies({
+    const errors = await validatePolicies({
       environment,
-      setPolicyValidation,
       policies: props.policies,
       taker: taker.token,
       maker: maker.token,
@@ -152,7 +151,10 @@ export const FundOrderbookMarketForm: React.FC<FundOrderbookMarketFormProps> = (
       denominationAsset: props.denominationAsset,
       tradingAddress: props.trading,
     });
-    if (!policyValidation.valid) {
+
+    setErrors(errors);
+
+    if (errors.length) {
       return;
     }
 

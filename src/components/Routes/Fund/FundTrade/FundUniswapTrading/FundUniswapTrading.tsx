@@ -45,7 +45,7 @@ export const FundUniswapTrading: React.FC<FundUniswapTradingProps> = (props) => 
     state: 'loading',
   }));
 
-  const [policyValidation, setPolicyValidation] = useState({ valid: true, message: '' });
+  const [errors, setErrors] = React.useState<string[]>([]);
 
   const environment = useEnvironment()!;
   const account = useAccount()!;
@@ -126,9 +126,8 @@ export const FundUniswapTrading: React.FC<FundUniswapTradingProps> = (props) => 
   const ready = !loading && valid;
 
   const submit = async () => {
-    await validatePolicies({
+    const errors = await validatePolicies({
       environment,
-      setPolicyValidation,
       makerAmount: value,
       policies: props.policies,
       taker: props.taker,
@@ -138,7 +137,8 @@ export const FundUniswapTrading: React.FC<FundUniswapTradingProps> = (props) => 
       takerAmount: props.quantity,
       tradingAddress: props.trading,
     });
-    if (!policyValidation.valid) {
+    setErrors(errors);
+    if (errors.length) {
       return;
     }
 
@@ -172,9 +172,9 @@ export const FundUniswapTrading: React.FC<FundUniswapTradingProps> = (props) => 
           'No Offer'
         )}
       </Button>
-      {!policyValidation.valid && (
+      {!!errors.length && (
         <NotificationBar kind="error">
-          <NotificationContent>{policyValidation.message}</NotificationContent>
+          <NotificationContent>{errors.join('\n')}</NotificationContent>
         </NotificationBar>
       )}
       <TransactionModal transaction={transaction}>

@@ -52,7 +52,7 @@ export interface TransactionModalProps extends Partial<ModalProps> {
 }
 
 const validationSchema = Yup.object().shape({
-  gasPrice: bigNumberSchema().required().gt(0).lte(80),
+  gasPrice: bigNumberSchema().required().gt(0).lte(500),
 });
 
 export const TransactionModal: React.FC<TransactionModalProps> = ({

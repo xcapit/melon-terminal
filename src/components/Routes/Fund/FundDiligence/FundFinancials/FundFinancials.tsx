@@ -165,18 +165,24 @@ export const FundFinancials: React.FC<FundFactSheetProps> = ({ address }) => {
         </DictionaryData>
       </DictionaryEntry>
       <DictionaryDivider />
-      <DictionaryEntry>
-        <DictionaryLabel>Management fee</DictionaryLabel>
-        <DictionaryData>{managementFee?.rate}%</DictionaryData>
-      </DictionaryEntry>
-      <DictionaryEntry>
-        <DictionaryLabel>Performance fee</DictionaryLabel>
-        <DictionaryData>{performanceFee?.rate}%</DictionaryData>
-      </DictionaryEntry>
-      <DictionaryEntry>
-        <DictionaryLabel>Performance fee period</DictionaryLabel>
-        <DictionaryData>{performanceFee?.period} days</DictionaryData>
-      </DictionaryEntry>
+      {!!managementFee && (
+        <DictionaryEntry>
+          <DictionaryLabel>Management fee</DictionaryLabel>
+          <DictionaryData>{managementFee?.rate}%</DictionaryData>
+        </DictionaryEntry>
+      )}
+      {!!performanceFee && (
+        <>
+          <DictionaryEntry>
+            <DictionaryLabel>Performance fee</DictionaryLabel>
+            <DictionaryData>{performanceFee?.rate}%</DictionaryData>
+          </DictionaryEntry>
+          <DictionaryEntry>
+            <DictionaryLabel>Performance fee period</DictionaryLabel>
+            <DictionaryData>{performanceFee?.period} days</DictionaryData>
+          </DictionaryEntry>
+        </>
+      )}
       <DictionaryEntry>
         <DictionaryLabel>Unpaid fees (% of NAV)</DictionaryLabel>
         <DictionaryData>

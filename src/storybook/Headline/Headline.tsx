@@ -21,8 +21,8 @@ export const Headline: React.FC<HeadlineProps> = (props) => {
       <H.HeadlineText>
         <Title>
           {props.title}{' '}
-          {props.badges?.map((badge) => (
-            <>{badge} </>
+          {props.badges?.map((badge, index) => (
+            <React.Fragment key={index}>{badge}</React.Fragment>
           ))}
         </Title>
         {props.text && <H.HeadlineSideInfo>{props.text}</H.HeadlineSideInfo>}

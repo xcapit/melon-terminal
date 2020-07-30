@@ -71,13 +71,9 @@ export const FundMonthlyReturnTable: React.FC<MonthlyReturnTableProps> = ({ addr
 
   const [selectedYear, setSelectedYear] = React.useState(today.getFullYear());
 
-  const { data: monthlyData, error: monthlyError, isFetching: monthlyFetching } = useFetchFundPricesByMonthEnd(address);
+  const { data: monthlyData, error: monthlyError } = useFetchFundPricesByMonthEnd(address);
 
-  const {
-    data: fxAtInception,
-    error: fxAtInceptionError,
-    isFetching: fxAtInceptionFetching,
-  } = useFetchReferencePricesByDate(fund.creationTime!);
+  const { data: fxAtInception, error: fxAtInceptionError } = useFetchReferencePricesByDate(fund.creationTime!);
 
   const monthsBeforeFund = differenceInCalendarMonths(fundInception, startOfYear(activeYears[0]));
   const monthsRemaining = differenceInCalendarMonths(endOfYear(today), today);
@@ -106,9 +102,6 @@ export const FundMonthlyReturnTable: React.FC<MonthlyReturnTableProps> = ({ addr
       return format(addMonths(january, index), 'MMM');
     });
   }, []);
-
-  const validDataLengthCheck =
-    tableData && tableData.data.ETH.length === monthsBeforeFund + activeMonths + monthsRemaining;
 
   function toggleYear(direction: 'decrement' | 'increment') {
     if (direction === 'decrement') {
@@ -151,81 +144,69 @@ export const FundMonthlyReturnTable: React.FC<MonthlyReturnTableProps> = ({ addr
 
   return (
     <Block>
-      {validDataLengthCheck ? (
-        <>
-          <TitleContainerWithButton>
-            <Title>{selectedYear} Monthly Returns </Title>
-            {activeYears.length > 1 ? (
-              <div>
-                <Button
-                  onClick={() => toggleYear('decrement')}
-                  disabled={selectedYear == activeYears[0].getFullYear()}
-                  size="extrasmall"
-                  kind="secondary"
-                >
-                  {'<'}
-                </Button>
-                <Button
-                  onClick={() => toggleYear('increment')}
-                  disabled={selectedYear == activeYears[activeYears.length - 1].getFullYear()}
-                  size="extrasmall"
-                  kind="secondary"
-                >
-                  {'>'}
-                </Button>
-              </div>
-            ) : null}
-          </TitleContainerWithButton>
-          <ScrollableTable>
-            <Table>
-              <tbody>
-                <HeaderRow>
-                  <HeaderCellRightAlign>{'             '}</HeaderCellRightAlign>
-                  {months.map((month, index) => (
-                    <HeaderCellRightAlign key={index}>{month}</HeaderCellRightAlign>
-                  ))}
-                </HeaderRow>
-                {potentialCurrencies.map((ccy, index) => {
-                  return (
-                    <BodyRow key={index * Math.random()}>
-                      <BodyCell>Return in {ccy.label}</BodyCell>
-                      {tableData.data[ccy.value]!.filter((item) => item.date.getFullYear() === selectedYear).map(
-                        (item, index) => (
-                          <BodyCellRightAlign key={index}>
-                            {item.return && !item.return.isNaN() ? (
-                              <>
-                                <span>
-                                  {numberPadding(item.return.toPrecision(2).toString().length, tableData.maxDigits)}
-                                </span>
-                                <FormattedNumber suffix={'%'} value={item.return} decimals={2} colorize={true} />
-                              </>
-                            ) : (
-                              <>
-                                <span>{numberPadding(0, tableData.maxDigits + 3)}</span>
-                                <span>-</span>
-                              </>
-                            )}
-                          </BodyCellRightAlign>
-                        )
-                      )}
-                    </BodyRow>
-                  );
-                })}
-              </tbody>
-            </Table>
-          </ScrollableTable>
-        </>
-      ) : (
-        <>
-          <SectionTitle>Monthly Returns</SectionTitle>
-          <NotificationBar kind="error">
-            <NotificationContent>
-              There is a known issue where funds created in February 2020 cannot query their monthly returns. This is a
-              temporary error message while we fix this issue.
-            </NotificationContent>
-          </NotificationBar>
-        </>
-      )}
+      <>
+        <TitleContainerWithButton>
+          <Title>{selectedYear} Monthly Returns </Title>
+          {activeYears.length > 1 ? (
+            <div>
+              <Button
+                onClick={() => toggleYear('decrement')}
+                disabled={selectedYear == activeYears[0].getFullYear()}
+                size="extrasmall"
+                kind="secondary"
+              >
+                {'<'}
+              </Button>
+              <Button
+                onClick={() => toggleYear('increment')}
+                disabled={selectedYear == activeYears[activeYears.length - 1].getFullYear()}
+                size="extrasmall"
+                kind="secondary"
+              >
+                {'>'}
+              </Button>
+            </div>
+          ) : null}
+        </TitleContainerWithButton>
+        <ScrollableTable>
+          <Table>
+            <tbody>
+              <HeaderRow>
+                <HeaderCellRightAlign>{'             '}</HeaderCellRightAlign>
+                {months.map((month, index) => (
+                  <HeaderCellRightAlign key={index}>{month}</HeaderCellRightAlign>
+                ))}
+              </HeaderRow>
+              {potentialCurrencies.map((ccy, index) => {
+                return (
+                  <BodyRow key={index * Math.random()}>
+                    <BodyCell>Return in {ccy.label}</BodyCell>
+                    {tableData.data[ccy.value]!.filter((item) => item.date.getFullYear() === selectedYear).map(
+                      (item, index) => (
+                        <BodyCellRightAlign key={index}>
+                          {item.return && !item.return.isNaN() ? (
+                            <>
+                              <span>
+                                {numberPadding(item.return.toPrecision(2).toString().length, tableData.maxDigits)}
+                              </span>
+                              <FormattedNumber suffix={'%'} value={item.return} decimals={2} colorize={true} />
+                            </>
+                          ) : (
+                            <>
+                              <span>{numberPadding(0, tableData.maxDigits + 3)}</span>
+                              <span>-</span>
+                            </>
+                          )}
+                        </BodyCellRightAlign>
+                      )
+                    )}
+                  </BodyRow>
+                );
+              })}
+            </tbody>
+          </Table>
+        </ScrollableTable>
+      </>
     </Block>
   );
 };

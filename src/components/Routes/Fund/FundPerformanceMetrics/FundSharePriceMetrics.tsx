@@ -115,67 +115,70 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
   const sharePriceByDate = React.useMemo(() => {
     return {
       mostRecent: {
-        ETH: monthlyData?.data && monthlyData.data[monthlyData.data.length - 1].calculations.price,
+        ETH: monthlyData?.data && monthlyData.data[monthlyData.data.length - 1]?.calculations.price,
         USD:
           monthlyData?.data &&
-          monthlyData.data[monthlyData.data.length - 1].references.ethusd *
-            monthlyData.data[monthlyData.data.length - 1].calculations.price,
+          monthlyData.data[monthlyData.data.length - 1]?.references.ethusd *
+            monthlyData.data[monthlyData.data.length - 1]?.calculations.price,
         EUR:
           monthlyData?.data &&
-          monthlyData.data[monthlyData.data.length - 1].references.etheur *
-            monthlyData.data[monthlyData.data.length - 1].calculations.price,
+          monthlyData.data[monthlyData.data.length - 1]?.references.etheur *
+            monthlyData.data[monthlyData.data.length - 1]?.calculations.price,
         BTC:
           monthlyData?.data &&
-          monthlyData.data[monthlyData.data.length - 1].references.ethbtc *
-            monthlyData.data[monthlyData.data.length - 1].calculations.price,
+          monthlyData.data[monthlyData.data.length - 1]?.references.ethbtc *
+            monthlyData.data[monthlyData.data.length - 1]?.calculations.price,
       },
       monthStart: {
-        ETH: monthlyData?.data && monthlyData.data[monthlyData.data.length - 2].calculations.price,
+        ETH: monthlyData?.data && monthlyData.data[monthlyData.data.length - 2]?.calculations.price,
         USD:
           monthlyData?.data &&
-          monthlyData.data[monthlyData.data.length - 2].references.ethusd *
-            monthlyData.data[monthlyData.data.length - 2].calculations.price,
+          monthlyData.data[monthlyData.data.length - 2]?.references.ethusd *
+            monthlyData.data[monthlyData.data.length - 2]?.calculations.price,
         EUR:
           monthlyData?.data &&
-          monthlyData.data[monthlyData.data.length - 2].references.etheur *
-            monthlyData.data[monthlyData.data.length - 2].calculations.price,
+          monthlyData.data[monthlyData.data.length - 2]?.references.etheur *
+            monthlyData.data[monthlyData.data.length - 2]?.calculations.price,
         BTC:
           monthlyData?.data &&
-          monthlyData.data[monthlyData.data.length - 2].references.ethbtc *
-            monthlyData.data[monthlyData.data.length - 2].calculations.price,
+          monthlyData.data[monthlyData.data.length - 2]?.references.ethbtc *
+            monthlyData.data[monthlyData.data.length - 2]?.calculations.price,
       },
       quarterStart: {
         ETH:
-          monthlyData?.data && quarterToDateIndex !== 0 ? monthlyData.data[quarterToDateIndex].calculations.price : 1,
+          monthlyData?.data && quarterToDateIndex !== 0 ? monthlyData.data[quarterToDateIndex]?.calculations.price : 1,
         USD:
           monthlyData?.data && quarterToDateIndex !== 0
-            ? monthlyData.data[quarterToDateIndex].references.ethusd *
-              monthlyData.data[quarterToDateIndex].calculations.price
+            ? monthlyData.data[quarterToDateIndex]?.references.ethusd *
+              monthlyData.data[quarterToDateIndex]?.calculations.price
             : fxAtInception?.ethusd,
         EUR:
           monthlyData?.data && quarterToDateIndex !== 0
-            ? monthlyData.data[quarterToDateIndex].references.etheur *
-              monthlyData.data[quarterToDateIndex].calculations.price
+            ? monthlyData.data[quarterToDateIndex]?.references.etheur *
+              monthlyData.data[quarterToDateIndex]?.calculations.price
             : fxAtInception?.etheur,
         BTC:
           monthlyData?.data && quarterToDateIndex !== 0
-            ? monthlyData.data[quarterToDateIndex].references.ethbtc *
-              monthlyData.data[quarterToDateIndex].calculations.price
+            ? monthlyData.data[quarterToDateIndex]?.references.ethbtc *
+              monthlyData.data[quarterToDateIndex]?.calculations.price
             : fxAtInception?.ethbtc,
       },
       yearStart: {
-        ETH: monthlyData?.data && yearToDateIndex !== 0 ? monthlyData.data[yearToDateIndex].calculations.price : 1,
+        ETH: monthlyData?.data && yearToDateIndex !== 0 ? monthlyData.data[yearToDateIndex]?.calculations.price : 1,
         USD:
           monthlyData?.data && yearToDateIndex !== 0
-            ? monthlyData.data[yearToDateIndex].references.ethbtc * monthlyData.data[yearToDateIndex].calculations.price
+            ? monthlyData.data[yearToDateIndex].references.ethbtc *
+              monthlyData.data[yearToDateIndex]?.calculations.price
             : fxAtInception?.ethusd,
         EUR:
           monthlyData?.data && yearToDateIndex !== 0
-            ? monthlyData.data[yearToDateIndex].references.ethbtc * monthlyData.data[yearToDateIndex].calculations.price
+            ? monthlyData.data[yearToDateIndex].references.ethbtc *
+              monthlyData.data[yearToDateIndex]?.calculations.price
             : fxAtInception?.etheur,
         BTC:
           monthlyData?.data && yearToDateIndex !== 0
-            ? monthlyData.data[yearToDateIndex].references.ethbtc * monthlyData.data[yearToDateIndex].calculations.price
+            ? monthlyData.data[yearToDateIndex].references.ethbtc *
+              monthlyData.data[yearToDateIndex]?.calculations.price
             : fxAtInception?.ethbtc,
       },
     };
@@ -319,7 +322,7 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
           <DictionaryData> - </DictionaryData>
         ) : (
           <DictionaryData textAlign={'right'}>
-            {qtdReturn ? <FormattedNumber decimals={2} value={qtdReturn} suffix={'%'} /> : '...loading'}
+            <FormattedNumber decimals={2} value={qtdReturn} suffix={'%'} />
           </DictionaryData>
         )}
       </DictionaryEntry>
@@ -329,30 +332,26 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
           <DictionaryData> - </DictionaryData>
         ) : (
           <DictionaryData textAlign={'right'}>
-            {ytdReturn ? <FormattedNumber decimals={2} value={ytdReturn} suffix={'%'} /> : '...loading'}
+            <FormattedNumber decimals={2} value={ytdReturn} suffix={'%'} />
           </DictionaryData>
         )}
       </DictionaryEntry>
       <DictionaryEntry>
         <DictionaryLabel>Best Month</DictionaryLabel>
         <DictionaryData textAlign={'right'}>
-          {bestMonth ? <FormattedNumber decimals={2} value={bestMonth.return} suffix={'%'} /> : '...loading'}
+          <FormattedNumber decimals={2} value={bestMonth?.return} suffix={'%'} />
         </DictionaryData>
       </DictionaryEntry>
       <DictionaryEntry>
         <DictionaryLabel>Worst Month</DictionaryLabel>
         <DictionaryData textAlign={'right'}>
-          {worstMonth ? <FormattedNumber decimals={2} value={worstMonth?.return} suffix={'%'} /> : '...loading'}
+          <FormattedNumber decimals={2} value={worstMonth?.return} suffix={'%'} />
         </DictionaryData>
       </DictionaryEntry>
       <DictionaryEntry>
         <DictionaryLabel>Average Month</DictionaryLabel>
         <DictionaryData textAlign={'right'}>
-          {averageMonthlyReturn ? (
-            <FormattedNumber decimals={2} value={averageMonthlyReturn} suffix={'%'} />
-          ) : (
-            '...loading'
-          )}
+          <FormattedNumber decimals={2} value={averageMonthlyReturn} suffix={'%'} />
         </DictionaryData>
       </DictionaryEntry>
       <DictionaryEntry>
@@ -375,7 +374,7 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
         <DictionaryEntry>
           <DictionaryLabel>Volatility</DictionaryLabel>
           <DictionaryData textAlign={'right'}>
-            {sampleVol ? <FormattedNumber decimals={2} value={sampleVol} suffix={'%'} /> : '...loading'}
+            <FormattedNumber decimals={2} value={sampleVol} suffix={'%'} />
           </DictionaryData>
         </DictionaryEntry>
       </Tooltip>

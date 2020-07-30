@@ -207,6 +207,7 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
             .filter((_, index) => index < 5)
             .map((holding) => (
               <Tooltip
+                key={holding.token.symbol}
                 value={`${holding.token.symbol}: ${holding.value
                   ?.dividedBy(cell.row.original.eth)
                   .multipliedBy(100)

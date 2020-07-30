@@ -1,12 +1,18 @@
 import * as React from 'react';
 import BigNumber from 'bignumber.js';
-import { startOfYear, startOfMonth, startOfQuarter, isBefore, subDays, differenceInCalendarDays } from 'date-fns';
+import {
+  startOfYear,
+  startOfMonth,
+  startOfQuarter,
+  isBefore,
+  subDays,
+  differenceInCalendarDays,
+  differenceInCalendarMonths,
+  isSameDay,
+} from 'date-fns';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { useFund } from '~/hooks/useFund';
-import {
-  useFetchFundPricesByMonthEnd,
-  MonthendTimelineItem,
-} from '~/hooks/metricsService/useFetchFundPricesByMonthEnd';
+import { useFetchFundPricesByMonthEnd } from '~/hooks/metricsService/useFetchFundPricesByMonthEnd';
 import { useFetchFundPricesByRange, RangeTimelineItem } from '~/hooks/metricsService/useFetchFundPricesByRange';
 import { useFetchReferencePricesByDate } from '~/hooks/metricsService/useFetchReferencePricesByDate';
 import { monthlyReturnsFromTimeline, DisplayData } from './FundMetricsUtilFunctions';
@@ -57,30 +63,6 @@ const BlockWithSelect = styled(Block)`
   padding-top: ${(props) => props.theme.spaceUnits.xs};
 `;
 
-function findTimeLineItemByDate(timeline: MonthendTimelineItem[], date: Date) {
-  const startOfDay = findCorrectFromTime(date);
-  const endOfDay = findCorrectToTime(date);
-  const targetDate = timeline.reduce((carry, current) => {
-    if (startOfDay < current.timestamp && current.timestamp < endOfDay) {
-      return current;
-    }
-    return carry;
-  }, timeline[0]);
-  return targetDate;
-}
-
-function calculateSharePricesFromTimelineItem(item: MonthendTimelineItem) {
-  const usd = item.calculations.price * item.references.ethusd;
-  const eur = item.calculations.price * item.references.etheur;
-  const btc = item.calculations.price * item.references.ethbtc;
-  return {
-    ETH: item.calculations.price,
-    USD: usd,
-    EUR: eur,
-    BTC: btc,
-  };
-}
-
 const comparisonCurrencies: SelectItem[] = [
   { label: 'ETH', value: 'ETH' },
   { label: 'BTC', value: 'BTC' },
@@ -95,9 +77,7 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
   const [selectedCurrency, setSelectedCurrency] = React.useState<SelectItem>(comparisonCurrencies[0]);
 
   const fundInceptionDate = findCorrectFromTime(fund.creationTime!);
-  const monthStartDate = subDays(startOfMonth(today), 1);
-  const quarterStartDate = subDays(startOfQuarter(today), 1);
-  const yearStartDate = subDays(startOfYear(today), 1);
+
   const toToday = findCorrectToTime(today);
 
   const {
@@ -116,31 +96,24 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
     isFetching: fxAtInceptionFetching,
   } = useFetchReferencePricesByDate(fund.creationTime!);
 
-  const {
-    data: fxAtMonthStart,
-    error: fxAtMonthStartError,
-    isFetching: fxAtMonthStartFetching,
-  } = useFetchReferencePricesByDate(monthStartDate);
-
-  const {
-    data: fxAtQuarterStart,
-    error: fxAtQuarterStartError,
-    isFetching: fxAtQuarterStartFetching,
-  } = useFetchReferencePricesByDate(quarterStartDate);
-
-  const {
-    data: fxAtYearStart,
-    error: fxAtYearStartError,
-    isFetching: fxAtYearStartFetching,
-  } = useFetchReferencePricesByDate(yearStartDate);
-
   const monthlyReturns = React.useMemo(() => {
     return monthlyData?.data && fxAtInception && monthlyReturnsFromTimeline(monthlyData.data, fxAtInception);
   }, [monthlyData?.data, fxAtInception]);
 
+  const lastQuarterEndDate = subDays(startOfQuarter(today), 1);
+  const diffInMonthsQuarter = differenceInCalendarMonths(today, lastQuarterEndDate);
+  const quarterToDateIndex = isBefore(fundInceptionDate, lastQuarterEndDate)
+    ? monthlyData?.data && monthlyData.data.length - diffInMonthsQuarter - 1
+    : 0;
+
+  const lastYearEndDate = subDays(startOfYear(today), 1);
+  const diffInMonthsYear = differenceInCalendarMonths(today, lastYearEndDate);
+  const yearToDateIndex = isBefore(fundInceptionDate, lastYearEndDate)
+    ? 0
+    : monthlyData?.data && monthlyData.length - diffInMonthsYear - 1;
+
   const sharePriceByDate = React.useMemo(() => {
     return {
-      random: {},
       mostRecent: {
         ETH: monthlyData?.data && monthlyData.data[monthlyData.data.length - 1].calculations.price,
         USD:
@@ -157,53 +130,56 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
             monthlyData.data[monthlyData.data.length - 1].calculations.price,
       },
       monthStart: {
-        ETH:
-          monthlyData?.data &&
-          calculateSharePricesFromTimelineItem(findTimeLineItemByDate(monthlyData.data, monthStartDate)).ETH,
+        ETH: monthlyData?.data && monthlyData.data[monthlyData.data.length - 2].calculations.price,
         USD:
           monthlyData?.data &&
-          calculateSharePricesFromTimelineItem(findTimeLineItemByDate(monthlyData.data, monthStartDate)).USD,
+          monthlyData.data[monthlyData.data.length - 2].references.ethusd *
+            monthlyData.data[monthlyData.data.length - 2].calculations.price,
         EUR:
           monthlyData?.data &&
-          calculateSharePricesFromTimelineItem(findTimeLineItemByDate(monthlyData.data, monthStartDate)).EUR,
+          monthlyData.data[monthlyData.data.length - 2].references.etheur *
+            monthlyData.data[monthlyData.data.length - 2].calculations.price,
         BTC:
           monthlyData?.data &&
-          calculateSharePricesFromTimelineItem(findTimeLineItemByDate(monthlyData.data, monthStartDate)).BTC,
+          monthlyData.data[monthlyData.data.length - 2].references.ethbtc *
+            monthlyData.data[monthlyData.data.length - 2].calculations.price,
       },
       quarterStart: {
         ETH:
-          monthlyData?.data &&
-          calculateSharePricesFromTimelineItem(findTimeLineItemByDate(monthlyData.data, quarterStartDate)).ETH,
+          monthlyData?.data && quarterToDateIndex !== 0 ? monthlyData.data[quarterToDateIndex].calculations.price : 1,
         USD:
-          monthlyData?.data &&
-          calculateSharePricesFromTimelineItem(findTimeLineItemByDate(monthlyData.data, quarterStartDate)).USD,
-        EUR:
-          monthlyData?.data &&
-          calculateSharePricesFromTimelineItem(findTimeLineItemByDate(monthlyData.data, quarterStartDate)).EUR,
-        BTC:
-          monthlyData?.data &&
-          calculateSharePricesFromTimelineItem(findTimeLineItemByDate(monthlyData.data, quarterStartDate)).BTC,
-      },
-      yearStart: {
-        ETH:
-          monthlyData?.data && isBefore(yearStartDate, fundInceptionDate)
-            ? calculateSharePricesFromTimelineItem(findTimeLineItemByDate(monthlyData.data, yearStartDate)).ETH
-            : 1,
-        USD:
-          monthlyData?.data && isBefore(yearStartDate, fundInceptionDate)
-            ? calculateSharePricesFromTimelineItem(findTimeLineItemByDate(monthlyData.data, yearStartDate)).USD
+          monthlyData?.data && quarterToDateIndex !== 0
+            ? monthlyData.data[quarterToDateIndex].references.ethusd *
+              monthlyData.data[quarterToDateIndex].calculations.price
             : fxAtInception?.ethusd,
         EUR:
-          monthlyData?.data && isBefore(yearStartDate, fundInceptionDate)
-            ? calculateSharePricesFromTimelineItem(findTimeLineItemByDate(monthlyData.data, yearStartDate)).EUR
+          monthlyData?.data && quarterToDateIndex !== 0
+            ? monthlyData.data[quarterToDateIndex].references.etheur *
+              monthlyData.data[quarterToDateIndex].calculations.price
             : fxAtInception?.etheur,
         BTC:
-          monthlyData?.data && isBefore(yearStartDate, fundInceptionDate)
-            ? calculateSharePricesFromTimelineItem(findTimeLineItemByDate(monthlyData.data, yearStartDate)).BTC
+          monthlyData?.data && quarterToDateIndex !== 0
+            ? monthlyData.data[quarterToDateIndex].references.ethbtc *
+              monthlyData.data[quarterToDateIndex].calculations.price
+            : fxAtInception?.ethbtc,
+      },
+      yearStart: {
+        ETH: monthlyData?.data && yearToDateIndex !== 0 ? monthlyData.data[yearToDateIndex].calculations.price : 1,
+        USD:
+          monthlyData?.data && yearToDateIndex !== 0
+            ? monthlyData.data[yearToDateIndex].references.ethbtc * monthlyData.data[yearToDateIndex].calculations.price
+            : fxAtInception?.ethusd,
+        EUR:
+          monthlyData?.data && yearToDateIndex !== 0
+            ? monthlyData.data[yearToDateIndex].references.ethbtc * monthlyData.data[yearToDateIndex].calculations.price
+            : fxAtInception?.etheur,
+        BTC:
+          monthlyData?.data && yearToDateIndex !== 0
+            ? monthlyData.data[yearToDateIndex].references.ethbtc * monthlyData.data[yearToDateIndex].calculations.price
             : fxAtInception?.ethbtc,
       },
     };
-  }, [monthlyData, historicalData, fxAtMonthStart, fxAtQuarterStart, fxAtYearStart, fxAtInception]);
+  }, [monthlyData, fxAtInception]);
 
   const mostRecentPrice = sharePriceByDate.mostRecent[selectedCurrency.value];
   const quarterStartPrice = sharePriceByDate.quarterStart[selectedCurrency.value];
@@ -275,26 +251,18 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
     setSelectedCurrency(newCurrency);
   }
 
-  if (fund.creationTime && differenceInCalendarDays(today, fund.creationTime) < 7) {
+  if (fund.creationTime && differenceInCalendarDays(today, fund.creationTime) < 31) {
     return (
       <Block>
         <SectionTitle>Share Price Metrics</SectionTitle>
         <NotificationBar kind="neutral">
-          <NotificationContent>Statistics are not available for funds younger than one week.</NotificationContent>
+          <NotificationContent>Statistics are not available for funds younger than one month.</NotificationContent>
         </NotificationBar>
       </Block>
     );
   }
 
-  if (
-    historicalDataError ||
-    monthlyError ||
-    fxAtInceptionError ||
-    fxAtMonthStartError ||
-    fxAtQuarterStartError ||
-    fxAtYearStartError ||
-    monthlyData?.errors?.length
-  ) {
+  if (historicalDataError || monthlyError || monthlyData?.errors?.length || fxAtInceptionError) {
     return (
       <Block>
         <SectionTitle>Share Price Metrics</SectionTitle>
@@ -311,13 +279,7 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
     !monthlyData ||
     monthlyFetching ||
     !fxAtInception ||
-    fxAtInceptionFetching ||
-    !fxAtMonthStart ||
-    fxAtMonthStartFetching ||
-    !fxAtQuarterStart ||
-    fxAtQuarterStartFetching ||
-    !fxAtYearStart ||
-    fxAtYearStartFetching
+    fxAtInceptionFetching
   ) {
     return (
       <Block>
@@ -343,21 +305,33 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
 
       <DictionaryEntry>
         <DictionaryLabel>MTD</DictionaryLabel>
-        <DictionaryData textAlign={'right'}>
-          <FormattedNumber decimals={2} value={mtdReturn} suffix={'%'} />
-        </DictionaryData>
+        {isSameDay(today, startOfMonth(today)) ? (
+          <DictionaryData> - </DictionaryData>
+        ) : (
+          <DictionaryData textAlign={'right'}>
+            <FormattedNumber decimals={2} value={mtdReturn} suffix={'%'} />
+          </DictionaryData>
+        )}
       </DictionaryEntry>
       <DictionaryEntry>
         <DictionaryLabel>QTD</DictionaryLabel>
-        <DictionaryData textAlign={'right'}>
-          {qtdReturn ? <FormattedNumber decimals={2} value={qtdReturn} suffix={'%'} /> : '...loading'}
-        </DictionaryData>
+        {isSameDay(today, startOfQuarter(today)) ? (
+          <DictionaryData> - </DictionaryData>
+        ) : (
+          <DictionaryData textAlign={'right'}>
+            {qtdReturn ? <FormattedNumber decimals={2} value={qtdReturn} suffix={'%'} /> : '...loading'}
+          </DictionaryData>
+        )}
       </DictionaryEntry>
       <DictionaryEntry>
         <DictionaryLabel>YTD</DictionaryLabel>
-        <DictionaryData textAlign={'right'}>
-          {ytdReturn ? <FormattedNumber decimals={2} value={ytdReturn} suffix={'%'} /> : '...loading'}
-        </DictionaryData>
+        {isSameDay(today, startOfYear(today)) ? (
+          <DictionaryData> - </DictionaryData>
+        ) : (
+          <DictionaryData textAlign={'right'}>
+            {ytdReturn ? <FormattedNumber decimals={2} value={ytdReturn} suffix={'%'} /> : '...loading'}
+          </DictionaryData>
+        )}
       </DictionaryEntry>
       <DictionaryEntry>
         <DictionaryLabel>Best Month</DictionaryLabel>

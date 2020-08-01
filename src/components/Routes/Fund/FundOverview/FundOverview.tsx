@@ -20,7 +20,7 @@ export const FundOverview: React.FC<FundOverviewProps> = ({ address }) => (
       <GridCol>
         <NotificationBar kind="neutral">
           <NotificationContent>
-            The metrics component is currently underg maintenance and will be back soon.
+            The metrics component is currently under maintenance and will be back soon.
           </NotificationContent>
         </NotificationBar>
       </GridCol>

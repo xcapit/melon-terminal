@@ -2,10 +2,8 @@ import React from 'react';
 import { FundHoldings } from '../FundHoldings/FundHoldings';
 import { NewFundPerformanceChart } from '../FundPerformanceChart/FundPerformanceChart';
 import { Grid, GridRow, GridCol } from '~/storybook/Grid/Grid';
-import { FundPerformanceTable } from '~/components/Routes/Fund/FundPerfomanceTable/FundPerformanceTable';
 import { FundDiligence } from '../FundDiligence/FundDiligence';
-import { FundSharePriceMetrics } from '../FundPerformanceMetrics/FundSharePriceMetrics';
-import { FundMonthlyReturnTable } from '../FundPerformanceMetrics/FundMonthlyReturnTable';
+import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 
 export interface FundOverviewProps {
   address: string;
@@ -14,16 +12,17 @@ export interface FundOverviewProps {
 export const FundOverview: React.FC<FundOverviewProps> = ({ address }) => (
   <Grid>
     <GridRow>
-      <GridCol sm={12} md={8} lg={8}>
+      <GridCol>
         <NewFundPerformanceChart address={address} />
-      </GridCol>
-      <GridCol sm={12} md={4} lg={4}>
-        <FundSharePriceMetrics address={address} />
       </GridCol>
     </GridRow>
     <GridRow>
       <GridCol>
-        <FundMonthlyReturnTable address={address} />
+        <NotificationBar kind="neutral">
+          <NotificationContent>
+            The metrics component is currently underg maintenance and will be back soon.
+          </NotificationContent>
+        </NotificationBar>
       </GridCol>
     </GridRow>
     <GridRow>

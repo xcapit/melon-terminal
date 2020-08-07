@@ -52,7 +52,7 @@ export function average(data: number[] | BigNumber[]) {
 export function calculateReturn(currentPx: BigNumber | number, historicalPx: BigNumber | number): BigNumber {
   const current = !BigNumber.isBigNumber(currentPx) ? new BigNumber(currentPx) : currentPx;
   const historical = !BigNumber.isBigNumber(historicalPx) ? new BigNumber(historicalPx) : historicalPx;
-  return current.dividedBy(historical).minus(1).multipliedBy(100);
+  return current.minus(historical).dividedBy(historical).multipliedBy(100);
 }
 
 /**

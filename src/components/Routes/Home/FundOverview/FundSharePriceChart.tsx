@@ -5,7 +5,8 @@ import BigNumber from 'bignumber.js';
 import ReactApexChart from 'react-apexcharts';
 import styled, { useTheme } from 'styled-components';
 
-import { useOnchainFundHistoryByDepth } from '~/components/Routes/Fund/FundPerformanceChart/FundPerformanceChart.tsx';
+import { useFetchFundPricesByDepth } from '~/hooks/metricsService/useFetchFundPricesByDepth';
+import { DepthTimelineItem } from '~/hooks/metricsService/useFetchOffChainPricesByDepth';
 
 export interface FundSharePriceChartProps {
   address: string;
@@ -22,7 +23,7 @@ export const Chart = styled.div`
 export const FundSharePriceChart: React.FC<FundSharePriceChartProps> = (props) => {
   const theme = useTheme();
 
-  const { data, error, isFetching } = useOnchainFundHistoryByDepth(props.address, '1m');
+  const { data, error, isFetching } = useFetchFundPricesByDepth(props.address, '1m');
 
   if (!data) {
     return <></>;
@@ -32,7 +33,16 @@ export const FundSharePriceChart: React.FC<FundSharePriceChartProps> = (props) =
     return <>Error</>;
   }
 
-  const series = [{ id: 'sharePrice', name: 'Share price', data }];
+  const series = [
+    {
+      id: 'sharePrice',
+      name: 'Share price',
+      data: data.data.map((item: DepthTimelineItem) => ({
+        x: new Date(item.timestamp * 1000),
+        y: new BigNumber(item.calculations.price).toPrecision(8),
+      })),
+    },
+  ];
 
   const options = {
     colors: ['#aaaaaa'],

@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import gql from 'graphql-tag';
 import { useTheGraphQuery } from '~/hooks/useQuery';
-import { startOfQuarter, startOfYear, getUnixTime, subMonths, subYears, startOfDay, subDays } from 'date-fns';
+import { startOfQuarter, startOfYear, getUnixTime, subMonths, subYears } from 'date-fns';
 import { useFund } from '~/hooks/useFund';
 import { useMemo } from 'react';
 import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';

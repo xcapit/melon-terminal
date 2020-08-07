@@ -1,20 +1,17 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import ReactApexChart from 'react-apexcharts';
 import styled, { useTheme } from 'styled-components';
 import * as S from './PriceChart.styles';
-import { Depth, Serie, ZoomControl } from '../ZoomControl/ZoomControl';
+import { ZoomControl } from '../ZoomControl/ZoomControl';
+import { Serie, Depth } from '~/components/Charts/types';
 
 export interface PriceChartProps {
   loading?: boolean;
-  depth: Depth;
+  depth: number | Depth;
   data: Serie[];
-  secondaryData?: Serie[];
-  setDepth: (depth: Depth) => void;
-  setDate: (date: number) => void;
-  setQueryType: Dispatch<SetStateAction<'depth' | 'date'>>;
-  queryType: 'depth' | 'date';
-  queryFromDate: number;
-  fundInceptionDate: Date | undefined;
+  secondary?: Serie[];
+  setDepth: (depth: number | Depth) => void;
+  inception: Date;
 }
 
 const ChartDescription = styled.span`
@@ -27,18 +24,8 @@ const ChartDescription = styled.span`
 
 export const PriceChart: React.FC<PriceChartProps> = (props) => {
   const theme = useTheme();
-
-  const showSecondaryData = props.queryType == 'depth' && (props.depth === '1d' || props.depth === '1w') ? true : false;
-
-  const data = React.useMemo(() => {
-    if (props.secondaryData && showSecondaryData) {
-      return [...props.data, ...props.secondaryData];
-    }
-    return [...props.data];
-  }, [props.queryType, props.depth]);
-
-  const curveType = data.length === 1 ? ['smooth'] : ['stepline', 'smooth'];
-
+  const data = React.useMemo(() => [...props.data, ...(props.secondary ?? [])], [props.data, props.secondary]);
+  const curveType = props.depth === '1w' || props.depth === '1d' ? ['stepline', 'smooth'] : ['smooth'];
   const options = {
     chart: {
       type: 'area',
@@ -57,7 +44,6 @@ export const PriceChart: React.FC<PriceChartProps> = (props) => {
         },
       },
     },
-
     colors: ['rgb(133,213,202)', '#aaaaaa'],
     dataLabels: {
       enabled: false,
@@ -103,28 +89,19 @@ export const PriceChart: React.FC<PriceChartProps> = (props) => {
 
   return (
     <>
-      <ZoomControl
-        fundInceptionDate={props.fundInceptionDate}
-        depth={props.depth}
-        setDepth={props.setDepth}
-        setDate={props.setDate}
-        setQueryType={props.setQueryType}
-        queryFromDate={props.queryFromDate}
-        queryType={props.queryType}
-      />
+      <ZoomControl inception={props.inception} depth={props.depth} setDepth={props.setDepth} />
 
       <S.Chart>
         <ReactApexChart options={options} series={data} type="area" height={350} />
-        {showSecondaryData ? (
+
+        {props.depth === '1w' || props.depth === '1d' ? (
           <ChartDescription>
             On-chain prices are updated once daily and used for all fund accounting functions. The interim prices
             displayed here are from an off-chain source and are for descriptive purposes only to show intra-update
             fluctuations. Because of the way they're observed, there may be small differences between onchain and
             offchain prices.
           </ChartDescription>
-        ) : (
-          <></>
-        )}
+        ) : null}
       </S.Chart>
     </>
   );

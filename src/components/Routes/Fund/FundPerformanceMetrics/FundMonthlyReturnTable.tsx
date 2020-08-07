@@ -72,7 +72,6 @@ export const FundMonthlyReturnTable: React.FC<MonthlyReturnTableProps> = ({ addr
   const [selectedYear, setSelectedYear] = React.useState(today.getFullYear());
 
   const { data: monthlyData, error: monthlyError } = useFetchFundPricesByMonthEnd(address);
-
   const { data: fxAtInception, error: fxAtInceptionError } = useFetchReferencePricesByDate(fund.creationTime!);
 
   const monthsBeforeFund = differenceInCalendarMonths(fundInception, startOfYear(activeYears[0]));
@@ -87,7 +86,7 @@ export const FundMonthlyReturnTable: React.FC<MonthlyReturnTableProps> = ({ addr
       return undefined;
     }
     return monthlyReturnsFromTimeline(
-      monthlyData.data,
+      monthlyData.data ?? [],
       fxAtInception,
       today,
       activeMonths,

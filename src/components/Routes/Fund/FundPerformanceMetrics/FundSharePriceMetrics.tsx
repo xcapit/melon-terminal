@@ -1,21 +1,12 @@
 import * as React from 'react';
 import BigNumber from 'bignumber.js';
-import {
-  startOfYear,
-  startOfMonth,
-  startOfQuarter,
-  isBefore,
-  subDays,
-  differenceInCalendarDays,
-  differenceInCalendarMonths,
-  isSameDay,
-} from 'date-fns';
+import { startOfYear, startOfMonth, startOfQuarter, differenceInCalendarDays, isSameDay } from 'date-fns';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { useFund } from '~/hooks/useFund';
 import { useFetchFundPricesByMonthEnd } from '~/hooks/metricsService/useFetchFundPricesByMonthEnd';
 import { useFetchFundPricesByRange, RangeTimelineItem } from '~/hooks/metricsService/useFetchFundPricesByRange';
 import { useFetchReferencePricesByDate } from '~/hooks/metricsService/useFetchReferencePricesByDate';
-import { monthlyReturnsFromTimeline, DisplayData } from './FundMetricsUtilFunctions';
+import { monthlyReturnsFromTimeline, DisplayData, calculateHoldingPeriodReturns } from './FundMetricsUtilFunctions';
 import { SelectField } from '~/components/Form/Select/Select';
 import { DictionaryEntry, DictionaryLabel, DictionaryData } from '~/storybook/Dictionary/Dictionary';
 import { SectionTitle } from '~/storybook/Title/Title.styles';
@@ -25,7 +16,7 @@ import { Block } from '~/storybook/Block/Block';
 import { Spinner } from '~/storybook/Spinner/Spinner';
 import { Title } from '~/storybook/Title/Title';
 import { findCorrectFromTime, findCorrectToTime } from '~/utils/priceServiceDates';
-import { calculateReturn, average, calculateVolatility } from '~/utils/finance';
+import { average, calculateVolatility } from '~/utils/finance';
 import styled from 'styled-components';
 
 export interface FundSharePriceMetricsProps {
@@ -70,21 +61,31 @@ const comparisonCurrencies: SelectItem[] = [
   { label: 'USD', value: 'USD' },
 ];
 
+function findLastQuarter(utcMonth: number): number {
+  let month = 0;
+  for (let i = utcMonth; i >= 0; i--) {
+    if (i % 3 === 0) {
+      month = i;
+      break;
+    }
+  }
+  return month;
+}
+
 export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (props) => {
   const today = React.useMemo(() => new Date(), []);
+
   const fund = useFund();
 
   const [selectedCurrency, setSelectedCurrency] = React.useState<SelectItem>(comparisonCurrencies[0]);
 
   const fundInceptionDate = findCorrectFromTime(fund.creationTime!);
 
-  const toToday = findCorrectToTime(today);
-
   const {
     data: historicalData,
     error: historicalDataError,
     isFetching: historicalDataFetching,
-  } = useFetchFundPricesByRange(fund.address!, fundInceptionDate, toToday);
+  } = useFetchFundPricesByRange(fund.address!, fundInceptionDate);
 
   const { data: monthlyData, error: monthlyError, isFetching: monthlyFetching } = useFetchFundPricesByMonthEnd(
     fund.address!
@@ -100,98 +101,24 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
     return monthlyData?.data && fxAtInception && monthlyReturnsFromTimeline(monthlyData.data, fxAtInception);
   }, [monthlyData?.data, fxAtInception]);
 
-  const lastQuarterEndDate = subDays(startOfQuarter(today), 1);
-  const diffInMonthsQuarter = differenceInCalendarMonths(today, lastQuarterEndDate);
-  const quarterToDateIndex = isBefore(fundInceptionDate, lastQuarterEndDate)
-    ? monthlyData?.data && monthlyData.data.length - diffInMonthsQuarter - 1
-    : 0;
+  const utcYear = today.getUTCFullYear();
+  const utcMonth = today.getUTCMonth();
+  const dayInMilliseconds = 24 * 60 * 60 * 1000;
+  const lastMonthendDate: number = (Date.UTC(utcYear, utcMonth) - dayInMilliseconds) / 1000;
+  const lastQuarterendDate: number = (Date.UTC(utcYear, findLastQuarter(utcMonth)) - dayInMilliseconds) / 1000;
+  const lastYearendDate: number = (Date.UTC(utcYear, 0) - dayInMilliseconds) / 1000;
 
-  const lastYearEndDate = subDays(startOfYear(today), 1);
-  const diffInMonthsYear = differenceInCalendarMonths(today, lastYearEndDate);
-  const yearToDateIndex = isBefore(fundInceptionDate, lastYearEndDate)
-    ? 0
-    : monthlyData?.data && monthlyData.length - diffInMonthsYear - 1;
-
-  const sharePriceByDate = React.useMemo(() => {
-    return {
-      mostRecent: {
-        ETH: monthlyData?.data && monthlyData.data[monthlyData.data.length - 1]?.calculations.price,
-        USD:
-          monthlyData?.data &&
-          monthlyData.data[monthlyData.data.length - 1]?.references.ethusd *
-            monthlyData.data[monthlyData.data.length - 1]?.calculations.price,
-        EUR:
-          monthlyData?.data &&
-          monthlyData.data[monthlyData.data.length - 1]?.references.etheur *
-            monthlyData.data[monthlyData.data.length - 1]?.calculations.price,
-        BTC:
-          monthlyData?.data &&
-          monthlyData.data[monthlyData.data.length - 1]?.references.ethbtc *
-            monthlyData.data[monthlyData.data.length - 1]?.calculations.price,
-      },
-      monthStart: {
-        ETH: monthlyData?.data && monthlyData.data[monthlyData.data.length - 2]?.calculations.price,
-        USD:
-          monthlyData?.data &&
-          monthlyData.data[monthlyData.data.length - 2]?.references.ethusd *
-            monthlyData.data[monthlyData.data.length - 2]?.calculations.price,
-        EUR:
-          monthlyData?.data &&
-          monthlyData.data[monthlyData.data.length - 2]?.references.etheur *
-            monthlyData.data[monthlyData.data.length - 2]?.calculations.price,
-        BTC:
-          monthlyData?.data &&
-          monthlyData.data[monthlyData.data.length - 2]?.references.ethbtc *
-            monthlyData.data[monthlyData.data.length - 2]?.calculations.price,
-      },
-      quarterStart: {
-        ETH:
-          monthlyData?.data && quarterToDateIndex !== 0 ? monthlyData.data[quarterToDateIndex]?.calculations.price : 1,
-        USD:
-          monthlyData?.data && quarterToDateIndex !== 0
-            ? monthlyData.data[quarterToDateIndex]?.references.ethusd *
-              monthlyData.data[quarterToDateIndex]?.calculations.price
-            : fxAtInception?.ethusd,
-        EUR:
-          monthlyData?.data && quarterToDateIndex !== 0
-            ? monthlyData.data[quarterToDateIndex]?.references.etheur *
-              monthlyData.data[quarterToDateIndex]?.calculations.price
-            : fxAtInception?.etheur,
-        BTC:
-          monthlyData?.data && quarterToDateIndex !== 0
-            ? monthlyData.data[quarterToDateIndex]?.references.ethbtc *
-              monthlyData.data[quarterToDateIndex]?.calculations.price
-            : fxAtInception?.ethbtc,
-      },
-      yearStart: {
-        ETH: monthlyData?.data && yearToDateIndex !== 0 ? monthlyData.data[yearToDateIndex]?.calculations.price : 1,
-        USD:
-          monthlyData?.data && yearToDateIndex !== 0
-            ? monthlyData.data[yearToDateIndex].references.ethbtc *
-              monthlyData.data[yearToDateIndex]?.calculations.price
-            : fxAtInception?.ethusd,
-        EUR:
-          monthlyData?.data && yearToDateIndex !== 0
-            ? monthlyData.data[yearToDateIndex].references.ethbtc *
-              monthlyData.data[yearToDateIndex]?.calculations.price
-            : fxAtInception?.etheur,
-        BTC:
-          monthlyData?.data && yearToDateIndex !== 0
-            ? monthlyData.data[yearToDateIndex].references.ethbtc *
-              monthlyData.data[yearToDateIndex]?.calculations.price
-            : fxAtInception?.ethbtc,
-      },
-    };
+  const mtdReturn = React.useMemo(() => {
+    return calculateHoldingPeriodReturns(monthlyData?.data, lastMonthendDate, fxAtInception);
   }, [monthlyData, fxAtInception]);
 
-  const mostRecentPrice = sharePriceByDate.mostRecent[selectedCurrency.value];
-  const quarterStartPrice = sharePriceByDate.quarterStart[selectedCurrency.value];
-  const monthStartPrice = sharePriceByDate.monthStart[selectedCurrency.value];
-  const yearStartPrice = sharePriceByDate.yearStart[selectedCurrency.value];
+  const qtdReturn = React.useMemo(() => {
+    return calculateHoldingPeriodReturns(monthlyData?.data, lastQuarterendDate, fxAtInception);
+  }, [monthlyData, fxAtInception]);
 
-  const qtdReturn = mostRecentPrice && quarterStartPrice && calculateReturn(mostRecentPrice, quarterStartPrice);
-  const mtdReturn = mostRecentPrice && monthStartPrice && calculateReturn(mostRecentPrice, monthStartPrice);
-  const ytdReturn = mostRecentPrice && yearStartPrice && calculateReturn(mostRecentPrice, yearStartPrice);
+  const ytdReturn = React.useMemo(() => {
+    return calculateHoldingPeriodReturns(monthlyData?.data, lastYearendDate, fxAtInception);
+  }, [monthlyData, fxAtInception]);
 
   const bestMonth = React.useMemo(() => {
     return monthlyReturns?.data[selectedCurrency.value].reduce((carry: DisplayData, current: DisplayData) => {
@@ -254,17 +181,6 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
     setSelectedCurrency(newCurrency);
   }
 
-  if (fund.creationTime && differenceInCalendarDays(today, fund.creationTime) < 31) {
-    return (
-      <Block>
-        <SectionTitle>Share Price Metrics</SectionTitle>
-        <NotificationBar kind="neutral">
-          <NotificationContent>Statistics are not available for funds younger than one month.</NotificationContent>
-        </NotificationBar>
-      </Block>
-    );
-  }
-
   if (historicalDataError || monthlyError || monthlyData?.errors?.length || fxAtInceptionError) {
     return (
       <Block>
@@ -312,7 +228,7 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
           <DictionaryData> - </DictionaryData>
         ) : (
           <DictionaryData textAlign={'right'}>
-            <FormattedNumber decimals={2} value={mtdReturn} suffix={'%'} />
+            <FormattedNumber decimals={2} value={mtdReturn[selectedCurrency.label]} suffix={'%'} />
           </DictionaryData>
         )}
       </DictionaryEntry>
@@ -322,7 +238,7 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
           <DictionaryData> - </DictionaryData>
         ) : (
           <DictionaryData textAlign={'right'}>
-            <FormattedNumber decimals={2} value={qtdReturn} suffix={'%'} />
+            <FormattedNumber decimals={2} value={qtdReturn[selectedCurrency.label]} suffix={'%'} />
           </DictionaryData>
         )}
       </DictionaryEntry>
@@ -332,7 +248,7 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
           <DictionaryData> - </DictionaryData>
         ) : (
           <DictionaryData textAlign={'right'}>
-            <FormattedNumber decimals={2} value={ytdReturn} suffix={'%'} />
+            <FormattedNumber decimals={2} value={ytdReturn[selectedCurrency.label]} suffix={'%'} />
           </DictionaryData>
         )}
       </DictionaryEntry>
@@ -370,14 +286,16 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
           <FormattedNumber value={monthlyWinLoss.win + monthlyWinLoss.lose} decimals={0} /> months
         </DictionaryData>
       </DictionaryEntry>
-      <Tooltip placement="auto" value={`${volSampleTime}-day volatility of fund share price in ETH`}>
-        <DictionaryEntry>
-          <DictionaryLabel>Volatility</DictionaryLabel>
-          <DictionaryData textAlign={'right'}>
-            <FormattedNumber decimals={2} value={sampleVol} suffix={'%'} />
-          </DictionaryData>
-        </DictionaryEntry>
-      </Tooltip>
+      {selectedCurrency.label === 'ETH' ? (
+        <Tooltip placement="auto" value={`${volSampleTime}-day volatility of fund share price in ETH`}>
+          <DictionaryEntry>
+            <DictionaryLabel>Volatility</DictionaryLabel>
+            <DictionaryData textAlign={'right'}>
+              <FormattedNumber decimals={2} value={sampleVol} suffix={'%'} />
+            </DictionaryData>
+          </DictionaryEntry>
+        </Tooltip>
+      ) : null}
     </BlockWithSelect>
   );
 };

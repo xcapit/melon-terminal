@@ -13,5 +13,6 @@ export function useFetchFundPricesByDepth(fund: string, depth: Depth) {
   const key = 'depth';
   return useQuery([key, address, depth], fetchFundPricesByDepth, {
     refetchOnWindowFocus: false,
+    enabled: typeof depth === 'string',
   });
 }

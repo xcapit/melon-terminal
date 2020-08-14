@@ -96,15 +96,6 @@ export const FundTrade: React.FC<FundTradeProps> = ({ address }) => {
           </RequiresFundDeployedWithCurrentVersion>
         </RequiresFundManager>
       )}
-
-      <GridRow>
-        <GridCol>
-          <Block>
-            <SectionTitle>Trade History</SectionTitle>
-            <FundTradeHistory address={address} />
-          </Block>
-        </GridCol>
-      </GridRow>
     </Grid>
   );
 };

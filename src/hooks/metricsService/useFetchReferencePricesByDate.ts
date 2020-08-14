@@ -29,5 +29,7 @@ export function useFetchReferencePricesByDate(date: Date) {
   const key = 'referencePricesByDate';
   return useQuery([key, day], fetchReferencePricesByDate, {
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    staleTime: 1000 * 60 * 10,
   });
 }

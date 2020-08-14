@@ -8,12 +8,10 @@ export interface MonthendTimelineItem {
   holdings: {
     [symbol: string]: number;
   };
-  shares: number;
-  references: {
-    ethusd: number;
-    etheur: number;
-    ethbtc: number;
+  references?: {
+    [key: string]: number;
   };
+  shares: number;
   calculations: {
     price: number;
     gav: number;
@@ -34,5 +32,7 @@ export function useFetchFundPricesByMonthEnd(fund: string) {
   const key = 'monthlyPrice';
   return useQuery([key, address], fetchFundPricesByMonthEnd, {
     refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 10,
+    refetchOnMount: false,
   });
 }

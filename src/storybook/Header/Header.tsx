@@ -46,6 +46,16 @@ export const LogoDesktop = styled.div`
   }
 `;
 
+export const CurrencySelectionItem = styled.div`
+  display: flex;
+  padding: ${(props) => props.theme.spaceUnits.xs} 0px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  margin-right: ${(props) => props.theme.spaceUnits.s};
+`;
+
 export const ConnectionInfo = styled.div`
   display: flex;
   padding: ${(props) => props.theme.spaceUnits.xs} 0px;

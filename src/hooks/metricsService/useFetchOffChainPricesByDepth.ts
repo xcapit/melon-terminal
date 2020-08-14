@@ -29,6 +29,8 @@ export function useFetchOffchainPricesByDepth(fund: string, depth: number | Dept
   const key = 'offchainPrices';
   return useQuery([key, address, depth as Depth], fetchOffchainHistoryByDepth, {
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    staleTime: 1000 * 60 * 10,
     enabled: typeof depth === 'string' && (depth === '1d' || depth === '1w'),
   });
 }

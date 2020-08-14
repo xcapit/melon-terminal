@@ -1,29 +1,18 @@
-import React, { Fragment } from 'react';
 import { sameAddress } from '@melonproject/melonjs';
-import { Spinner } from '~/storybook/Spinner/Spinner';
-import { useFundDetailsQuery } from '../FundDetails.query';
-import { SectionTitle } from '~/storybook/Title/Title';
-import {
-  Dictionary,
-  DictionaryEntry,
-  DictionaryData,
-  DictionaryLabel,
-  DictionaryDivider,
-} from '~/storybook/Dictionary/Dictionary';
-import { EtherscanLink } from '~/components/Common/EtherscanLink/EtherscanLink';
-import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
-import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
-import { useEnvironment } from '~/hooks/useEnvironment';
-import { useFundCalculationHistoryQuery } from '~/components/Routes/Fund/FundDiligence/FundFactSheet/FundCalculationHistory.query';
 import BigNumber from 'bignumber.js';
-import { TwitterLink } from '~/components/Common/TwitterLink/TwitterLink';
-import { useAccount } from '~/hooks/useAccount';
-import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
 import { range } from 'ramda';
-import { useFundSlug } from '../../FundHeader/FundSlug.query';
-import { NetworkEnum } from '~/types';
-import { format } from 'date-fns';
+import React, { Fragment } from 'react';
+import { EtherscanLink } from '~/components/Common/EtherscanLink/EtherscanLink';
+import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
+import { useFundCalculationHistoryQuery } from '~/components/Routes/Fund/FundDiligence/FundFactSheet/FundCalculationHistory.query';
+import { useAccount } from '~/hooks/useAccount';
+import { useEnvironment } from '~/hooks/useEnvironment';
 import { Block } from '~/storybook/Block/Block';
+import { DictionaryData, DictionaryDivider, DictionaryEntry, DictionaryLabel } from '~/storybook/Dictionary/Dictionary';
+import { Spinner } from '~/storybook/Spinner/Spinner';
+import { NetworkEnum } from '~/types';
+import { useFundSlug } from '../../FundHeader/FundSlug.query';
+import { useFundDetailsQuery } from '../FundDetails.query';
 
 export interface NormalizedCalculation {
   sharePrice: BigNumber;

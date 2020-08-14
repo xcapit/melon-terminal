@@ -8,8 +8,8 @@ export const NumberInputWrapper = styled.div`
 export const InputPresetWrapper = styled.div`
   z-index: 100;
   position: absolute;
-  right: 8px;
-  top: 8px;
+  right: ${(props) => props.theme.spaceUnits.xs};
+  top: ${(props) => props.theme.spaceUnits.xxs};
 `;
 
 export const InputContainer = styled.div`

@@ -1,6 +1,4 @@
 import styled from 'styled-components';
-import Control from 'react-select/src/components/Control';
-import { components } from 'react-select';
 
 export const SelectWrapper = styled.div`
   display: flex;
@@ -12,12 +10,14 @@ export const SelecLabelWrapper = styled.span`
 `;
 
 export const SelectIcon = styled.span`
+  margin-top: 2px;
   margin-right: 10px;
 `;
 
 export const SelectLabel = styled.span`
   color: ${(props) => props.theme.mainColors.textColor};
   text-align: left;
+  margin-top: 2px;
 `;
 
 export const SelectDescription = styled.span`
@@ -33,9 +33,10 @@ export const ComponentsControl = styled.div`
     border-width: 1px;
     background: ${(props) => props.theme.mainColors.primary};
     box-shadow: inset 1px 4px 4px rgba(200, 200, 200, 0.25);
-    min-height: ${(props) => props.theme.spaceUnits.xxl};
+    min-height: ${(props) => props.theme.spaceUnits.xl};
   }
   &.melon__control:active {
+    min-height: ${(props) => props.theme.spaceUnits.xl};
   }
 `;
 
@@ -70,5 +71,11 @@ export const ComponentsOption = styled.div`
   }
   .melon__option--is-selected {
     background: ${(props) => props.theme.mainColors.secondaryDarkAlpha};
+  }
+`;
+
+export const IndicatorContainer = styled.div`
+  .melon__dropdown-indicator {
+    padding: 0px 8px;
   }
 `;

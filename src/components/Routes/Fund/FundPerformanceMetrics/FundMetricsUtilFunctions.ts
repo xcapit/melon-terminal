@@ -1,7 +1,8 @@
 import { BigNumber } from 'bignumber.js';
-import { endOfMonth, subMonths, addMonths } from 'date-fns';
+import { endOfMonth, subMonths, addMonths, addMinutes } from 'date-fns';
 import { calculateReturn } from '~/utils/finance';
 import { MonthendTimelineItem } from '~/hooks/metricsService/useFetchFundPricesByMonthEnd';
+import { getRate } from '~/components/Contexts/Currency/Currency';
 
 export interface DisplayData {
   label?: string;
@@ -11,13 +12,7 @@ export interface DisplayData {
 
 export interface MonthlyReturnData {
   maxDigits: number;
-  data: {
-    ETH: DisplayData[];
-    EUR: DisplayData[];
-    USD: DisplayData[];
-    BTC: DisplayData[];
-    BITWISE10?: DisplayData[];
-  };
+  data: DisplayData[];
 }
 
 /**
@@ -29,22 +24,16 @@ export interface MonthlyReturnData {
  *
  * @param priceData potentially undefined while query is fetching
  * @param startDate
- * @param fxRates
  */
 
 export function calculateHoldingPeriodReturns(
   priceData: MonthendTimelineItem[] | undefined,
   startDate: number,
-  fxRates: { ethbtc: number; ethusd: number; etheur: number } | undefined
-) {
+  currency: string
+): BigNumber {
   // fxAtInception and priceData are loading
-  if (!fxRates || !priceData) {
-    return {
-      ETH: new BigNumber('NaN'),
-      BTC: new BigNumber('NaN'),
-      USD: new BigNumber('NaN'),
-      EUR: new BigNumber('NaN'),
-    };
+  if (!priceData) {
+    return new BigNumber('NaN');
   }
 
   const relevantPriceData = priceData.filter((item) => {
@@ -54,48 +43,18 @@ export function calculateHoldingPeriodReturns(
   // failsafe if somehow a young fund gets through the conditional in FundOverview
   // or if holding period started today
   if (relevantPriceData.length < 2) {
-    return {
-      ETH: new BigNumber('NaN'),
-      BTC: new BigNumber('NaN'),
-      USD: new BigNumber('NaN'),
-      EUR: new BigNumber('NaN'),
-    };
+    return new BigNumber('NaN');
   }
 
   const periodStart = relevantPriceData[0];
   const periodEnd = relevantPriceData[relevantPriceData.length - 1];
-  // .8327, .7734
-  // fund is younger than the date passed if the filter does not change the length of the array
-  // in that case, you calculate return using 1 for the starting price of ETH and the various exchange rates for the others
-  if (priceData.length === relevantPriceData.length) {
-    return {
-      ETH: calculateReturn(periodEnd.calculations.price, 1),
-      BTC: calculateReturn(periodEnd.references.ethbtc * periodEnd.calculations.price, fxRates.ethbtc),
-      USD: calculateReturn(periodEnd.references.ethusd * periodEnd.calculations.price, fxRates.ethusd),
-      EUR: calculateReturn(periodEnd.references.etheur * periodEnd.calculations.price, fxRates.etheur),
-    };
-  }
 
-  const ethReturn = calculateReturn(periodEnd.calculations.price, periodStart.calculations.price);
-  const btcReturn = calculateReturn(
-    periodEnd.references.ethbtc * periodEnd.calculations.price,
-    periodStart.references.ethbtc * periodStart.calculations.price
+  return calculateReturn(
+    new BigNumber(periodEnd.calculations.gav > 0 ? periodEnd.calculations.price : NaN).dividedBy(
+      getRate(periodEnd.rates, currency)
+    ),
+    new BigNumber(periodStart.calculations.price).dividedBy(getRate(periodStart.rates, currency))
   );
-  const usdReturn = calculateReturn(
-    periodEnd.references.ethusd * periodEnd.calculations.price,
-    periodStart.references.ethusd * periodStart.calculations.price
-  );
-  const eurReturn = calculateReturn(
-    periodEnd.references.etheur * periodEnd.calculations.price,
-    periodStart.references.etheur * periodStart.calculations.price
-  );
-
-  return {
-    ETH: ethReturn,
-    BTC: btcReturn,
-    USD: usdReturn,
-    EUR: eurReturn,
-  };
 }
 
 /**
@@ -117,98 +76,53 @@ export function calculateHoldingPeriodReturns(
 
 export function monthlyReturnsFromTimeline(
   monthlyReturnData: MonthendTimelineItem[] = [],
-  dayZeroFx: {
-    ethbtc: number;
-    ethusd: number;
-    etheur: number;
-  },
+  currency: string,
   today?: Date,
   activeMonths?: number,
   monthsBeforeFund?: number,
   monthsRemaining?: number
 ): MonthlyReturnData {
   let maxDigits = 0;
-  const ethActiveMonthReturns: DisplayData[] = monthlyReturnData.map(
+
+  const activeMonthReturns: DisplayData[] = monthlyReturnData.map(
     (item: MonthendTimelineItem, index: number, arr: MonthendTimelineItem[]) => {
-      const previous = index === 0 ? new BigNumber(1) : new BigNumber(arr[index - 1].calculations.price);
+      const prevIndex = index === 0 ? 0 : index - 1;
 
-      const rtrn = calculateReturn(new BigNumber(item.calculations.price), previous);
+      const previousFxRate = new BigNumber(getRate(arr[prevIndex].rates, currency));
+      const previous = new BigNumber(arr[prevIndex].calculations.price).dividedBy(previousFxRate);
 
-      if (rtrn.toPrecision(2).toString().length > maxDigits) {
-        maxDigits = rtrn.toPrecision(2).toString().length;
+      const currentFxRate = new BigNumber(getRate(item.rates, currency));
+      const current = new BigNumber(item.calculations.price).dividedBy(currentFxRate);
+
+      const rtrn = calculateReturn(current, previous);
+
+      if (rtrn.toPrecision(2).length > maxDigits) {
+        maxDigits = rtrn.toPrecision(2).length;
       }
 
+      const rawDate = new Date(item.timestamp * 1000);
+      const date = addMinutes(rawDate, rawDate.getTimezoneOffset());
+
       return {
-        return: rtrn,
-        date: new Date(item.timestamp * 1000),
+        return: arr[prevIndex].calculations.price > 0 && item.calculations.gav > 0 ? rtrn : new BigNumber(NaN),
+        date,
       };
     }
   );
 
-  const usdActiveMonthReturns: DisplayData[] = monthlyReturnData.map(
-    (item: MonthendTimelineItem, index: number, arr: MonthendTimelineItem[]) => {
-      const previous =
-        index === 0
-          ? new BigNumber(dayZeroFx.ethusd)
-          : new BigNumber(arr[index - 1].calculations.price * arr[index - 1].references.ethusd);
-
-      const rtrn = calculateReturn(new BigNumber(item.calculations.price * item.references.ethusd), previous);
-
-      if (rtrn.toPrecision(2).toString().length > maxDigits) {
-        maxDigits = rtrn.toPrecision(2).toString().length;
-      }
-
-      return {
-        return: rtrn,
-        date: new Date(item.timestamp * 1000),
-      };
+  // in general, the first item should be removed
+  // When fund was started on the last day of the month, however, we keep that first item
+  if (activeMonthReturns.length > 1) {
+    if (activeMonthReturns[0].date.getMonth() === activeMonthReturns[1].date.getMonth()) {
+      activeMonthReturns.shift();
     }
-  );
-
-  const eurActiveMonthReturns: DisplayData[] = monthlyReturnData.map(
-    (item: MonthendTimelineItem, index: number, arr: MonthendTimelineItem[]) => {
-      const previous =
-        index === 0
-          ? new BigNumber(dayZeroFx.etheur)
-          : new BigNumber(arr[index - 1].calculations.price * arr[index - 1].references.etheur);
-      const rtrn = calculateReturn(new BigNumber(item.calculations.price * item.references.etheur), previous);
-
-      if (rtrn.toPrecision(2).toString().length > maxDigits) {
-        maxDigits = rtrn.toPrecision(2).toString().length;
-      }
-
-      return {
-        return: rtrn,
-        date: new Date(item.timestamp * 1000),
-      };
-    }
-  );
-
-  const btcActiveMonthReturns: DisplayData[] = monthlyReturnData.map(
-    (item: MonthendTimelineItem, index: number, arr: MonthendTimelineItem[]) => {
-      const previous =
-        index === 0
-          ? new BigNumber(dayZeroFx.ethbtc)
-          : new BigNumber(arr[index - 1].calculations.price * arr[index - 1].references.ethbtc);
-
-      const rtrn = calculateReturn(new BigNumber(item.calculations.price * item.references.ethbtc), previous);
-
-      if (rtrn.toPrecision(2).toString().length > maxDigits) {
-        maxDigits = rtrn.toPrecision(2).toString().length;
-      }
-
-      return {
-        return: rtrn,
-        date: new Date(item.timestamp * 1000),
-      };
-    }
-  );
+  }
 
   const inactiveMonthReturns: DisplayData[] | undefined =
     today && monthsBeforeFund && activeMonths
       ? new Array(monthsBeforeFund)
           .fill(null)
-          .map((item, index: number) => {
+          .map((_, index: number) => {
             return {
               date: endOfMonth(subMonths(today, index + activeMonths)),
               return: new BigNumber('NaN'),
@@ -224,24 +138,10 @@ export function monthlyReturnsFromTimeline(
         })
       : undefined;
 
-  const aggregatedMonthlyReturns = {
-    ETH:
-      inactiveMonthReturns && monthsRemainingInYear
-        ? inactiveMonthReturns.concat(ethActiveMonthReturns).concat(monthsRemainingInYear)
-        : ethActiveMonthReturns,
-    USD:
-      inactiveMonthReturns && monthsRemainingInYear
-        ? inactiveMonthReturns.concat(usdActiveMonthReturns).concat(monthsRemainingInYear)
-        : usdActiveMonthReturns,
-    EUR:
-      inactiveMonthReturns && monthsRemainingInYear
-        ? inactiveMonthReturns.concat(eurActiveMonthReturns).concat(monthsRemainingInYear)
-        : eurActiveMonthReturns,
-    BTC:
-      inactiveMonthReturns && monthsRemainingInYear
-        ? inactiveMonthReturns.concat(btcActiveMonthReturns).concat(monthsRemainingInYear)
-        : btcActiveMonthReturns,
-  };
+  const aggregatedMonthlyReturns =
+    inactiveMonthReturns && monthsRemainingInYear
+      ? inactiveMonthReturns.concat(activeMonthReturns).concat(monthsRemainingInYear)
+      : activeMonthReturns;
 
   return { maxDigits: maxDigits, data: aggregatedMonthlyReturns };
 }

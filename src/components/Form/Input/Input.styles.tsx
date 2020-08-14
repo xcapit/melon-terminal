@@ -8,7 +8,7 @@ export const Input = styled.input<InputProps>`
   border: 1px solid ${(props) => props.theme.mainColors.secondaryDarkAlpha};
   border-radius: 0;
   background: ${(props) => props.theme.mainColors.primary};
-  height: ${(props) => props.theme.spaceUnits.xxl};
+  height: ${(props) => props.theme.spaceUnits.xl};
   box-shadow: inset 1px 4px 4px rgba(200, 200, 200, 0.25);
   color: ${(props) => props.theme.mainColors.textColor};
 

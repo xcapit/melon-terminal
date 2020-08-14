@@ -7,7 +7,8 @@ import { useConnectionState } from '~/hooks/useConnectionState';
 import { Block } from '~/storybook/Block/Block';
 import { Grid, GridCol, GridRow } from '~/storybook/Grid/Grid';
 import { SectionTitle } from '~/storybook/Title/Title';
-import { useTableData } from '../FundOverview/FundOverview';
+import { useFundList } from '~/hooks/useFundList';
+
 import { FundBadgeDirectory } from './FundBadgeDirectory';
 import { MdClose } from 'react-icons/md';
 import { Button } from '~/components/Form/Button/Button';
@@ -51,16 +52,16 @@ const BadgeWrapper = styled.div`
 
 export const FundLeaderboard: React.FC = (props) => {
   const [showDirectory, setShowDirectory] = React.useState(false);
-  const data = useTableData();
+  const data = useFundList();
   const history = useHistory();
   const connection = useConnectionState();
 
   const prefix = getNetworkName(connection.network);
 
-  const topAum = data.find((fund) => fund.topAUM);
-  const topYTD = data.find((fund) => fund.topYTD);
-  const topMTD = data.find((fund) => fund.topMTD);
-  const topRecent = data.find((fund) => fund.topRecent);
+  const topAum = data.list.find((fund) => fund.topAUM);
+  const topSinceInception = data.list.find((fund) => fund.topSinceInception);
+  const topMTD = data.list.find((fund) => fund.topMTD);
+  const topRecent = data.list.find((fund) => fund.topRecent);
 
   return (
     <Block>
@@ -97,13 +98,15 @@ export const FundLeaderboard: React.FC = (props) => {
               </BadgeWrapper>
             </GridCol>
             <GridCol xs={12} sm={6}>
-              <BadgeWrapper onClick={() => topYTD?.name && history.push(`/${prefix}/fund/${topYTD?.address}`)}>
+              <BadgeWrapper
+                onClick={() => topSinceInception?.name && history.push(`/${prefix}/fund/${topSinceInception?.address}`)}
+              >
                 <BadgeIcon>
                   <GiSpartanHelmet size="4rem" color="rgb( 133,213,202)" />
                 </BadgeIcon>
                 <BadgeText>
-                  <BadgeTextFundName>{topYTD?.name}</BadgeTextFundName>
-                  <BadgeTextBadgeName>Best YTD performance</BadgeTextBadgeName>
+                  <BadgeTextFundName>{topSinceInception?.name}</BadgeTextFundName>
+                  <BadgeTextBadgeName>Best since inception </BadgeTextBadgeName>
                 </BadgeText>
               </BadgeWrapper>
             </GridCol>

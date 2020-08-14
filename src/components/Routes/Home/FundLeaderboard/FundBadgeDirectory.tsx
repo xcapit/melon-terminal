@@ -53,7 +53,7 @@ const badges = [
   { name: 'Caesar', description: 'Top 5 AUM', icon: <GiCaesar size="2rem" color="rgb(133,213,202)" /> },
   {
     name: 'Spartan',
-    description: 'Top 5 performance YTD',
+    description: 'Top 5 performance since inception',
     icon: <GiSpartanHelmet size="2rem" color="rgb(133,213,202)" />,
   },
   { name: 'Pegasus', description: 'Top 5 performance MTD', icon: <GiPegasus size="2rem" color="rgb(133,213,202)" /> },

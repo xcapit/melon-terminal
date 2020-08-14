@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react';
-import { useFundDetailsQuery } from '../FundDetails.query';
-import { Spinner } from '~/storybook/Spinner/Spinner';
-import { Dictionary, DictionaryEntry, DictionaryLabel, DictionaryData } from '~/storybook/Dictionary/Dictionary';
 import { EtherscanLink } from '~/components/Common/EtherscanLink/EtherscanLink';
 import { Block } from '~/storybook/Block/Block';
+import { DictionaryData, DictionaryEntry, DictionaryLabel } from '~/storybook/Dictionary/Dictionary';
+import { Spinner } from '~/storybook/Spinner/Spinner';
+import { useFundDetailsQuery } from '../FundDetails.query';
 
 export interface FundContractsProps {
   address: string;

@@ -6,7 +6,6 @@ import { ZoomControl } from '../ZoomControl/ZoomControl';
 import { Serie, Depth } from '~/components/Charts/types';
 
 export interface PriceChartProps {
-  loading?: boolean;
   depth: number | Depth;
   data: Serie[];
   secondary?: Serie[];
@@ -28,6 +27,9 @@ export const PriceChart: React.FC<PriceChartProps> = (props) => {
   const curveType = props.depth === '1w' || props.depth === '1d' ? ['stepline', 'smooth'] : ['smooth'];
   const options = {
     chart: {
+      animations: {
+        enabled: false,
+      },
       type: 'area',
       stacked: false,
       height: 'auto',

@@ -2,6 +2,7 @@ import React, { useMemo, useEffect, createContext, useRef } from 'react';
 import ApolloClient from 'apollo-client';
 import { ApolloLink, Observable, FetchResult } from 'apollo-link';
 import { onError } from 'apollo-link-error';
+import { RetryLink } from 'apollo-link-retry';
 import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import { ApolloProvider as BaseApolloProvider } from '@apollo/react-hooks';
@@ -55,8 +56,9 @@ const useOnChainApollo = (environment?: DeployedEnvironment) => {
         })
       : nullLink;
 
+    const retry = new RetryLink();
     const error = createErrorLink();
-    const link = ApolloLink.from([error, data]);
+    const link = ApolloLink.from([error, retry, data]);
     const memory = new InMemoryCache({
       addTypename: true,
     });
@@ -102,8 +104,9 @@ const useTheGraphApollo = (environment?: DeployedEnvironment) => {
         })
       : nullLink;
 
+    const retry = new RetryLink();
     const error = createErrorLink();
-    const link = ApolloLink.from([error, data]);
+    const link = ApolloLink.from([error, retry, data]);
     const memory = new InMemoryCache({
       addTypename: true,
     });

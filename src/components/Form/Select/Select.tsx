@@ -10,11 +10,13 @@ import {
   Props as SelectPropsBase,
   SingleValueProps,
   ValueType,
+  IndicatorProps,
 } from 'react-select';
 import { MenuListComponentProps } from 'react-select/src/components/Menu';
 import { Error, Label, useField, Wrapper } from '~/components/Form/Form';
 import { IconName, Icons } from '~/storybook/Icons/Icons';
 import * as S from './Select.styles';
+import { IndicatorContainerProps } from 'react-select/src/components/containers';
 
 export interface SelectOption<TValue = string | number> {
   value: TValue;
@@ -83,7 +85,7 @@ export const SelectField: React.FC<SelectProps> = ({ Component = SelectBase, ...
       {...props}
       theme={props.theme}
       isDisabled={props.disabled ?? props.isDisabled}
-      components={{ Option, SingleValue, MultiValue, Control, MenuList, ...props.components }}
+      components={{ Option, SingleValue, MultiValue, Control, MenuList, DropdownIndicator, ...props.components }}
       hasDescriptions={hasDescriptions}
       hasIcons={hasIcons}
       classNamePrefix="melon"
@@ -167,4 +169,10 @@ const MenuList: React.FC<MenuListComponentProps<SelectOption>> = (props) => (
   <S.ComponentsMenuList>
     <components.MenuList {...props} />
   </S.ComponentsMenuList>
+);
+
+const DropdownIndicator: React.FC<IndicatorProps<SelectOption>> = (props) => (
+  <S.IndicatorContainer>
+    <components.DropdownIndicator {...props} />
+  </S.IndicatorContainer>
 );

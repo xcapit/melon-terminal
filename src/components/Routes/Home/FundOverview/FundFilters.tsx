@@ -20,13 +20,14 @@ import {
 const Toolbar = styled.div`
   width: 100%;
   height: 40px;
-  margin: 0 auto 20px auto;
+  margin: 0 auto ${(props) => props.theme.spaceUnits.xl} auto;
 `;
 
 const Search = styled.div`
   float: left;
   min-width: 200px;
-  margin-right: 10px;
+  margin-right: ${(props) => props.theme.spaceUnits.s};
+  margin-top: ${(props) => props.theme.spaceUnits.xxxs};
 `;
 
 const Filter = styled.div`
@@ -35,29 +36,21 @@ const Filter = styled.div`
   vertical-align: top;
   height: 40px;
   text-align: center;
-  margin-right: 20px;
+  margin-right: ${(props) => props.theme.spaceUnits.xl};
 `;
 
 const Label = styled.div`
   float: left;
-  padding: 10px 10px 10px 0;
+  padding: ${(props) => props.theme.spaceUnits.xs} ${(props) => props.theme.spaceUnits.xs}
+    ${(props) => props.theme.spaceUnits.xs} 0;
   display: inline-block;
   vertical-align: top;
 `;
 
-// const Sort = styled.div`
-//   float: left;
-//   min-width: 200px;
-//   max-width: 400px;
-//   height: 25px;
-//   display: inline-block;
-//   vertical-align: top;
-// `;
-
 const FilterIcon = styled.div`
   float: left;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: ${(props) => props.theme.spaceUnits.xs};
+  padding-bottom: ${(props) => props.theme.spaceUnits.xs};
   cursor: pointer;
 `;
 
@@ -68,15 +61,15 @@ const FilterRow = styled.div`
   width: 100%;
   background: ${(props) => props.theme.mainColors.secondary};
   border: ${(props) => props.theme.border.borderDefault};
-  padding: 10px 10px 10px 10px;
-  margin-bottom: 10px;
+  padding: ${(props) => props.theme.spaceUnits.xs};
+  margin-bottom: ${(props) => props.theme.spaceUnits.xs};
 `;
 
 const SelectionFilter = styled.div`
   min-width: 200px;
   float: left;
-  margin-right: 10px;
-  margin-bottom: 5px;
+  margin-right: ${(props) => props.theme.spaceUnits.xs};
+  margin-bottom: ${(props) => props.theme.spaceUnits.xxs};
 `;
 
 const BadgeFilter = styled.div`
@@ -92,7 +85,7 @@ const FundsPerPage = styled.div`
 const FundsPerPageSelection = styled.div`
   min-width: 150px;
   float: left;
-  margin-bottom: 5px;
+  margin-top: ${(props) => props.theme.spaceUnits.xxxs};
 `;
 
 export interface TableGlobalFilterProps<TData extends object = any> extends CommonTableProps<TData> {}
@@ -193,20 +186,6 @@ export function TableGlobalFilter<TData extends object>(props: TableGlobalFilter
           <FilterIcon>
             <FaFilter onClick={() => setShowFilters(!showFilters)} size="1.5rem" />
           </FilterIcon>
-          {/* <Sort>
-            <SelectField
-              name="sort"
-              options={sort}
-              onChange={(e) => {
-                const [field, direction] = (e as any).value.split('-');
-                props.table.toggleSortBy(field, direction === 'desc' ? false : true, false);
-              }}
-              placeholder="Sort by..."
-              defaultValue={sort[0]}
-              maxWidth="300"
-            />
-          </Sort>
-          <SortLabel>Sort by: </SortLabel> */}
         </Filter>
 
         <FundsPerPage>

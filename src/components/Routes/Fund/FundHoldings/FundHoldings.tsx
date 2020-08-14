@@ -1,6 +1,6 @@
 import React from 'react';
 import { Spinner } from '~/storybook/Spinner/Spinner';
-import { useFundHoldingsQuery, useAssetsDailyChange } from './FundHoldings.query';
+
 import * as S from './FundHoldings.styles';
 import BigNumber from 'bignumber.js';
 import {
@@ -18,6 +18,11 @@ import { Block } from '~/storybook/Block/Block';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { Icons, IconName } from '~/storybook/Icons/Icons';
 import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
+import { useCurrency } from '~/hooks/useCurrency';
+import { useFetchFundPricesByDepth } from '~/hooks/metricsService/useFetchFundPricesByDepth';
+import { calculateReturn } from '~/utils/finance';
+import { useEnvironment } from '~/hooks/useEnvironment';
+import { getRate } from '~/components/Contexts/Currency/Currency';
 
 export interface FundHoldingsProps {
   address: string;
@@ -26,10 +31,15 @@ export interface FundHoldingsProps {
 const coloredIcons = ['MLN', 'REN', 'ZRX'];
 
 export const FundHoldings: React.FC<FundHoldingsProps> = ({ address }) => {
-  const [holdings, query] = useFundHoldingsQuery(address);
-  const [assetDailyChange] = useAssetsDailyChange();
+  const currency = useCurrency();
+  const environment = useEnvironment()!;
 
-  if (query.loading) {
+  const { data: dailyData, isError: dailyDataError, isFetching: dailyDataFetching } = useFetchFundPricesByDepth(
+    address,
+    '1w'
+  );
+
+  if (dailyDataFetching) {
     return (
       <Block>
         <SectionTitle>Portfolio Holdings</SectionTitle>
@@ -38,13 +48,40 @@ export const FundHoldings: React.FC<FundHoldingsProps> = ({ address }) => {
     );
   }
 
-  const nonZeroHoldings = holdings.filter((holding) => !holding.amount?.isZero());
+  const current = dailyData.data[dailyData.data.length - 1];
+  const previous = dailyData.data[dailyData.data.length - 2];
 
-  const totalValue = nonZeroHoldings.reduce((acc, current) => {
+  if (dailyDataError) {
+    return (
+      <Block>
+        <SectionTitle>Portfolio Holdings</SectionTitle>
+        <ScrollableTable maxHeight="650px">There was an error fetching the portfolio holdings.</ScrollableTable>
+      </Block>
+    );
+  }
+
+  const currentHoldings = Object.keys(current?.holdings || [])
+    .map((key) => {
+      const currentPrice = new BigNumber(current.rates[key]).dividedBy(getRate(current.rates, currency.currency));
+      const previousPrice = new BigNumber(previous.rates[key]).dividedBy(getRate(previous.rates, currency.currency));
+
+      return {
+        symbol: key,
+        name: environment.getToken(key).name,
+        amount: new BigNumber(current.holdings[key]),
+        price: currentPrice,
+        value: new BigNumber(current.holdings[key]).multipliedBy(currentPrice),
+        change: calculateReturn(currentPrice, previousPrice),
+      };
+    })
+    .filter((holding) => !holding.amount.isZero())
+    .sort((a, b) => b.value.comparedTo(a.value));
+
+  const totalValue = currentHoldings.reduce((acc, current) => {
     return acc.plus(current.value || new BigNumber(0));
   }, new BigNumber(0));
 
-  if (!nonZeroHoldings.length) {
+  if (!currentHoldings.length) {
     return (
       <Block>
         <SectionTitle>Portfolio Holdings</SectionTitle>
@@ -61,50 +98,46 @@ export const FundHoldings: React.FC<FundHoldingsProps> = ({ address }) => {
           <thead>
             <HeaderRow>
               <HeaderCell>Asset</HeaderCell>
-              <HeaderCellRightAlign>Price</HeaderCellRightAlign>
-              <HeaderCellRightAlign>Daily change</HeaderCellRightAlign>
               <HeaderCellRightAlign>Balance</HeaderCellRightAlign>
-              <HeaderCellRightAlign>Value [ETH]</HeaderCellRightAlign>
+              <HeaderCellRightAlign>Price [{currency.currency}]</HeaderCellRightAlign>
+              <HeaderCellRightAlign>Daily change</HeaderCellRightAlign>
+              <HeaderCellRightAlign>Value [{currency.currency}]</HeaderCellRightAlign>
               <HeaderCellRightAlign>Allocation</HeaderCellRightAlign>
             </HeaderRow>
           </thead>
           <tbody>
-            {nonZeroHoldings.map((holding, key) => (
+            {currentHoldings.map((holding, key) => (
               <BodyRow key={key}>
                 <BodyCell>
                   <S.HoldingIcon>
                     <Icons
-                      name={holding.token?.symbol as IconName}
+                      name={holding.symbol as IconName}
                       size="small"
-                      colored={coloredIcons.some((icon) => icon === holding.token?.symbol)}
+                      colored={coloredIcons.some((icon) => icon === holding.symbol)}
                     />
                   </S.HoldingIcon>
                   <S.HoldingName>
-                    <S.HoldingSymbol>{holding.token?.symbol}</S.HoldingSymbol>
+                    <S.HoldingSymbol>{holding.symbol}</S.HoldingSymbol>
                     <br />
-                    <S.HoldingName>{holding.token?.name}</S.HoldingName>
+                    <S.HoldingName>{holding.name}</S.HoldingName>
                   </S.HoldingName>
                 </BodyCell>
                 <BodyCellRightAlign>
-                  <TokenValueDisplay value={holding.token?.price} decimals={0} />
+                  <TokenValueDisplay value={holding.amount!} decimals={0} />
                 </BodyCellRightAlign>
                 <BodyCellRightAlign>
-                  {holding.token?.symbol && (
+                  <TokenValueDisplay value={holding.price} decimals={0} />
+                </BodyCellRightAlign>
+                <BodyCellRightAlign>
+                  {holding.symbol && (
                     <>
-                      <FormattedNumber
-                        value={assetDailyChange[holding.token.symbol]}
-                        colorize={true}
-                        decimals={2}
-                        suffix="%"
-                      />
+                      <FormattedNumber value={holding.change} colorize={true} decimals={2} suffix="%" />
                     </>
                   )}
                 </BodyCellRightAlign>
+
                 <BodyCellRightAlign>
-                  <TokenValueDisplay value={holding.amount!} decimals={holding.token!.decimals!} />
-                </BodyCellRightAlign>
-                <BodyCellRightAlign>
-                  <TokenValueDisplay value={holding.value!} />
+                  <TokenValueDisplay value={holding.value} decimals={0} />
                 </BodyCellRightAlign>
                 <BodyCellRightAlign>
                   <FormattedNumber value={holding.value?.dividedBy(totalValue).times(100)} decimals={2} suffix="%" />

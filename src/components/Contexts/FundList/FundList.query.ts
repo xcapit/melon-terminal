@@ -51,32 +51,41 @@ export interface Fund {
   }[];
   calculationsHistory: {
     id: string;
-    sharePrice: BigNumber;
     timestamp: string;
+    sharePrice: BigNumber;
+    gav: BigNumber;
+  }[];
+  firstPx: {
+    id: string;
+    timestamp: string;
+    sharePrice: BigNumber;
+    gav: BigNumber;
   }[];
   yearStartPx: {
     id: string;
-    sharePrice: BigNumber;
     timestamp: string;
+    sharePrice: BigNumber;
+    gav: BigNumber;
   }[];
   monthStartPx: {
     id: string;
-    sharePrice: BigNumber;
     timestamp: string;
+    sharePrice: BigNumber;
+    gav: BigNumber;
   }[];
 }
 
-export interface FundOverviewQueryResult {
+export interface FundListQueryResult {
   funds: Fund[];
 }
 
-export interface FundOverviewQueryVariables {
+export interface FundListQueryVariables {
   startOfYearDate: BigNumber;
   startOfMonthDate: BigNumber;
 }
 
-const FundOverviewQuery = gql`
-  query FundOverviewQuery($startOfYearDate: BigInt!, $startOfMonthDate: BigInt!) {
+const FundListQuery = gql`
+  query FundListQuery($startOfYearDate: BigInt!, $startOfMonthDate: BigInt!) {
     funds(
       first: 1000
       where: { id_not: "0x1e3ef9a8fe3cf5b3440b0df8347f1888484b8dc2" }
@@ -123,25 +132,46 @@ const FundOverviewQuery = gql`
       }
       calculationsHistory(orderBy: timestamp, orderDirection: desc, first: 2) {
         id
-        sharePrice
         timestamp
+        sharePrice
+        gav
       }
 
-      yearStartPx: calculationsHistory(where: { timestamp_gt: $startOfYearDate }, orderBy: timestamp, first: 1) {
+      firstPx: calculationsHistory(where: { gav_gt: 0 }, orderBy: timestamp, orderDirection: asc, first: 1) {
         id
-        sharePrice
         timestamp
+        sharePrice
+        gav
       }
-      monthStartPx: calculationsHistory(where: { timestamp_gt: $startOfMonthDate }, orderBy: timestamp, first: 1) {
+
+      yearStartPx: calculationsHistory(
+        where: { timestamp_gt: $startOfYearDate }
+        orderBy: timestamp
+        orderDirection: asc
+        first: 1
+      ) {
         id
-        sharePrice
         timestamp
+        sharePrice
+        gav
+      }
+
+      monthStartPx: calculationsHistory(
+        where: { timestamp_gt: $startOfMonthDate }
+        orderBy: timestamp
+        orderDirection: asc
+        first: 1
+      ) {
+        id
+        timestamp
+        sharePrice
+        gav
       }
     }
   }
 `;
 
-export const useFundOverviewQuery = (startOfMonthDate: BigNumber, startOfYearDate: BigNumber) => {
+export const useFundListQuery = (startOfMonthDate: BigNumber, startOfYearDate: BigNumber) => {
   const options = {
     variables: {
       startOfYearDate,
@@ -149,7 +179,7 @@ export const useFundOverviewQuery = (startOfMonthDate: BigNumber, startOfYearDat
     },
   };
 
-  const result = useTheGraphQuery<FundOverviewQueryResult, FundOverviewQueryVariables>(FundOverviewQuery, options);
+  const result = useTheGraphQuery<FundListQueryResult, FundListQueryVariables>(FundListQuery, options);
 
   return result;
 };

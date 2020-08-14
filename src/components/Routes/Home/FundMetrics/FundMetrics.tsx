@@ -9,9 +9,7 @@ import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
 import { Block } from '~/storybook/Block/Block';
 
 import styled from 'styled-components';
-import { useHistory } from 'react-router';
-import { Tooltip } from '~/storybook/Tooltip/Tooltip';
-import { Button } from '~/components/Form/Button/Button';
+import { useCurrency } from '~/hooks/useCurrency';
 
 export const MetricsAUM = styled.div`
   width: 100%;
@@ -19,7 +17,6 @@ export const MetricsAUM = styled.div`
   font-weight: ${(props) => props.theme.fontWeights.bold};
   font-size: ${(props) => props.theme.fontSizes.xxxl};
   color: rgb(133, 213, 202);
-  cursor: pointer;
   margin-top: 10px;
 `;
 
@@ -42,9 +39,7 @@ export const MetricsText = styled.div`
 
 export const FundMetrics: React.FC = () => {
   const [metrics, metricsQuery] = useFundMetricsQuery();
-  const [currency, setCurrency] = useState('USD');
-  const rates = useTokenRates('ETH');
-  const history = useHistory();
+  const currency = useCurrency();
 
   if (metricsQuery.loading || !metrics) {
     return (
@@ -63,7 +58,9 @@ export const FundMetrics: React.FC = () => {
   const nonActiveFunds = metrics.state?.nonActiveFunds;
   const allInvestments = metrics.state?.allInvestments;
 
-  const mlnPrice = networkGav.multipliedBy(rates.USD);
+  const gav = networkGav.dividedBy(currency.rates.ETH);
+
+  const prefix = currency.currency === 'BTC' ? 'BTC' : currency.currency === 'ETH' ? 'Ξ' : '$';
 
   return (
     <Block>
@@ -73,15 +70,9 @@ export const FundMetrics: React.FC = () => {
       <Grid>
         <GridRow>
           <GridCol xs={12} sm={12}>
-            {currency === 'USD' ? (
-              <MetricsAUM onClick={() => setCurrency('ETH')}>
-                <FormattedNumber value={mlnPrice} decimals={0} prefix="$" />
-              </MetricsAUM>
-            ) : (
-              <MetricsAUM onClick={() => setCurrency('USD')}>
-                <FormattedNumber value={networkGav} decimals={0} prefix="Ξ" />
-              </MetricsAUM>
-            )}
+            <MetricsAUM>
+              <FormattedNumber value={gav} decimals={0} prefix={prefix} />
+            </MetricsAUM>
 
             <MetricsText>Assets Managed</MetricsText>
           </GridCol>

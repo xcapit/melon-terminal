@@ -8,6 +8,7 @@ import { Container } from '~/storybook/Container/Container';
 import { useRouteMatch } from 'react-router';
 import { networkFromName } from '~/utils/networkFromName';
 import { getNetworkLabel } from '~/config';
+import { useTimeout } from 'react-use';
 
 export interface RequiresConnectionProps {
   fallback?: React.ReactNode;
@@ -20,6 +21,9 @@ interface NetworkedRouteParams {
 export const RequiresConnection: React.FC<RequiresConnectionProps> = ({ children, fallback = true }) => {
   const connection = useConnectionState();
   const match = useRouteMatch<NetworkedRouteParams>()!;
+
+  // Wait three seconds before printing an error
+  const [timeout] = useTimeout(3000);
 
   if (connection.status === ConnectionStatus.CONNECTED && connection.network) {
     const restricted = match.params.network && networkFromName(match.params.network);
@@ -44,8 +48,8 @@ export const RequiresConnection: React.FC<RequiresConnectionProps> = ({ children
     return <>{output || null}</>;
   }
 
-  if (connection.status === ConnectionStatus.CONNECTING) {
-    return <Spinner positioning="centered" size="large" />;
+  if (!timeout() || connection.status === ConnectionStatus.CONNECTING) {
+    return <Spinner positioning="overlay" size="large" />;
   }
 
   if (connection.network === NetworkEnum.UNSUPPORTED) {

@@ -32,6 +32,8 @@ export function useFetchFundPricesByRange(fund: string, from: number | Depth) {
 
   return useQuery([key, address, from as number, today], fetchFundPricesByRange, {
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    staleTime: 1000 * 60 * 10,
     enabled: typeof from === 'number',
   });
 }

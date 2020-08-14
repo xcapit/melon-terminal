@@ -1,89 +1,51 @@
 import BigNumber from 'bignumber.js';
 import React from 'react';
+import {
+  GiCaesar,
+  GiChariot,
+  GiIcarus,
+  GiMedusaHead,
+  GiPadlock,
+  GiPalisade,
+  GiPegasus,
+  GiSpartanHelmet,
+  GiStorkDelivery,
+  GiWingfoot,
+} from 'react-icons/gi';
 import { useHistory } from 'react-router';
 import {
   Column,
+  FilterValue,
+  IdType,
+  Row,
   TableOptions,
   useGlobalFilter,
   usePagination,
   useRowState,
   useSortBy,
   useTable,
-  FilterValue,
-  IdType,
-  Row,
 } from 'react-table';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { CommonTable, ScrollableTable } from '~/components/Common/Table/Table';
-import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
-import { useRatesOrThrow } from '~/components/Contexts/Rates/Rates';
+import { RowData } from '~/components/Contexts/FundList/FundList';
 import { Button } from '~/components/Form/Button/Button';
-import { useEnvironment } from '~/hooks/useEnvironment';
-import { Block } from '~/storybook/Block/Block';
-import { Spinner } from '~/storybook/Spinner/Spinner';
-import { SectionTitle } from '~/storybook/Title/Title';
-import { TokenValue } from '~/TokenValue';
-import { calculateChangeFromSharePrice } from '~/utils/calculateChangeFromSharePrice';
-import { useFundOverviewQuery } from './FundOverview.query';
 import { getNetworkName } from '~/config';
 import { useConnectionState } from '~/hooks/useConnectionState';
-import {
-  GiCaesar,
-  GiStorkDelivery,
-  GiPalisade,
-  GiMedusaHead,
-  GiIcarus,
-  GiPegasus,
-  GiSpartanHelmet,
-  GiPadlock,
-  GiWingfoot,
-  GiChariot,
-} from 'react-icons/gi';
-import { fromTokenBaseUnit } from '~/utils/fromTokenBaseUnit';
+import { useCurrency } from '~/hooks/useCurrency';
+import { useFundList } from '~/hooks/useFundList';
+import { Block } from '~/storybook/Block/Block';
+import { IconName, Icons } from '~/storybook/Icons/Icons';
+import { Spinner } from '~/storybook/Spinner/Spinner';
+import { SectionTitle } from '~/storybook/Title/Title';
+import { Tooltip } from '~/storybook/Tooltip/Tooltip';
+import { TokenValue } from '~/TokenValue';
+import { sortBigNumber } from '~/utils/sortBigNumber';
 import { TableGlobalFilter } from './FundFilters';
 import { FundSharePriceChart } from './FundSharePriceChart';
-import { Icons, IconName } from '~/storybook/Icons/Icons';
-import { Tooltip } from '~/storybook/Tooltip/Tooltip';
-import { startOfMonth, startOfYear, getUnixTime } from 'date-fns';
-import { sameAddress } from '@melonproject/melonjs';
-
-export type RowData = {
-  rank: number;
-  age: number;
-  address: string;
-  name: string;
-  inception: Date;
-  sharePrice: BigNumber;
-  returnSinceInception: BigNumber;
-  returnYTD: BigNumber;
-  returnMTD: BigNumber;
-  returnSinceYesterday: BigNumber;
-  holdings: TokenValue[];
-  eth: BigNumber;
-  usd: BigNumber;
-  isShutdown: boolean;
-  version: string;
-  investments: number;
-  userWhitelist: boolean;
-  closed: boolean;
-  top5AUM: boolean;
-  topAUM: boolean;
-  top5MTD: boolean;
-  topMTD: boolean;
-  top5YTD: boolean;
-  topYTD: boolean;
-  top5Recent: boolean;
-  topRecent: boolean;
-  top5Investments: boolean;
-  topInvestments: boolean;
-  largeFund: boolean;
-  tinyFund: boolean;
-  underperformingFund: boolean;
-};
 
 const coloredIcons = ['MLN', 'REN', 'ZRX'];
 
-const columns = (prefix: string, history: any): Column<RowData>[] => {
+const columns = (prefix: string, history: any, currency: string): Column<RowData>[] => {
   return [
     {
       Header: 'Name',
@@ -114,8 +76,8 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
               <GiCaesar color="rgb(133,213,202)" size={20} />
             </Tooltip>
           )}{' '}
-          {cell.row.original.top5YTD && (
-            <Tooltip value="Top 5 performance YTD">
+          {cell.row.original.top5SinceInception && (
+            <Tooltip value="Top 5 performance since inception">
               <GiSpartanHelmet color="rgb(133,213,202)" size={20} />
             </Tooltip>
           )}{' '}
@@ -163,25 +125,24 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       ),
     },
 
-    {
-      Header: 'Age',
-      accessor: 'age',
-      sortType: 'basic',
-    },
+    // {
+    //   Header: 'Age',
+    //   accessor: 'age',
+    //   sortType: 'basic',
+    // },
 
     {
-      Header: 'AUM',
-      accessor: 'eth',
-      sortType: (rowA, rowB, columnId) => {
-        const a = new BigNumber(rowA.values[columnId]);
-        const b = new BigNumber(rowB.values[columnId]);
-        return b.comparedTo(a);
-      },
+      Header: (
+        <>
+          AUM
+          <br />[{currency}]
+        </>
+      ),
+      accessor: 'aumEth',
+      sortType: 'basic',
       Cell: (cell) => (
         <>
-          <FormattedNumber value={fromTokenBaseUnit(cell.row.original.usd, 18)} decimals={0} prefix="$" />
-          <br />
-          <TokenValueDisplay value={cell.value} decimals={18} digits={0} symbol="Ξ" prefixSymbol={true} />
+          <FormattedNumber value={cell.row.original.aum} decimals={0} />
         </>
       ),
       cellProps: {
@@ -201,7 +162,7 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       accessor: 'holdings',
       disableSortBy: true,
       Cell: (cell) =>
-        !new BigNumber(cell.row.original.eth).isZero() ? (
+        !new BigNumber(cell.row.original.aumEth).isZero() ? (
           cell.value
             .filter((holding) => !holding?.value?.isZero())
             .filter((_, index) => index < 5)
@@ -209,7 +170,7 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
               <Tooltip
                 key={holding.token.symbol}
                 value={`${holding.token.symbol}: ${holding.value
-                  ?.dividedBy(cell.row.original.eth)
+                  ?.dividedBy(cell.row.original.aumEth)
                   .multipliedBy(100)
                   .toFixed(2)}%`}
               >
@@ -246,11 +207,8 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
         </>
       ),
       accessor: 'returnSinceInception',
-      sortType: (rowA, rowB, columnId) => {
-        const a = new BigNumber(rowA.values[columnId]);
-        const b = new BigNumber(rowB.values[columnId]);
-        return b.comparedTo(a);
-      },
+      sortType: (rowA, rowB, columnId) =>
+        sortBigNumber(new BigNumber(rowA.values[columnId]), new BigNumber(rowB.values[columnId])),
       Cell: (cell) => <FormattedNumber value={cell.value} colorize={true} decimals={2} suffix="%" />,
       cellProps: {
         style: {
@@ -266,34 +224,16 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       },
     },
     {
-      Header: 'YTD',
-      accessor: 'returnYTD',
-      sortType: (rowA, rowB, columnId) => {
-        const a = new BigNumber(rowA.values[columnId]);
-        const b = new BigNumber(rowB.values[columnId]);
-        return b.comparedTo(a);
-      },
-      Cell: (cell) => <FormattedNumber value={cell.value} colorize={true} decimals={2} suffix="%" />,
-      cellProps: {
-        style: {
-          textAlign: 'right',
-          verticalAlign: 'top',
-        },
-      },
-      headerProps: {
-        style: {
-          textAlign: 'right',
-        },
-      },
-    },
-    {
-      Header: 'MTD',
+      Header: (
+        <>
+          Performance
+          <br />
+          MTD
+        </>
+      ),
       accessor: 'returnMTD',
-      sortType: (rowA, rowB, columnId) => {
-        const a = new BigNumber(rowA.values[columnId]);
-        const b = new BigNumber(rowB.values[columnId]);
-        return b.comparedTo(a);
-      },
+      sortType: (rowA, rowB, columnId) =>
+        sortBigNumber(new BigNumber(rowA.values[columnId]), new BigNumber(rowB.values[columnId])),
       Cell: (cell) => <FormattedNumber value={cell.value} colorize={true} decimals={2} suffix="%" />,
       cellProps: {
         style: {
@@ -308,13 +248,15 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       },
     },
     {
-      Header: '1 day',
+      Header: (
+        <>
+          Performance
+          <br />1 day
+        </>
+      ),
       accessor: 'returnSinceYesterday',
-      sortType: (rowA, rowB, columnId) => {
-        const a = new BigNumber(rowA.values[columnId]);
-        const b = new BigNumber(rowB.values[columnId]);
-        return b.comparedTo(a);
-      },
+      sortType: (rowA, rowB, columnId) =>
+        sortBigNumber(new BigNumber(rowA.values[columnId]), new BigNumber(rowB.values[columnId])),
       Cell: (cell) => <FormattedNumber value={cell.value} colorize={true} decimals={2} suffix="%" />,
       cellProps: {
         style: {
@@ -329,10 +271,37 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
       },
     },
     {
-      Header: 'Share price',
+      Header: (
+        <>
+          Share Price
+          <br />[{currency}]
+        </>
+      ),
       accessor: 'sharePrice',
+      sortType: 'basic',
+      Cell: (cell) => (
+        <>
+          <FormattedNumber value={cell.value} decimals={4} />
+        </>
+      ),
+      cellProps: {
+        style: {
+          textAlign: 'right',
+          verticalAlign: 'top',
+        },
+      },
+      headerProps: {
+        style: {
+          textAlign: 'right',
+        },
+      },
+    },
+
+    {
+      Header: 'Last month',
+      // accessor: 'sharePrice',
       disableSortBy: true,
-      Cell: (cell) => <FundSharePriceChart address={cell.row.original.address} />,
+      Cell: (cell: any) => <FundSharePriceChart address={cell.row.original.address} />,
       cellProps: {
         style: {
           textAlign: 'right',
@@ -378,148 +347,9 @@ const columns = (prefix: string, history: any): Column<RowData>[] => {
   ];
 };
 
-export function useTableData() {
-  const today = new Date();
-  const startOfMonthDate = new BigNumber(getUnixTime(startOfMonth(today)));
-  const startOfYearDate = new BigNumber(getUnixTime(startOfYear(today)));
-
-  const result = useFundOverviewQuery(startOfMonthDate, startOfYearDate);
-  const rates = useRatesOrThrow();
-  const environment = useEnvironment()!;
-  const version = environment?.deployment.melon.addr.Version;
-
-  const data = React.useMemo(() => {
-    const funds = result.data?.funds ?? [];
-
-    return funds.map<RowData>((item, index) => {
-      // const holdings = tokens.map((token) => {
-      //   const tokenHolding = item.holdings.find((holding) => holding.asset.id === token.address);
-      //   const quantity = tokenHolding ? tokenHolding.assetGav : 0;
-      //   return new TokenValue(token, quantity);
-      // });
-
-      const holdings = item.holdings.map((holding) => {
-        const token = environment.getToken(holding.asset.symbol);
-        return new TokenValue(token, holding.assetGav);
-      });
-
-      const eth = new BigNumber(item.gav);
-      const usd = new BigNumber(item.gav).multipliedBy(rates.ETH.USD);
-
-      const largeFund = eth.isGreaterThan('1e20');
-      const tinyFund = eth.isLessThan('1e18');
-
-      const returnSinceInception = calculateChangeFromSharePrice(item.sharePrice, new BigNumber('1e18'));
-
-      const underperformingFund = returnSinceInception.isLessThan(-20);
-
-      const returnYTD = calculateChangeFromSharePrice(
-        item.calculationsHistory[0]?.sharePrice,
-        item.yearStartPx[0]?.sharePrice
-      );
-
-      const returnMTD = calculateChangeFromSharePrice(
-        item.calculationsHistory[0]?.sharePrice,
-        item.monthStartPx[0]?.sharePrice
-      );
-
-      const returnSinceYesterday = calculateChangeFromSharePrice(
-        item.calculationsHistory[0]?.sharePrice,
-        item.calculationsHistory[1]?.sharePrice
-      );
-
-      const userWhitelist = !!item.policyManager.policies.find((policy) => policy.identifier === 'UserWhitelist');
-      const closed = item.isShutdown || !sameAddress(item.version?.id, version);
-
-      const investments = item.investments.length;
-
-      // badges
-      const top5AUM = index < 5 ? true : false;
-      const topAUM = index === 0 ? true : false;
-      const top5MTD = false;
-      const topMTD = false;
-      const top5YTD = false;
-      const topYTD = false;
-      const top5Recent = false;
-      const topRecent = false;
-      const top5Investments = false;
-      const topInvestments = false;
-
-      const age = (Date.now() / 1000 - item.createdAt) / (24 * 60 * 60);
-
-      return {
-        rank: index + 1,
-        age,
-        address: item.id,
-        name: item.name,
-        inception: new Date(item.createdAt * 1000),
-        sharePrice: item.sharePrice,
-        returnSinceInception,
-        returnYTD,
-        returnMTD,
-        returnSinceYesterday,
-        holdings,
-        eth,
-        usd,
-        isShutdown: item.isShutdown,
-        version: item.version.name,
-        userWhitelist,
-        investments,
-        closed,
-        top5AUM,
-        topAUM,
-        top5MTD,
-        topMTD,
-        top5YTD,
-        topYTD,
-        top5Recent,
-        topRecent,
-        top5Investments,
-        topInvestments,
-        largeFund,
-        tinyFund,
-        underperformingFund,
-      };
-    });
-  }, [result.data]);
-
-  const d1 = React.useMemo(() => {
-    return data
-      .sort((a, b) => b.returnMTD.comparedTo(a.returnMTD))
-      .map((fund, index) => {
-        return { ...fund, ...(index < 5 && { top5MTD: true }), ...(index === 0 && { topMTD: true }) };
-      });
-  }, [data]);
-
-  const d2 = React.useMemo(() => {
-    return d1
-      .sort((a, b) => b.returnYTD.comparedTo(a.returnYTD))
-      .map((fund, index) => {
-        return { ...fund, ...(index < 5 && { top5YTD: true }), ...(index === 0 && { topYTD: true }) };
-      });
-  }, [d1]);
-
-  const d3 = React.useMemo(() => {
-    return d2
-      .sort((a, b) => a.age - b.age)
-      .map((fund, index) => {
-        return { ...fund, ...(index < 5 && { top5Recent: true }), ...(index === 0 && { topRecent: true }) };
-      });
-  }, [d2]);
-
-  const d4 = React.useMemo(() => {
-    return d3
-      .sort((a, b) => b.investments - a.investments)
-      .map((fund, index) => {
-        return { ...fund, ...(index < 5 && { top5Investments: true }), ...(index === 0 && { topInvestments: true }) };
-      });
-  }, [d3]);
-
-  return React.useMemo(() => d4.sort((a, b) => b.eth.comparedTo(a.eth)), [d4]);
-}
-
 export const FundOverview: React.FC = () => {
-  const data = useTableData();
+  const data = useFundList();
+  const currency = useCurrency();
   const history = useHistory();
   const connection = useConnectionState();
 
@@ -551,8 +381,8 @@ export const FundOverview: React.FC = () => {
             return sizes.some(
               (size: any) =>
                 !!(
-                  row.values.eth.dividedBy('1e18').isGreaterThanOrEqualTo(size.min) &&
-                  row.values.eth.dividedBy('1e18').isLessThan(size.max)
+                  row.values.aumEth.dividedBy('1e18').isGreaterThanOrEqualTo(size.min) &&
+                  row.values.aumEth.dividedBy('1e18').isLessThan(size.max)
                 )
             );
           })
@@ -648,12 +478,12 @@ export const FundOverview: React.FC = () => {
 
   const options: TableOptions<RowData> = React.useMemo(
     () => ({
-      columns: columns(prefix || '', history),
+      columns: columns(prefix || '', history, currency.currency),
       initialState: {
         hiddenColumns: ['age', 'top20AUM'],
         pageSize: 10,
       },
-      data,
+      data: data.list,
       rowProps: (row) => ({ onClick: () => history.push(`/${prefix}/fund/${row.original.address}`) }),
       filterTypes,
       globalFilter: 'custom',
@@ -664,7 +494,7 @@ export const FundOverview: React.FC = () => {
   const table = useTable(options, useGlobalFilter, useSortBy, usePagination, useRowState);
   const filter = <TableGlobalFilter table={table} />;
 
-  if (data.length === 0) {
+  if (data.list.length === 0) {
     return (
       <Block>
         <SectionTitle>Melon Fund Universe</SectionTitle>

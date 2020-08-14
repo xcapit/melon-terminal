@@ -13,7 +13,9 @@ import {
   HeaderTitle,
   LogoDesktop,
   LogoMobile,
+  CurrencySelectionItem,
 } from '~/storybook/Header/Header';
+import { CurrencySelector } from './CurrencySelector/CurrencySelector';
 import { Footer, FooterNavigation, FooterItem } from '~/storybook/Footer/Footer';
 import { Logo } from '~/storybook/Logo/Logo';
 import { ConnectionSelector } from './ConnectionSelector/ConnectionSelector';
@@ -88,6 +90,10 @@ export const Layout: React.FC<LayoutProps> = (props) => {
                   </NavLink>
                 </ConnectionInfoItem>
               )}
+
+              <CurrencySelectionItem>
+                <CurrencySelector />
+              </CurrencySelectionItem>
 
               {props.connectionSwitch && (
                 <ConnectionInfoItem>

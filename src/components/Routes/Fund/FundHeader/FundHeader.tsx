@@ -1,6 +1,4 @@
 import React from 'react';
-import { useFundDetailsQuery } from './FundDetails.query';
-import { useFundDailyChange } from '~/components/Routes/Fund/FundHeader/FundDailyChange.query';
 import { RequiresFundSetupComplete } from '~/components/Gates/RequiresFundSetupComplete/RequiresFundSetupComplete';
 import { DataBlock, DataBlockSection } from '~/storybook/DataBlock/DataBlock';
 import { Bar, BarContent } from '~/storybook/Bar/Bar';
@@ -11,7 +9,7 @@ import { useFundSlug } from './FundSlug.query';
 import { NetworkEnum } from '~/types';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { CopyToClipboard } from '~/components/Common/CopyToClipboard/CopyToClipboard';
-import { useTableData } from '../../Home/FundOverview/FundOverview';
+import { useFundList } from '~/hooks/useFundList';
 import {
   GiCaesar,
   GiSpartanHelmet,
@@ -29,6 +27,12 @@ import { useHistory } from 'react-router';
 import { useConnectionState } from '~/hooks/useConnectionState';
 import { getNetworkName } from '~/config';
 import { Tooltip } from '~/storybook/Tooltip/Tooltip';
+import { useCurrency } from '~/hooks/useCurrency';
+import { useFetchFundPricesByDepth } from '~/hooks/metricsService/useFetchFundPricesByDepth';
+import BigNumber from 'bignumber.js';
+import { useFund } from '~/hooks/useFund';
+import { calculateReturn } from '~/utils/finance';
+import { getRate } from '~/components/Contexts/Currency/Currency';
 
 export interface FundHeaderProps {
   address: string;
@@ -36,23 +40,23 @@ export interface FundHeaderProps {
 
 export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
   const environment = useEnvironment()!;
-  const [fund, query] = useFundDetailsQuery(address);
-  const [dailyChange, queryDailyChange] = useFundDailyChange(address);
+  const fund = useFund();
+
   const [slug] = useFundSlug(address);
-  const allFunds = useTableData();
+  const allFunds = useFundList();
 
   const history = useHistory();
   const connection = useConnectionState();
   const prefix = getNetworkName(connection.network);
+  const currency = useCurrency();
 
-  if (queryDailyChange.loading || query.loading || !fund) {
-    return null;
+  const fundData = allFunds.list.find((item) => item.address === address);
+
+  if (!fundData) {
+    return <></>;
   }
 
-  const fundData = allFunds.find((item) => item.address === address);
-
-  const routes = fund.routes;
-  const accounting = routes && routes.accounting;
+  const dailyChange = fundData?.returnSinceYesterday;
 
   const slugUrl =
     slug &&
@@ -67,9 +71,9 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
         <GiCaesar color="rgb(133,213,202)" size={20} />
       </Tooltip>
     );
-  fundData?.top5YTD &&
+  fundData?.top5SinceInception &&
     badges.push(
-      <Tooltip key="spartan" value="Top 5 performance YTD">
+      <Tooltip key="spartan" value="Top 5 performance since inception">
         <GiSpartanHelmet color="rgb(133,213,202)" size={20} />
       </Tooltip>
     );
@@ -137,12 +141,12 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
         />
         <RequiresFundSetupComplete fallback={false}>
           <DataBlockSection>
-            <DataBlock label="Share price">
-              <TokenValueDisplay value={accounting?.sharePrice} decimals={0} symbol="WETH" />
+            <DataBlock label="Assets under management">
+              <TokenValueDisplay value={fundData.aum} decimals={0} digits={0} symbol={currency.currency} />
             </DataBlock>
 
-            <DataBlock label="Assets under management">
-              <TokenValueDisplay value={accounting?.grossAssetValue} decimals={0} symbol="WETH" />
+            <DataBlock label="Share price">
+              <TokenValueDisplay value={fundData.sharePrice} decimals={0} symbol={currency.currency} />
             </DataBlock>
 
             <DataBlock label="Daily change">

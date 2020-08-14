@@ -8,7 +8,11 @@ export type RatesContextValue = QueryResult<RatesType>;
 export const Rates = React.createContext<RatesContextValue>({} as any);
 
 export const RatesProvider: React.FC = (props) => {
-  const rates = useQuery('rates', fetchRates);
+  const rates = useQuery('rates', fetchRates, {
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 10,
+  });
   return <Rates.Provider value={rates}>{props.children}</Rates.Provider>;
 };
 

@@ -1,7 +1,6 @@
 import React, { useMemo, useEffect, createContext, useRef } from 'react';
 import ApolloClient from 'apollo-client';
 import { ApolloLink, Observable, FetchResult } from 'apollo-link';
-import { onError } from 'apollo-link-error';
 import { RetryLink } from 'apollo-link-retry';
 import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
@@ -11,28 +10,6 @@ import { useEnvironment } from '~/hooks/useEnvironment';
 import { getConfig } from '~/config';
 import { DeployedEnvironment } from '@melonproject/melonjs';
 import { NetworkEnum } from '~/types';
-
-const createErrorLink = () => {
-  return onError(({ graphQLErrors, networkError }) => {
-    if (graphQLErrors) {
-      graphQLErrors.forEach(({ message, locations, path, extensions }) => {
-        const fields = path && path.join('.');
-        console.error('[GQL ERROR]: Message: %s, Path: %s, Locations: %o', message, fields, locations);
-
-        const stacktrace = extensions && extensions.exception && extensions.exception.stacktrace;
-        if (stacktrace && stacktrace.length) {
-          stacktrace.forEach((line: string) => {
-            console.error(line);
-          });
-        }
-      });
-    }
-
-    if (networkError) {
-      console.error('[GQL NETWORK ERROR]: %o', networkError);
-    }
-  });
-};
 
 const nullLink = new ApolloLink(
   () => new Observable<FetchResult>(() => {})
@@ -57,8 +34,7 @@ const useOnChainApollo = (environment?: DeployedEnvironment) => {
       : nullLink;
 
     const retry = new RetryLink();
-    const error = createErrorLink();
-    const link = ApolloLink.from([error, retry, data]);
+    const link = ApolloLink.from([retry, data]);
     const memory = new InMemoryCache({
       addTypename: true,
     });
@@ -105,8 +81,7 @@ const useTheGraphApollo = (environment?: DeployedEnvironment) => {
       : nullLink;
 
     const retry = new RetryLink();
-    const error = createErrorLink();
-    const link = ApolloLink.from([error, retry, data]);
+    const link = ApolloLink.from([retry, data]);
     const memory = new InMemoryCache({
       addTypename: true,
     });

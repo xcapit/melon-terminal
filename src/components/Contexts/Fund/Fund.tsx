@@ -26,12 +26,19 @@ export const FundProvider: React.FC<FundProviderProps> = (props) => {
   });
 
   const output = useMemo(() => ({ ...fund, address, loading: query.loading }), [fund, query.loading]);
-
   if (query.loading) {
     return <Spinner />;
   }
 
-  if (!fund.manager) {
+  if (query.error) {
+    return (
+      <Container>
+        <Fallback>Failed to load fund details. Please try again.</Fallback>
+      </Container>
+    );
+  }
+
+  if (!fund.address) {
     return (
       <Container>
         <Fallback>This fund does not exist. Are you connected to the right network?</Fallback>

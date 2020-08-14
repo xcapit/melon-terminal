@@ -2080,10 +2080,10 @@
   resolved "https://registry.yarnpkg.com/@mdx-js/util/-/util-1.6.0.tgz#896eace2b34238320521c0a92180c349942cd8f6"
   integrity sha512-zzGMtKnc28voDQ4LZFczZzwkm5VwwF7ZbC5iePaWFaF+kD+ekPVdronJEOMFK9SUEKUbmc31Bz81rtS6264z4w==
 
-"@melonproject/melongql@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@melonproject/melongql/-/melongql-1.0.2.tgz#b1fcf576e3065bc29eccc5a559410849e88baefc"
-  integrity sha512-9mRjkuI1DTJZkt6iFDxh6eHuu0bNBcNdaB5VYiulGQgO3kU3Ok8aesWzX8UJtjEMGHIub6bgYIPeP+51OW6rDg==
+"@melonproject/melongql@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@melonproject/melongql/-/melongql-1.0.3.tgz#1c878a1c12826c25b620bb55c05d867de51a16af"
+  integrity sha512-AIEdbkj6NblzgNyURE0LF/i2WfUmhQc92AuUCl90Yl3+6s7BRo9pi9KzyiDQ/ZNVUJjdUY4epoxUFq+bO9097g==
   dependencies:
     "@melonproject/melonjs" "^1.0.5"
     apollo-link "^1.2.14"
@@ -4638,15 +4638,6 @@ apollo-client@^2.6.4:
     ts-invariant "^0.4.0"
     tslib "^1.10.0"
     zen-observable "^0.8.0"
-
-apollo-link-error@^1.1.13:
-  version "1.1.13"
-  resolved "https://registry.yarnpkg.com/apollo-link-error/-/apollo-link-error-1.1.13.tgz#c1a1bb876ffe380802c8df0506a32c33aad284cd"
-  integrity sha512-jAZOOahJU6bwSqb2ZyskEK1XdgUY9nkmeclCrW7Gddh1uasHVqmoYc4CKdb0/H0Y1J9lvaXKle2Wsw/Zx1AyUg==
-  dependencies:
-    apollo-link "^1.2.14"
-    apollo-link-http-common "^0.2.16"
-    tslib "^1.9.3"
 
 apollo-link-http-common@^0.2.14, apollo-link-http-common@^0.2.16:
   version "0.2.16"

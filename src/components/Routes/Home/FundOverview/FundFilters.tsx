@@ -153,7 +153,7 @@ export function TableGlobalFilter<TData extends object>(props: TableGlobalFilter
 
   const badgesOptions = [
     { value: 'top5AUM', label: 'Largest funds', icon: <GiCaesar color="rgb(133,213,202)" /> },
-    { value: 'top5YTD', label: 'Best YTD', icon: <GiSpartanHelmet color="rgb(133,213,202)" /> },
+    { value: 'top5SinceInception', label: 'Best since inception', icon: <GiSpartanHelmet color="rgb(133,213,202)" /> },
     { value: 'top5MTD', label: 'Best MTD', icon: <GiPegasus color="rgb(133,213,202)" /> },
     { value: 'top5Recent', label: 'Most recent', icon: <GiStorkDelivery color="rgb(133,213,202)" /> },
     { value: 'top5Investments', label: 'Most investments', icon: <GiChariot color="rgb(133,213,202)" /> },
@@ -261,21 +261,6 @@ export function TableGlobalFilter<TData extends object>(props: TableGlobalFilter
                 props.table.setGlobalFilter({ ...value, sinceInception });
               }}
               placeholder="Since inception..."
-              maxWidth="300"
-            />
-          </SelectionFilter>
-
-          <SelectionFilter>
-            <SelectField
-              name="ytd"
-              options={returnFilterChoices}
-              isMulti={true}
-              onChange={(e) => {
-                const ytd = e?.map((item: any) => item.value);
-                setValue({ ...value, ytd });
-                props.table.setGlobalFilter({ ...value, ytd });
-              }}
-              placeholder="YTD..."
               maxWidth="300"
             />
           </SelectionFilter>

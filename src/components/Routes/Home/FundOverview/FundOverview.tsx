@@ -125,11 +125,11 @@ const columns = (prefix: string, history: any, currency: string): Column<RowData
       ),
     },
 
-    // {
-    //   Header: 'Age',
-    //   accessor: 'age',
-    //   sortType: 'basic',
-    // },
+    {
+      Header: 'Age',
+      accessor: 'age',
+      sortType: 'basic',
+    },
 
     {
       Header: (
@@ -378,13 +378,7 @@ export const FundOverview: React.FC = () => {
               return { min, max };
             });
 
-            return sizes.some(
-              (size: any) =>
-                !!(
-                  row.values.aumEth.dividedBy('1e18').isGreaterThanOrEqualTo(size.min) &&
-                  row.values.aumEth.dividedBy('1e18').isLessThan(size.max)
-                )
-            );
+            return sizes.some((size: any) => !!(row.values.aumEth >= size.min && row.values.aumEth < size.max));
           })
           .filter((row) => {
             if (!filterValue.age?.length) {
@@ -432,18 +426,18 @@ export const FundOverview: React.FC = () => {
             );
           })
           .filter((row) => {
-            if (!filterValue.ytd?.length) {
+            if (!filterValue.mtd?.length) {
               return true;
             }
 
-            const returns = filterValue.ytd.map((value: string) => {
+            const returns = filterValue.mtd.map((value: string) => {
               const [min, max] = value.split('/');
               return { min: parseFloat(min), max: parseFloat(max) };
             });
 
             return returns.some(
               (ret: any) =>
-                !!(row.values.returnYTD.isGreaterThanOrEqualTo(ret.min) && row.values.returnYTD.isLessThan(ret.max))
+                !!(row.values.returnMTD.isGreaterThanOrEqualTo(ret.min) && row.values.returnMTD.isLessThan(ret.max))
             );
           })
           .filter((row) => {

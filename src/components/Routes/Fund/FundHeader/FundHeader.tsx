@@ -1,38 +1,35 @@
+import { sameAddress } from '@melonproject/melonjs';
 import React from 'react';
-import { RequiresFundSetupComplete } from '~/components/Gates/RequiresFundSetupComplete/RequiresFundSetupComplete';
-import { DataBlock, DataBlockSection } from '~/storybook/DataBlock/DataBlock';
-import { Bar, BarContent } from '~/storybook/Bar/Bar';
-import { Headline } from '~/storybook/Headline/Headline';
-import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
-import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
-import { useFundSlug } from './FundSlug.query';
-import { NetworkEnum } from '~/types';
-import { useEnvironment } from '~/hooks/useEnvironment';
-import { CopyToClipboard } from '~/components/Common/CopyToClipboard/CopyToClipboard';
-import { useFundList } from '~/hooks/useFundList';
 import {
   GiCaesar,
-  GiSpartanHelmet,
-  GiPegasus,
-  GiStorkDelivery,
   GiChariot,
-  GiWingfoot,
   GiIcarus,
   GiMedusaHead,
-  GiPalisade,
   GiPadlock,
+  GiPalisade,
+  GiPegasus,
+  GiSpartanHelmet,
+  GiStorkDelivery,
+  GiWingfoot,
 } from 'react-icons/gi';
-import { Button } from '~/components/Form/Button/Button';
 import { useHistory } from 'react-router';
-import { useConnectionState } from '~/hooks/useConnectionState';
+import { CopyToClipboard } from '~/components/Common/CopyToClipboard/CopyToClipboard';
+import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
+import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
+import { Button } from '~/components/Form/Button/Button';
+import { RequiresFundSetupComplete } from '~/components/Gates/RequiresFundSetupComplete/RequiresFundSetupComplete';
 import { getNetworkName } from '~/config';
-import { Tooltip } from '~/storybook/Tooltip/Tooltip';
+import { useConnectionState } from '~/hooks/useConnectionState';
 import { useCurrency } from '~/hooks/useCurrency';
-import { useFetchFundPricesByDepth } from '~/hooks/metricsService/useFetchFundPricesByDepth';
-import BigNumber from 'bignumber.js';
+import { useEnvironment } from '~/hooks/useEnvironment';
 import { useFund } from '~/hooks/useFund';
-import { calculateReturn } from '~/utils/finance';
-import { getRate } from '~/components/Contexts/Currency/Currency';
+import { useFundList } from '~/hooks/useFundList';
+import { Bar, BarContent } from '~/storybook/Bar/Bar';
+import { DataBlock, DataBlockSection } from '~/storybook/DataBlock/DataBlock';
+import { Headline } from '~/storybook/Headline/Headline';
+import { Tooltip } from '~/storybook/Tooltip/Tooltip';
+import { NetworkEnum } from '~/types';
+import { useFundSlug } from './FundSlug.query';
 
 export interface FundHeaderProps {
   address: string;
@@ -50,7 +47,7 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
   const prefix = getNetworkName(connection.network);
   const currency = useCurrency();
 
-  const fundData = allFunds.list.find((item) => item.address === address);
+  const fundData = allFunds.list.find((item) => sameAddress(item.address, address));
 
   if (!fundData) {
     return <></>;
@@ -142,11 +139,11 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
         <RequiresFundSetupComplete fallback={false}>
           <DataBlockSection>
             <DataBlock label="Assets under management">
-              <TokenValueDisplay value={fundData.aum} decimals={0} digits={0} symbol={currency.currency} />
+              <TokenValueDisplay value={fundData?.aum} decimals={0} digits={0} symbol={currency.currency} />
             </DataBlock>
 
             <DataBlock label="Share price">
-              <TokenValueDisplay value={fundData.sharePrice} decimals={0} symbol={currency.currency} />
+              <TokenValueDisplay value={fundData?.sharePrice} decimals={0} symbol={currency.currency} />
             </DataBlock>
 
             <DataBlock label="Daily change">

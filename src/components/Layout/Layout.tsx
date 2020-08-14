@@ -69,7 +69,11 @@ export const Layout: React.FC<LayoutProps> = (props) => {
               <DarkModeSwitch />
               {!account.loading && account.fund && prefix && (
                 <ConnectionInfoItem>
-                  <NavLink to={`/${prefix}/fund/${account.fund}`} title={account.fund} activeClassName="active">
+                  <NavLink
+                    to={`/${prefix}/fund/${account.fund.toLowerCase()}`}
+                    title={account.fund}
+                    activeClassName="active"
+                  >
                     My Fund
                   </NavLink>
                 </ConnectionInfoItem>

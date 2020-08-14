@@ -161,29 +161,13 @@ const columns = (prefix: string, history: any, currency: string): Column<RowData
       Header: 'Top 5 assets',
       accessor: 'holdings',
       disableSortBy: true,
-      Cell: (cell) =>
-        !new BigNumber(cell.row.original.aumEth).isZero() ? (
-          cell.value
-            .filter((holding) => !holding?.value?.isZero())
-            .filter((_, index) => index < 5)
-            .map((holding) => (
-              <Tooltip
-                key={holding.token.symbol}
-                value={`${holding.token.symbol}: ${holding.value
-                  ?.dividedBy(cell.row.original.aumEth)
-                  .multipliedBy(100)
-                  .toFixed(2)}%`}
-              >
-                <Icons
-                  name={holding.token.symbol as IconName}
-                  size="medium"
-                  colored={coloredIcons.some((icon) => icon === holding.token.symbol)}
-                />{' '}
-              </Tooltip>
-            ))
-        ) : (
-          <></>
-        ),
+      Cell: (cell) => {
+        return cell.row.original.top5Holdings.map(([symbol, percentage]) => (
+          <Tooltip key={symbol} value={`${symbol}: ${percentage.toFixed(2)}%`}>
+            <Icons name={symbol as IconName} size="medium" colored={coloredIcons.includes(symbol)} />{' '}
+          </Tooltip>
+        ));
+      },
 
       cellProps: {
         style: {

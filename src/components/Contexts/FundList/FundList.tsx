@@ -1,13 +1,10 @@
-import React, { useState, createContext, useEffect, useMemo } from 'react';
+import React, { createContext } from 'react';
 import BigNumber from 'bignumber.js';
 import { TokenValue } from '~/TokenValue';
-import { startOfMonth, startOfYear, getUnixTime, addMinutes } from 'date-fns';
-import { useFundListQuery } from './FundList.query';
 import { calculateChangeFromSharePrice } from '~/utils/calculateChangeFromSharePrice';
 import { useEnvironment } from '~/hooks/useEnvironment';
 import { sameAddress } from '@melonproject/melonjs';
 import { useCurrency } from '~/hooks/useCurrency';
-import { usePriceQuery, AssetPrice } from './Price.query';
 import { useFetchFundList } from '~/hooks/metricsService/useFetchFundList';
 import { getRate } from '~/components/Contexts/Currency/Currency';
 import { sortBigNumber } from '~/utils/sortBigNumber';
@@ -62,6 +59,7 @@ export type RowData = {
   returnSinceYesterday: BigNumber;
   returnMTD: BigNumber;
   returnSinceInception: BigNumber;
+  top5Holdings: [string, BigNumber][];
   top5AUM: boolean;
   topAUM: boolean;
   top5SinceInception: boolean;
@@ -144,6 +142,18 @@ export const FundListProvider: React.FC = (props) => {
         const tinyFund = aumEth < 1;
         const underperformingFund = returnSinceInception.isLessThan(-20);
 
+        const top5Holdings: [string, BigNumber][] =
+          aumEth === 0
+            ? []
+            : holdings
+                .filter((holding) => !holding?.value?.isZero())
+                .sort((a, b) => b.value!.comparedTo(a.value!))
+                .slice(0, 5)
+                .map((holding) => {
+                  const percentage = holding.value!.dividedBy(aumEth).multipliedBy(100);
+                  return [holding.token.symbol, percentage];
+                });
+
         return {
           name: item.name,
           address: item.address,
@@ -156,6 +166,7 @@ export const FundListProvider: React.FC = (props) => {
           returnMTD,
           returnYTD,
           returnSinceInception,
+          top5Holdings,
           top5AUM,
           topAUM,
           top5SinceInception,

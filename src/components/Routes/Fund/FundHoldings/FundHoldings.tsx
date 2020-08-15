@@ -62,8 +62,12 @@ export const FundHoldings: React.FC<FundHoldingsProps> = ({ address }) => {
 
   const currentHoldings = Object.keys(current?.holdings || [])
     .map((key) => {
-      const currentPrice = new BigNumber(current.rates[key]).dividedBy(getRate(current.rates, currency.currency));
-      const previousPrice = new BigNumber(previous.rates[key]).dividedBy(getRate(previous.rates, currency.currency));
+      const currentPrice = new BigNumber(current?.rates?.[key] ?? 'NaN').dividedBy(
+        current?.rates ? getRate(current.rates, currency.currency) : 'NaN'
+      );
+      const previousPrice = new BigNumber(previous?.rates?.[key] ?? 'NaN').dividedBy(
+        previous?.rates ? getRate(previous.rates, currency.currency) : 'NaN'
+      );
 
       return {
         symbol: key,

@@ -15,7 +15,6 @@ import { RequiresFundJustCreated } from '~/components/Gates/RequiresFundJustCrea
 import { RequiresFundManager } from '~/components/Gates/RequiresFundManager/RequiresFundManager';
 import { RequiresNoSharesCreated } from '~/components/Gates/RequiresNoSharesCreated/RequiresNoSharesCreated';
 import { Link } from '~/storybook/Link/Link';
-import { RequiresNoPoliciesDeployed } from '~/components/Gates/RequiresNoPoliciesDeployed/RequiresNoPoliciesDeployed';
 import { RequiresFundDeployedWithCurrentVersion } from '~/components/Gates/RequiresFundDeployedWithCurrentVersion/RequiresFundDeployedWithCurrentVersion';
 import { RequiresFundNotShutDown } from '~/components/Gates/RequiresFundNotShutDown/RequiresFundNotShutDown';
 

@@ -49,7 +49,7 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
   const { data: monthlyData, error: monthlyError, isFetching: monthlyFetching } = useFetchFundPricesByMonthEnd(
     fund.address!
   );
-
+  console.log(monthlyData?.data);
   const monthlyReturns = React.useMemo(() => {
     return monthlyData?.data && monthlyReturnsFromTimeline(monthlyData.data, currency.currency);
   }, [monthlyData?.data, currency.currency]);

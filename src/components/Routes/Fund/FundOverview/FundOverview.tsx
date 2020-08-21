@@ -2,47 +2,57 @@ import React from 'react';
 import { FundHoldings } from '../FundHoldings/FundHoldings';
 import { NewFundPerformanceChart } from '../FundPerformanceChart/FundPerformanceChart';
 import { Grid, GridRow, GridCol } from '~/storybook/Grid/Grid';
-import { FundDiligence } from '../FundDiligence/FundDiligence';
 import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
+import { FundDiligence } from '../FundDiligence/FundDiligence';
 import { FundSharePriceMetrics } from '../FundPerformanceMetrics/FundSharePriceMetrics';
 import { FundMonthlyReturnTable } from '../FundPerformanceMetrics/FundMonthlyReturnTable';
 import { useFund } from '~/hooks/useFund';
-import { differenceInCalendarDays, differenceInCalendarMonths } from 'date-fns';
-import { Block } from '~/storybook/Block/Block';
-import { SectionTitle } from '~/storybook/Title/Title';
+import { differenceInCalendarDays } from 'date-fns';
+import { usePriceFeedUpdateQuery } from '~/components/Layout/PriceFeedUpdate.query';
 
 export interface FundOverviewProps {
   address: string;
 }
 
 export const FundOverview: React.FC<FundOverviewProps> = ({ address }) => {
+  const [update] = usePriceFeedUpdateQuery();
   const fund = useFund();
-  const today = React.useMemo(() => new Date(), []);
 
-  // const showMetrics = React.useMemo(() => {
-  //   if (!fund.creationTime) {
-  //     return false;
-  //   }
-  //   const diffMonths = differenceInCalendarMonths(today, fund.creationTime);
-  //   const diffDays = differenceInCalendarDays(today, fund.creationTime);
-  //   return diffMonths > 1 && diffDays > 7;
-  // }, [fund.creationTime]);
+  const showMetrics = React.useMemo(() => {
+    if (update && fund.creationTime) {
+      return update.getTime() > fund.creationTime.getTime();
+    }
+
+    return false;
+  }, [fund.creationTime, update]);
+  const showMetricsNotification = !!(!showMetrics && update && fund.creationTime);
 
   return (
     <Grid>
-      <GridRow>
-        <GridCol sm={12} md={8} lg={8}>
-          <NewFundPerformanceChart address={address} />
-        </GridCol>
-        <GridCol sm={12} md={4} lg={4}>
-          <FundSharePriceMetrics address={address} />
-        </GridCol>
-      </GridRow>
-      <GridRow>
-        <GridCol>
-          <FundMonthlyReturnTable address={address} />
-        </GridCol>
-      </GridRow>
+      {showMetrics && (
+        <>
+          <GridRow>
+            <GridCol sm={12} md={8} lg={8}>
+              <NewFundPerformanceChart address={address} />
+            </GridCol>
+            <GridCol sm={12} md={4} lg={4}>
+              <FundSharePriceMetrics address={address} />
+            </GridCol>
+          </GridRow>
+          <GridRow>
+            <GridCol>
+              <FundMonthlyReturnTable address={address} />
+            </GridCol>
+          </GridRow>
+        </>
+      )}
+      {showMetricsNotification && (
+        <NotificationBar>
+          <NotificationContent>
+            The fund metrics for this fund will become available after the next price feed update.
+          </NotificationContent>
+        </NotificationBar>
+      )}
       <GridRow>
         <GridCol>
           <FundHoldings address={address} />

@@ -87,9 +87,14 @@ export function monthlyReturnsFromTimeline(
   const activeMonthReturns: DisplayData[] = monthlyReturnData.map(
     (item: MonthendTimelineItem, index: number, arr: MonthendTimelineItem[]) => {
       const prevIndex = index === 0 ? 0 : index - 1;
+      // if the prior month had no shares and this month has shares, this month's return is based on an opening share price of 1
+      // if the prior month had no shares and this month has no shares, this month's return is NA
+      // if the prior month had shares and this month has no shares, this month's return is NA
+      // if the prior month had share and this month has shares this month's return is as per
 
       const previousFxRate = new BigNumber(getRate(arr[prevIndex].rates, currency));
-      const previous = new BigNumber(arr[prevIndex].calculations.price).dividedBy(previousFxRate);
+      const previousSharePrice = new BigNumber(arr[prevIndex].shares == 0 ? 1 : arr[prevIndex].calculations.price);
+      const previous = previousSharePrice.dividedBy(previousFxRate);
 
       const currentFxRate = new BigNumber(getRate(item.rates, currency));
       const current = new BigNumber(item.calculations.price).dividedBy(currentFxRate);
@@ -102,9 +107,9 @@ export function monthlyReturnsFromTimeline(
 
       const rawDate = new Date(item.timestamp * 1000);
       const date = addMinutes(rawDate, rawDate.getTimezoneOffset());
-
+      //
       return {
-        return: arr[prevIndex].calculations.price > 0 && item.calculations.gav > 0 ? rtrn : new BigNumber(NaN),
+        return: item.shares > 0 && arr[prevIndex].shares >= 0 ? rtrn : new BigNumber(NaN),
         date,
       };
     }

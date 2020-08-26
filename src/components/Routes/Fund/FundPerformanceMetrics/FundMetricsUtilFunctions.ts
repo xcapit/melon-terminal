@@ -47,13 +47,14 @@ export function calculateHoldingPeriodReturns(
   }
 
   const periodStart = relevantPriceData[0];
+  const periodStartPrice = periodStart.calculations.price === 0 ? 1 : periodStart.calculations.price;
   const periodEnd = relevantPriceData[relevantPriceData.length - 1];
 
   return calculateReturn(
     new BigNumber(periodEnd.calculations.gav > 0 ? periodEnd.calculations.price : NaN).dividedBy(
       getRate(periodEnd.rates, currency)
     ),
-    new BigNumber(periodStart.calculations.price).dividedBy(getRate(periodStart.rates, currency))
+    new BigNumber(periodStartPrice).dividedBy(getRate(periodStart.rates, currency))
   );
 }
 
@@ -93,7 +94,10 @@ export function monthlyReturnsFromTimeline(
       // if the prior month had share and this month has shares this month's return is as per
 
       const previousFxRate = new BigNumber(getRate(arr[prevIndex].rates, currency));
+
+      // if prior month had no shares, set price === 1, else take the actual share price
       const previousSharePrice = new BigNumber(arr[prevIndex].shares == 0 ? 1 : arr[prevIndex].calculations.price);
+
       const previous = previousSharePrice.dividedBy(previousFxRate);
 
       const currentFxRate = new BigNumber(getRate(item.rates, currency));
@@ -109,7 +113,10 @@ export function monthlyReturnsFromTimeline(
       const date = addMinutes(rawDate, rawDate.getTimezoneOffset());
       //
       return {
-        return: item.shares > 0 && arr[prevIndex].shares >= 0 ? rtrn : new BigNumber(NaN),
+        // in the case where this month has shares, the prrior month either did not have shares, in which case we've set
+        // the price to 1, or it did have shares in which case we've taken the actual price. If this month
+        // doesn't have shares we return NaN
+        return: item.shares > 0 ? rtrn : new BigNumber(NaN),
         date,
       };
     }

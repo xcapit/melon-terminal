@@ -3,7 +3,7 @@ import { ExchangeAlt } from '@styled-icons/fa-solid/ExchangeAlt';
 
 export const TokenSwapButtonIcon = styled(ExchangeAlt)`
   height: ${(props) => props.theme.spaceUnits.m};
-  vertical-align: -0.35em;
+  vertical-align: -0.15em;
 `;
 
 export interface TokenSwapButtonProps {
@@ -17,4 +17,5 @@ export const TokenSwapButton = styled.div<TokenSwapButtonProps>`
   border-style: solid;
   border-width: 0px 1px 0px 0px;
   background-color: ${(props) => (props.disabled ? props.theme.mainColors.secondary : props.theme.mainColors.primary)};
+  height: ${(props) => props.theme.spaceUnits.xl};
 `;

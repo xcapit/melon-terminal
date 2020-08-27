@@ -9,7 +9,7 @@ export const InputPresetWrapper = styled.div`
   z-index: 100;
   position: absolute;
   right: 8px;
-  top: 8px;
+  top: 4px;
 `;
 
 export const InputContainer = styled.div`

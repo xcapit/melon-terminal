@@ -8,14 +8,20 @@ export interface MonthendTimelineItem {
   holdings: {
     [symbol: string]: number;
   };
-  references?: {
-    [key: string]: number;
-  };
   shares: number;
   calculations: {
     price: number;
     gav: number;
     nav: number;
+  };
+  purchase: boolean;
+  redemption: boolean;
+  monthEnd: boolean;
+  returns: {
+    ETH: number;
+    BTC: number;
+    USD: number;
+    date: number;
   };
 }
 

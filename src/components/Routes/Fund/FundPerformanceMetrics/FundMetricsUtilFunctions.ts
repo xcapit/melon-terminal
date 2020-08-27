@@ -85,7 +85,7 @@ export function monthlyReturnsFromTimeline(
 ): MonthlyReturnData {
   let maxDigits = 0;
 
-  const activeMonthReturns: DisplayData[] = monthlyReturnData?.map(
+  const activeMonthReturns: DisplayData[] = monthlyReturnData.map(
     (item: MonthendTimelineItem, index: number, arr: MonthendTimelineItem[]) => {
       const prevIndex = index === 0 ? 0 : index - 1;
       // if the prior month had no shares and this month has shares, this month's return is based on an opening share price of 1

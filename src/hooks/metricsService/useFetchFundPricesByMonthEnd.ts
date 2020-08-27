@@ -18,9 +18,7 @@ export interface MonthendTimelineItem {
   redemption: boolean;
   monthEnd: boolean;
   returns: {
-    ETH: number;
-    BTC: number;
-    USD: number;
+    [symbol: string]: number;
     date: number;
   };
 }

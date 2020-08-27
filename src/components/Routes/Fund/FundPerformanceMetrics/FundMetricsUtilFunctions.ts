@@ -85,7 +85,7 @@ export function monthlyReturnsFromTimeline(
 ): MonthlyReturnData {
   let maxDigits = 0;
 
-  const activeMonthReturns: DisplayData[] = monthlyReturnData.map(
+  const activeMonthReturns: DisplayData[] = monthlyReturnData?.map(
     (item: MonthendTimelineItem, index: number, arr: MonthendTimelineItem[]) => {
       const prevIndex = index === 0 ? 0 : index - 1;
       // if the prior month had no shares and this month has shares, this month's return is based on an opening share price of 1
@@ -93,21 +93,21 @@ export function monthlyReturnsFromTimeline(
       // if the prior month had shares and this month has no shares, this month's return is NA
       // if the prior month had share and this month has shares this month's return is as per
 
-      const previousFxRate = new BigNumber(getRate(arr[prevIndex].rates, currency));
+      // const previousFxRate = new BigNumber(getRate(arr[prevIndex].rates, currency));
 
-      // if prior month had no shares, set price === 1, else take the actual share price
-      const previousSharePrice = new BigNumber(arr[prevIndex].shares == 0 ? 1 : arr[prevIndex].calculations.price);
+      // // if prior month had no shares, set price === 1, else take the actual share price
+      // const previousSharePrice = new BigNumber(arr[prevIndex].shares == 0 ? 1 : arr[prevIndex].calculations.price);
 
-      const previous = previousSharePrice.dividedBy(previousFxRate);
+      // const previous = previousSharePrice.dividedBy(previousFxRate);
 
-      const currentFxRate = new BigNumber(getRate(item.rates, currency));
-      const current = new BigNumber(item.calculations.price).dividedBy(currentFxRate);
+      // const currentFxRate = new BigNumber(getRate(item.rates, currency));
+      // const current = new BigNumber(item.calculations.price).dividedBy(currentFxRate);
 
-      const rtrn = calculateReturn(current, previous);
+      const rtrn = new BigNumber(item.returns[currency]);
 
-      if (rtrn.toPrecision(2).length > maxDigits) {
-        maxDigits = rtrn.toPrecision(2).length;
-      }
+      // if (rtrn.toPrecision(2).length > maxDigits) {
+      //   maxDigits = rtrn.toPrecision(2).length;
+      // }
 
       const rawDate = new Date(item.timestamp * 1000);
       const date = addMinutes(rawDate, rawDate.getTimezoneOffset());

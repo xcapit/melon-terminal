@@ -46,14 +46,15 @@ export function calculateHoldingPeriodReturns(
   }
 
   const periodStart = relevantPriceData[0];
-  const periodStartPrice = periodStart.calculations.price === 0 ? 1 : periodStart.calculations.price;
   const periodEnd = relevantPriceData[relevantPriceData.length - 1];
 
   return calculateReturn(
     new BigNumber(periodEnd.calculations.gav > 0 ? periodEnd.calculations.price : NaN).dividedBy(
       getRate(periodEnd.rates, currency)
     ),
-    new BigNumber(periodStartPrice).dividedBy(getRate(periodStart.rates, currency))
+    new BigNumber(periodStart.calculations.price === 0 ? 1 : periodStart.calculations.price).dividedBy(
+      getRate(periodStart.rates, currency)
+    )
   );
 }
 

@@ -56,12 +56,13 @@ export const NewFundPerformanceChart: React.FC<NewFundPerformanceChartProps> = (
       return undefined;
     }
 
-    const dataArray = (onchainDataByDepth.data || [])
-      .filter((item: DepthTimelineItem) => item.calculations.gav > 0)
-      .map((item: DepthTimelineItem) => ({
-        x: new Date(item.timestamp * 1000),
-        y: new BigNumber(item.calculations.price).dividedBy(getRate(item.rates, currency.currency)).toPrecision(8),
-      }));
+    const dataArray = (onchainDataByDepth.data || []).map((item: DepthTimelineItem) => ({
+      x: new Date(item.timestamp * 1000),
+      y:
+        item.calculations.gav > 0
+          ? new BigNumber(item.calculations.price).dividedBy(getRate(item.rates, currency.currency)).toPrecision(8)
+          : null,
+    }));
 
     if (dataArray.length && (depth === '1d' || depth === '1w')) {
       dataArray.push({
@@ -85,12 +86,13 @@ export const NewFundPerformanceChart: React.FC<NewFundPerformanceChartProps> = (
       return undefined;
     }
 
-    const dataArray = (offchainDataByDepth.data || [])
-      .filter((item: DepthTimelineItem) => item.calculations.gav > 0)
-      .map((item: DepthTimelineItem) => ({
-        x: new Date(item.timestamp * 1000),
-        y: new BigNumber(item.calculations.price).dividedBy(getRate(item.rates, currency.currency)).toPrecision(8),
-      }));
+    const dataArray = (offchainDataByDepth.data || []).map((item: DepthTimelineItem) => ({
+      x: new Date(item.timestamp * 1000),
+      y:
+        item.calculations.gav > 0
+          ? new BigNumber(item.calculations.price).dividedBy(getRate(item.rates, currency.currency)).toPrecision(8)
+          : null,
+    }));
 
     return [
       {
@@ -107,12 +109,13 @@ export const NewFundPerformanceChart: React.FC<NewFundPerformanceChartProps> = (
       return undefined;
     }
 
-    const dataArray = (onchainDataByDate.data || [])
-      .filter((item: DepthTimelineItem) => item.calculations.gav > 0)
-      .map((item: DepthTimelineItem) => ({
-        x: new Date(item.timestamp * 1000),
-        y: new BigNumber(item.calculations.price).dividedBy(getRate(item.rates, currency.currency)).toPrecision(8),
-      }));
+    const dataArray = (onchainDataByDate.data || []).map((item: DepthTimelineItem) => ({
+      x: new Date(item.timestamp * 1000),
+      y:
+        item.calculations.gav > 0
+          ? new BigNumber(item.calculations.price).dividedBy(getRate(item.rates, currency.currency)).toPrecision(8)
+          : null,
+    }));
 
     return [
       {

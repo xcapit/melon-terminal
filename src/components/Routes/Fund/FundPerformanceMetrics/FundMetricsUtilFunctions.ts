@@ -11,7 +11,6 @@ export interface DisplayData {
 }
 
 export interface MonthlyReturnData {
-  maxDigits: number;
   data: DisplayData[];
 }
 
@@ -83,40 +82,15 @@ export function monthlyReturnsFromTimeline(
   monthsBeforeFund?: number,
   monthsRemaining?: number
 ): MonthlyReturnData {
-  let maxDigits = 0;
-
   const activeMonthReturns: DisplayData[] = monthlyReturnData.map(
     (item: MonthendTimelineItem, index: number, arr: MonthendTimelineItem[]) => {
-      const prevIndex = index === 0 ? 0 : index - 1;
-      // if the prior month had no shares and this month has shares, this month's return is based on an opening share price of 1
-      // if the prior month had no shares and this month has no shares, this month's return is NA
-      // if the prior month had shares and this month has no shares, this month's return is NA
-      // if the prior month had share and this month has shares this month's return is as per
-
-      // const previousFxRate = new BigNumber(getRate(arr[prevIndex].rates, currency));
-
-      // // if prior month had no shares, set price === 1, else take the actual share price
-      // const previousSharePrice = new BigNumber(arr[prevIndex].shares == 0 ? 1 : arr[prevIndex].calculations.price);
-
-      // const previous = previousSharePrice.dividedBy(previousFxRate);
-
-      // const currentFxRate = new BigNumber(getRate(item.rates, currency));
-      // const current = new BigNumber(item.calculations.price).dividedBy(currentFxRate);
-
       const rtrn = new BigNumber(item.returns[currency]);
-
-      // if (rtrn.toPrecision(2).length > maxDigits) {
-      //   maxDigits = rtrn.toPrecision(2).length;
-      // }
 
       const rawDate = new Date(item.timestamp * 1000);
       const date = addMinutes(rawDate, rawDate.getTimezoneOffset());
-      //
+
       return {
-        // in the case where this month has shares, the prrior month either did not have shares, in which case we've set
-        // the price to 1, or it did have shares in which case we've taken the actual price. If this month
-        // doesn't have shares we return NaN
-        return: item.shares > 0 ? rtrn : new BigNumber(NaN),
+        return: rtrn,
         date,
       };
     }
@@ -155,5 +129,5 @@ export function monthlyReturnsFromTimeline(
       ? inactiveMonthReturns.concat(activeMonthReturns).concat(monthsRemainingInYear)
       : activeMonthReturns;
 
-  return { maxDigits: maxDigits, data: aggregatedMonthlyReturns };
+  return { data: aggregatedMonthlyReturns };
 }

@@ -1,5 +1,23 @@
 import { useQuery } from 'react-query';
 
+interface HoldingPeriodReturns {
+  monthToDate: {
+    ETH: number | null;
+    BTC: number | null;
+    USD: number | null;
+  };
+  quarterToDate: {
+    ETH: number | null;
+    BTC: number | null;
+    USD: number | null;
+  };
+  yearToDate: {
+    ETH: number | null;
+    BTC: number | null;
+    USD: number | null;
+  };
+}
+
 export interface MonthendTimelineItem {
   timestamp: number;
   rates: {
@@ -17,10 +35,11 @@ export interface MonthendTimelineItem {
   purchase: boolean;
   redemption: boolean;
   monthEnd: boolean;
-  returns: {
+  monthlyReturns: {
     [symbol: string]: number;
     date: number;
   };
+  holdingPeriodReturns: HoldingPeriodReturns;
 }
 
 async function fetchFundPricesByMonthEnd(key: string, address: string) {

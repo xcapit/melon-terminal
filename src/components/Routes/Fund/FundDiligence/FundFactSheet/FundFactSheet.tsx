@@ -54,7 +54,8 @@ export const FundFactSheet: React.FC<FundFactSheetProps> = ({ address }) => {
 
   const slugUrl =
     slug &&
-    slug + (environment.network > 1 ? `.${NetworkEnum[environment.network].toLowerCase()}.melon.fund` : '.melon.fund');
+    slug +
+      (environment.network > 1 ? `.${NetworkEnum[environment.network].toLowerCase()}.melonfund.xyz` : '.melonfund.xyz');
 
   const routes = fund.routes;
   const accounting = routes?.accounting;

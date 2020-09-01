@@ -84,7 +84,7 @@ export const FundListProvider: React.FC = (props) => {
   const result = useFetchFundList();
 
   const currency = useCurrency();
-  const version = environment?.deployment.melon.addr.Version;
+  const version = environment?.deployment.addr.Version;
 
   const data = React.useMemo(() => {
     if (!environment) {

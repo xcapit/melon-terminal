@@ -18,7 +18,8 @@ export const ShareFund: React.FC<ShareFundProps> = ({ address }) => {
 
   const slugUrl =
     slug &&
-    slug + (environment.network > 1 ? `.${NetworkEnum[environment.network].toLowerCase()}.melon.fund` : '.melon.fund');
+    slug +
+      (environment.network > 1 ? `.${NetworkEnum[environment.network].toLowerCase()}.melonfund.xyz` : '.melonfund.xyz');
 
   const onClick = () => {
     if (result.loading) return;

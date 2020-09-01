@@ -57,7 +57,8 @@ export const FundHeader: React.FC<FundHeaderProps> = ({ address }) => {
 
   const slugUrl =
     slug &&
-    slug + (environment.network > 1 ? `.${NetworkEnum[environment.network].toLowerCase()}.melon.fund` : '.melon.fund');
+    slug +
+      (environment.network > 1 ? `.${NetworkEnum[environment.network].toLowerCase()}.melonfund.xyz` : '.melonfund.xyz');
 
   const SlugComponent = <CopyToClipboard text={slugUrl} value={`https://${slugUrl}`} />;
 

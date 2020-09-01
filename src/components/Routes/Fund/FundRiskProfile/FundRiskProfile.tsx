@@ -10,22 +10,20 @@ export interface FundRiskProfileProps {
 }
 
 export const FundRiskProfile: React.FC<FundRiskProfileProps> = ({ address }) => (
-  <RequiresFundManager>
-    <Grid>
-      <GridRow>
-        <RequiresFundDeployedWithCurrentVersion address={address} fallback={false}>
-          <GridCol xs={12} sm={12}>
-            <FundRegisterPolicies address={address} />
-          </GridCol>
-        </RequiresFundDeployedWithCurrentVersion>
-      </GridRow>
-      <GridRow>
-        <GridCol>
-          <FundPolicies address={address} />
+  <Grid>
+    <GridRow>
+      <RequiresFundDeployedWithCurrentVersion address={address} fallback={false}>
+        <GridCol xs={12} sm={12}>
+          <FundRegisterPolicies address={address} />
         </GridCol>
-      </GridRow>
-    </Grid>
-  </RequiresFundManager>
+      </RequiresFundDeployedWithCurrentVersion>
+    </GridRow>
+    <GridRow>
+      <GridCol>
+        <FundPolicies address={address} />
+      </GridCol>
+    </GridRow>
+  </Grid>
 );
 
 export default FundRiskProfile;

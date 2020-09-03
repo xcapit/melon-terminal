@@ -133,6 +133,7 @@ const UserWhitelistConfigurationForm: React.FC<UserWhitelistConfigurationFormPro
           startTransaction(tx, 'Remove investors from whitelist');
         }
       } else {
+        console.log(whitelistedUsers);
         const tx = UserWhitelist.deploy(environment, UserWhitelistBytecode, account.address!, whitelistedUsers);
         startTransaction(tx, 'Deploy InvestorWhitelist Contract');
       }

@@ -88,11 +88,13 @@ export function monthlyReturnsFromTimeline(
     (item: MonthendTimelineItem, index: number, arr: MonthendTimelineItem[]) => {
       const prevIndex = index === 0 ? 0 : index - 1;
 
-      const previousFxRate = new BigNumber(getRate(arr[prevIndex].rates, currency));
-      const previous = new BigNumber(arr[prevIndex].calculations.price).dividedBy(previousFxRate);
+      const previousPrice = new BigNumber(arr[prevIndex]?.calculations?.price ?? 'NaN');
+      const previousFxRate = new BigNumber(getRate(arr[prevIndex]?.rates ?? 'NaN', currency));
+      const previous = previousPrice.dividedBy(previousFxRate);
 
       const currentFxRate = new BigNumber(getRate(item.rates, currency));
-      const current = new BigNumber(item.calculations.price).dividedBy(currentFxRate);
+      const current = new BigNumber(item.calculations?.price ?? 'NaN').dividedBy(currentFxRate);
+      const currentGav = new BigNumber(item.calculations?.gav ?? 'NaN');
 
       const rtrn = calculateReturn(current, previous);
 
@@ -104,7 +106,7 @@ export function monthlyReturnsFromTimeline(
       const date = addMinutes(rawDate, rawDate.getTimezoneOffset());
 
       return {
-        return: arr[prevIndex].calculations.price > 0 && item.calculations.gav > 0 ? rtrn : new BigNumber(NaN),
+        return: previousPrice.gt(0) && currentGav.gt(0) ? rtrn : new BigNumber('NaN'),
         date,
       };
     }

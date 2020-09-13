@@ -5,7 +5,7 @@ import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNu
 import { useFund } from '~/hooks/useFund';
 import { useFetchFundPricesByMonthEnd } from '~/hooks/metricsService/useFetchFundPricesByMonthEnd';
 import { useFetchFundPricesByRange, RangeTimelineItem } from '~/hooks/metricsService/useFetchFundPricesByRange';
-import { monthlyReturnsFromTimeline, DisplayData } from './FundMetricsUtilFunctions';
+import { monthlyReturnsFromTimeline, DisplayData, calculateHoldingPeriodReturns } from './FundMetricsUtilFunctions';
 import { DictionaryEntry, DictionaryLabel, DictionaryData } from '~/storybook/Dictionary/Dictionary';
 import { SectionTitle } from '~/storybook/Title/Title.styles';
 import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
@@ -61,20 +61,17 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
   const lastQuarterendDate: number = (Date.UTC(utcYear, findLastQuarter(utcMonth)) - dayInMilliseconds) / 1000;
   const lastYearendDate: number = (Date.UTC(utcYear, 0) - dayInMilliseconds) / 1000;
 
-  const mtdReturn = React.useMemo(
-    () => monthlyData?.data[monthlyData.data.length - 1].holdingPeriodReturns.monthToDate[currency.currency],
-    [monthlyData, currency.currency]
-  );
+  const mtdReturn = React.useMemo(() => {
+    return calculateHoldingPeriodReturns(monthlyData?.data, lastMonthendDate, currency.currency);
+  }, [monthlyData, currency.currency]);
 
-  const qtdReturn = React.useMemo(
-    () => monthlyData?.data[monthlyData.data.length - 1].holdingPeriodReturns.quarterToDate[currency.currency],
-    [monthlyData, currency.currency]
-  );
+  const qtdReturn = React.useMemo(() => {
+    return calculateHoldingPeriodReturns(monthlyData?.data, lastQuarterendDate, currency.currency);
+  }, [monthlyData, currency.currency]);
 
-  const ytdReturn = React.useMemo(
-    () => monthlyData?.data[monthlyData.data.length - 1].holdingPeriodReturns.yearToDate[currency.currency],
-    [monthlyData, currency.currency]
-  );
+  const ytdReturn = React.useMemo(() => {
+    return calculateHoldingPeriodReturns(monthlyData?.data, lastYearendDate, currency.currency);
+  }, [monthlyData, currency.currency]);
 
   const filteredReturns = monthlyReturns?.data.filter((item) => !item.return.isNaN()) || [];
 

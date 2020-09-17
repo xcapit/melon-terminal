@@ -34,7 +34,7 @@ export function monthlyReturnsFromTimeline(
   monthsRemaining?: number
 ): MonthlyReturnData {
   const activeMonthReturns: DisplayData[] = monthlyReturnData.map((item: MonthendTimelineItem) => {
-    const rtrn = new BigNumber(item.monthlyReturns[currency]);
+    const rtrn = new BigNumber(item.monthlyReturns?.[currency]);
 
     const rawDate = new Date(item.timestamp * 1000);
     const date = addMinutes(rawDate, rawDate.getTimezoneOffset());

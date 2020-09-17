@@ -54,10 +54,8 @@ export const FundMonthlyReturnTable: React.FC<MonthlyReturnTableProps> = ({ addr
 
   const { data: monthlyData, error: monthlyError } = useFetchFundPricesByMonthEnd(address);
 
-  const firstDate = new Date(monthlyData?.data?.[0]?.timestamp * 1000 || fundInception.getTime());
-  const lastDate = new Date(
-    monthlyData?.data?.[monthlyData?.data?.length - 1]?.timestamp * 1000 || fundInception.getTime()
-  );
+  const firstDate = new Date(fundInception.getTime());
+  const lastDate = new Date(monthlyData?.data?.[monthlyData?.data?.length - 1]?.timestamp * 1000);
 
   const monthsBeforeFund = differenceInCalendarMonths(firstDate, startOfYear(new Date(activeYears[0], 1, 1)));
 
@@ -68,9 +66,7 @@ export const FundMonthlyReturnTable: React.FC<MonthlyReturnTableProps> = ({ addr
     if (!monthlyData || !fund) {
       return undefined;
     }
-    // if (fund.creationTime && differenceInCalendarDays(today, fund.creationTime) < 7) {
-    //   return undefined;
-    // }
+
     return monthlyReturnsFromTimeline(
       monthlyData.data ?? [{}],
       currency.currency,
@@ -87,17 +83,6 @@ export const FundMonthlyReturnTable: React.FC<MonthlyReturnTableProps> = ({ addr
       return format(addMonths(january, index), 'MMM');
     });
   }, []);
-
-  // if (fund.creationTime && differenceInCalendarDays(today, fund.creationTime) < 7) {
-  //   return (
-  //     <Block>
-  //       <SectionTitle>Monthly Returns</SectionTitle>
-  //       <NotificationBar kind="neutral">
-  //         <NotificationContent>Statistics are not available for funds younger than one week.</NotificationContent>
-  //       </NotificationBar>
-  //     </Block>
-  //   );
-  // }
 
   if (!tableData) {
     return (

@@ -1,7 +1,6 @@
-import React, { useState, createContext, useEffect, useMemo } from 'react';
+import React, { useState, createContext } from 'react';
 import { useRates } from '../Rates/Rates';
 import { Rates, RatesItem } from '~/utils/fetchRates';
-import BigNumber from 'bignumber.js';
 
 export const currencyList = [
   { symbol: 'USD', name: 'US Dollar' },

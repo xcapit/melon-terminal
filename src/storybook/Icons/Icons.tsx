@@ -19,6 +19,7 @@ const availableIcons = {
   SAI: React.lazy(() => import('./svg/tokens/Sai')),
   USDC: React.lazy(() => import('./svg/tokens/Usdc')),
   USDT: React.lazy(() => import('./svg/tokens/Usdt')),
+  UNI: React.lazy(() => import('./svg/tokens/Uni')),
   WBTC: React.lazy(() => import('./svg/tokens/Wbtc')),
   WETH: React.lazy(() => import('./svg/tokens/Weth')),
   ZRX: React.lazy(() => import('./svg/tokens/Zrx')),

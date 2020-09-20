@@ -48,8 +48,8 @@ export const FundHoldings: React.FC<FundHoldingsProps> = ({ address }) => {
     );
   }
 
-  const current = dailyData.data[dailyData.data.length - 1];
-  const previous = dailyData.data[dailyData.data.length - 2];
+  const current = dailyData?.data[dailyData?.data.length - 1];
+  const previous = dailyData?.data[dailyData?.data.length - 2];
 
   if (dailyDataError) {
     return (

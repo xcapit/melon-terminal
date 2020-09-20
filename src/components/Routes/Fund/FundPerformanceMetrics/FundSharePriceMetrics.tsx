@@ -62,17 +62,17 @@ export const FundSharePriceMetrics: React.FC<FundSharePriceMetricsProps> = (prop
   const lastYearendDate: number = (Date.UTC(utcYear, 0) - dayInMilliseconds) / 1000;
 
   const mtdReturn = React.useMemo(
-    () => monthlyData?.data?.[monthlyData.data?.length - 1].holdingPeriodReturns.monthToDate[currency.currency],
+    () => monthlyData?.data?.[monthlyData.data?.length - 1]?.holdingPeriodReturns.monthToDate[currency.currency],
     [monthlyData, currency.currency]
   );
 
   const qtdReturn = React.useMemo(
-    () => monthlyData?.data?.[monthlyData.data?.length - 1].holdingPeriodReturns.quarterToDate[currency.currency],
+    () => monthlyData?.data?.[monthlyData.data?.length - 1]?.holdingPeriodReturns.quarterToDate[currency.currency],
     [monthlyData, currency.currency]
   );
 
   const ytdReturn = React.useMemo(
-    () => monthlyData?.data?.[monthlyData.data?.length - 1].holdingPeriodReturns.yearToDate[currency.currency],
+    () => monthlyData?.data?.[monthlyData.data?.length - 1]?.holdingPeriodReturns.yearToDate[currency.currency],
     [monthlyData, currency.currency]
   );
 

@@ -11,7 +11,6 @@ export const Header = styled.div`
 
 export const HeaderContent = styled(Container)`
   position: relative;
-  overflow-x: auto;
   display: flex;
   justify-content: space-between;
   align-items: center;

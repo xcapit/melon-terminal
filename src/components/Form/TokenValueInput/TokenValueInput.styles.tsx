@@ -13,14 +13,19 @@ export const InputPresetWrapper = styled.div`
 `;
 
 export const InputContainer = styled.div`
-  display: flex;
+  display: flex-block;
+  flex-wrap: wrap;
   margin-bottom: 10px;
+  @media (${(props) => props.theme.mediaQueries.s}) {
+    display: flex;
+    flex-wrap: nowrap;
+  }
 `;
 
 export const TokenWrapper = styled.div`
   border-color: ${(props) => props.theme.mainColors.secondaryDarkAlpha};
   border-style: solid;
-  border-width: 1px 1px 1px 0px;
+  border-width: 1px;
   white-space: nowrap;
   display: flex;
   justify-content: center;
@@ -32,5 +37,9 @@ export const TokenWrapper = styled.div`
   padding: 0px ${(props) => props.theme.spaceUnits.m};
   &:focus {
     outline-color: ${(props) => props.theme.mainColors.secondaryDarkAlpha};
+  }
+
+  @media (${(props) => props.theme.mediaQueries.s}) {
+    border-width: 1px 1px 1px 0px;
   }
 `;

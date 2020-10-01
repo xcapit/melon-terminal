@@ -13,8 +13,13 @@ export const InputPresetWrapper = styled.div`
 `;
 
 export const InputContainer = styled.div`
-  display: flex;
+  display: flex-block;
+  flex-wrap: wrap;
   margin-bottom: 10px;
+  @media (${(props) => props.theme.mediaQueries.s}) {
+    display: flex;
+    flex-wrap: nowrap;
+  }
 `;
 
 export interface SelectTriggerProps {
@@ -25,7 +30,7 @@ export const SelectTrigger = styled.div<SelectTriggerProps>`
   cursor: ${(props) => (props.disabled ? 'default' : 'pointer')};
   border-color: ${(props) => props.theme.mainColors.secondaryDarkAlpha};
   border-style: solid;
-  border-width: 1px 1px 1px 0px;
+  border-width: 1px;
   white-space: nowrap;
   display: flex;
   justify-content: center;
@@ -37,6 +42,10 @@ export const SelectTrigger = styled.div<SelectTriggerProps>`
 
   &:focus {
     outline-color: ${(props) => props.theme.mainColors.secondaryDarkAlpha};
+  }
+
+  @media (${(props) => props.theme.mediaQueries.s}) {
+    border-width: 1px 1px 1px 0px;
   }
 `;
 

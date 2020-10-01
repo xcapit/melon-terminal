@@ -20,7 +20,7 @@ import { Footer, FooterNavigation, FooterItem } from '~/storybook/Footer/Footer'
 import { Logo } from '~/storybook/Logo/Logo';
 import { ConnectionSelector } from './ConnectionSelector/ConnectionSelector';
 import { useEnvironment } from '~/hooks/useEnvironment';
-import { Icons } from '~/storybook/Icons/Icons';
+
 import { NetworkEnum } from '~/types';
 import { useVersionQuery } from '~/components/Layout/Version.query';
 import * as S from './Layout.styles';
@@ -51,7 +51,7 @@ export const Layout: React.FC<LayoutProps> = (props) => {
           <HeaderContent>
             <HeaderTitle>
               <Link to="/">
-                {!home && <Icons name="LEFTARROW" size="small" colored={true} />}
+                {!home && <S.Icons name="LEFTARROW" size="small" colored={true} />}
                 <S.AppName>Melon Terminal</S.AppName>
               </Link>
             </HeaderTitle>

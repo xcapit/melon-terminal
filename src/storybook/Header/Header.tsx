@@ -12,28 +12,31 @@ export const Header = styled.div`
 export const HeaderContent = styled(Container)`
   position: relative;
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
-  height: ${(props) => props.theme.skeleton.headerHeight};
+  justify-content: center;
+  height: auto;
   padding: 0px;
   @media (${(props) => props.theme.mediaQueries.s}) {
     padding: 0px 16px;
+    height: ${(props) => props.theme.skeleton.headerHeight};
+    justify-content: space-between;
+    flex-wrap: nowrap;
   }
 `;
 
 export const LogoContainer = styled.div`
   position: relative;
-  padding: 0px ${(props) => props.theme.spaceUnits.m};
-  @media (${(props) => props.theme.mediaQueries.l}) {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  padding: 0px 8px;
+
+  @media (${(props) => props.theme.mediaQueries.s}) {
+    padding: 0px ${(props) => props.theme.spaceUnits.m};
   }
 `;
 
 export const LogoMobile = styled.div`
   display: block;
+  padding-top: 4px;
   @media (${(props) => props.theme.mediaQueries.m}) {
     display: none;
   }
@@ -47,13 +50,18 @@ export const LogoDesktop = styled.div`
 `;
 
 export const CurrencySelectionItem = styled.div`
+  font-size: ${(props) => props.theme.fontSizes.s};
   display: flex;
   padding: ${(props) => props.theme.spaceUnits.xs} 0px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   flex-direction: row;
-  margin-right: ${(props) => props.theme.spaceUnits.s};
+  margin-right: ${(props) => props.theme.spaceUnits.xs};
+  @media (${(props) => props.theme.mediaQueries.s}) {
+    font-size: ${(props) => props.theme.fontSizes.l};
+    margin-right: ${(props) => props.theme.spaceUnits.s};
+  }
 `;
 
 export const ConnectionInfo = styled.div`
@@ -63,17 +71,23 @@ export const ConnectionInfo = styled.div`
   justify-content: space-between;
   align-items: center;
   flex-direction: row;
+  padding: 0px;
+
+  @media (${(props) => props.theme.mediaQueries.s}) {
+    padding: 8px 0px;
+  }
 `;
 
 export const ConnectionInfoItem = styled.div`
-  margin-right: ${(props) => props.theme.spaceUnits.s};
+  margin-right: ${(props) => props.theme.spaceUnits.xs};
+  padding: 0;
 
   a {
     background: ${(props) => props.theme.mainColors.secondary};
-    font-size: ${(props) => props.theme.fontSizes.m};
+    font-size: ${(props) => props.theme.fontSizes.s};
     text-transform: uppercase;
     text-decoration: none;
-    padding: ${(props) => props.theme.spaceUnits.xs} ${(props) => props.theme.spaceUnits.s};
+    padding: ${(props) => props.theme.spaceUnits.xs} ${(props) => props.theme.spaceUnits.xs};
     display: inline-block;
 
     &.active {
@@ -86,6 +100,14 @@ export const ConnectionInfoItem = styled.div`
       background: ${(props) => props.theme.mainColors.secondaryDarkAlpha};
     }
   }
+
+
+
+  @media (${(props) => props.theme.mediaQueries.s}) {
+    margin-right: ${(props) => props.theme.spaceUnits.s};
+    a {
+      font-size: ${(props) => props.theme.fontSizes.m};
+    }
 `;
 
 export const HeaderTitle = styled(Title)`

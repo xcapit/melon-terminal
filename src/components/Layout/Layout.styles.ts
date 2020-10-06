@@ -4,7 +4,7 @@ import { Icons as BaseIcons } from '~/storybook/Icons/Icons';
 export const AppName = styled.span`
   display: none;
   margin-left: ${(props) => props.theme.spaceUnits.s};
-  @media (${(props) => props.theme.mediaQueries.s}) {
+  @media (${(props) => props.theme.mediaQueries.m}) {
     display: block;
   }
 `;

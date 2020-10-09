@@ -73,8 +73,10 @@ export function calculateStdDev(values: BigNumber[]): BigNumber {
 
 /**
  * @param values is an array of BigNumbers that most cases will represent an asset's price over time.
- * @returns an object with two properties - lowZ and highZ - which are both BigNumbers. LowZ represents the
- * maximum expected drawdown per period one can expect in 95% of outcomes. HighZ is 99%.
+ * @returns a BigNumber that is the result of the standard deviation of the log returns of an asset's price over the time period,
+ * multiplied by the square root of the number of observations, multiplied by 100 (to display in %).
+ * NB: Our implementation in the metrics component expects this function to be called on a series of data of length n that is composed of one
+ * observation per day for n days.
  */
 
 export function calculateVolatility(values: BigNumber[]): BigNumber {

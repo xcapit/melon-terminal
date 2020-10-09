@@ -1,27 +1,28 @@
+import { AssetBlacklist, AssetWhitelist, MaxPositions, UserWhitelist } from '@melonproject/melongql';
+import { sameAddress, Transaction } from '@melonproject/melonjs';
 import React, { useMemo, useRef } from 'react';
-import { useEnvironment } from '~/hooks/useEnvironment';
-import { Transaction } from '@melonproject/melonjs';
-import { useTransaction } from '~/hooks/useTransaction';
-import { useFundInvestQuery } from './FundInvest.query';
-import { Spinner } from '~/storybook/Spinner/Spinner';
-import { RequestInvestment } from '../RequestInvestment/RequestInvestment';
-import { ExecuteRequest } from '../ExecuteRequest/ExecuteRequest';
-import { CancelRequest } from '../CancelRequest/CancelRequest';
-import { Block } from '~/storybook/Block/Block';
-import { SectionTitle } from '~/storybook/Title/Title';
-import { RequiresFundCreatedAfter } from '~/components/Gates/RequiresFundCreatedAfter/RequiresFundCreatedAfter';
-import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
-import { usePriceFeedUpdateQuery } from '~/components/Layout/PriceFeedUpdate.query';
+import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
 import { TokenValueDisplay } from '~/components/Common/TokenValueDisplay/TokenValueDisplay';
 import { TransactionDescription } from '~/components/Common/TransactionModal/TransactionDescription';
+import { TransactionModal } from '~/components/Common/TransactionModal/TransactionModal';
+import { RequiresFundCreatedAfter } from '~/components/Gates/RequiresFundCreatedAfter/RequiresFundCreatedAfter';
+import { RequiresFundManager } from '~/components/Gates/RequiresFundManager/RequiresFundManager';
 import { RequiresFundNotShutDown } from '~/components/Gates/RequiresFundNotShutDown/RequiresFundNotShutDown';
-import { UserWhitelist, AssetWhitelist, AssetBlacklist, MaxPositions } from '@melonproject/melongql';
-import { FormattedDate } from '~/components/Common/FormattedDate/FormattedDate';
+import { usePriceFeedUpdateQuery } from '~/components/Layout/PriceFeedUpdate.query';
+import { getNetworkName } from '~/config';
+import { useEnvironment } from '~/hooks/useEnvironment';
+import { useTransaction } from '~/hooks/useTransaction';
+import { Block } from '~/storybook/Block/Block';
+import { Link } from '~/storybook/Link/Link';
+import { Spinner } from '~/storybook/Spinner/Spinner';
+import { SectionTitle } from '~/storybook/Title/Title';
 import { TokenValue } from '~/TokenValue';
 import { sharesToken } from '~/utils/sharesToken';
-import { RequiresFundManager } from '~/components/Gates/RequiresFundManager/RequiresFundManager';
-import { Link } from '~/storybook/Link/Link';
-import { getNetworkName } from '~/config';
+import { CancelRequest } from '../CancelRequest/CancelRequest';
+import { ExecuteRequest } from '../ExecuteRequest/ExecuteRequest';
+import { RequestInvestment } from '../RequestInvestment/RequestInvestment';
+import { useFundInvestQuery } from './FundInvest.query';
+import { KYC } from '../KYC/KYC';
 
 export interface FundInvestProps {
   address: string;
@@ -36,6 +37,9 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
   const prefix = getNetworkName(environment.network)!;
   const [fundInvestResult, fundInvestQuery] = useFundInvestQuery(address);
   const [priceUpdateResult, priceUpdateQuery] = usePriceFeedUpdateQuery();
+
+  const kycFunds = process.env.MELON_KYC_FUNDS.split(',');
+  const kyc = kycFunds.find((fund) => sameAddress(fund, address));
 
   const currentShares = fundInvestResult?.fund?.routes?.shares?.totalSupply!;
   const existingRequest = fundInvestResult?.account?.participation?.request;
@@ -186,13 +190,17 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
     );
   }
 
-  if (!accountWhitelisted) {
+  if (!accountWhitelisted && !kyc) {
     return (
       <Block>
         <SectionTitle>Invest</SectionTitle>
         <p>This fund operates an investor whitelist and you are currently not on that whitelist.</p>
       </Block>
     );
+  }
+
+  if (!accountWhitelisted && kyc) {
+    return <KYC address={address} />;
   }
 
   return (

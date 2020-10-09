@@ -1,10 +1,9 @@
 import React from 'react';
+import { Fallback } from '~/components/Common/Fallback/Fallback';
+import { RequiresAccount } from '~/components/Gates/RequiresAccount/RequiresAccount';
+import { Grid, GridCol, GridRow } from '~/storybook/Grid/Grid';
 import { FundInvest } from './FundInvest/FundInvest';
 import { FundRedeem } from './FundRedeem/FundRedeem';
-import { FundInvestmentHistoryList } from './FundInvestmentHistoryList/FundInvestmentHistoryList';
-import { Grid, GridRow, GridCol } from '~/storybook/Grid/Grid';
-import { RequiresAccount } from '~/components/Gates/RequiresAccount/RequiresAccount';
-import { Fallback } from '~/components/Common/Fallback/Fallback';
 
 export interface FundInvestProps {
   address: string;

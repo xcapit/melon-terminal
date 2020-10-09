@@ -91,6 +91,8 @@ declare global {
       MELON_MAX_EXPOSURE: string;
       MELON_TELEGRAM_API: string;
       MELON_RATES_API: string;
+      MELON_KYC_VERIFY_EMAIL_API: string;
+      MELON_KYC_FUNDS: string;
     }
   }
 }

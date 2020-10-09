@@ -64,6 +64,8 @@ module.exports = override(
       'process.env.MELON_TELEGRAM_API': JSON.stringify(process.env.MELON_TELEGRAM_API),
       'process.env.MELON_RATES_API': JSON.stringify(process.env.MELON_RATES_API),
       'process.env.MELON_METRICS_API': JSON.stringify(process.env.MELON_METRICS_API),
+      'process.env.MELON_KYC_VERIFY_EMAIL_API': JSON.stringify(process.env.MELON_KYC_VERIFY_EMAIL_API),
+      'process.env.MELON_KYC_FUNDS': JSON.stringify(process.env.MELON_KYC_FUNDS),
       'process.env.MELON_WALLETCONNECT_INFURA_ID': JSON.stringify(process.env.MELON_WALLETCONNECT_INFURA_ID),
       'process.env.MELON_INCLUDE_GRAPHIQL': JSON.stringify(process.env.MELON_INCLUDE_GRAPHIQL),
       'process.env.MELON_MAINNET': JSON.stringify(mainnet),

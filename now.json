@@ -24,7 +24,9 @@
       "MELON_MAX_EXPOSURE": "50000",
       "MELON_TELEGRAM_API": "https://bot.avantgarde.finance",
       "MELON_RATES_API": "https://rates.avantgarde.finance",
-      "MELON_METRICS_API": "https://metrics.avantgarde.finance"
+      "MELON_METRICS_API": "https://metrics.avantgarde.finance",
+      "MELON_KYC_VERIFY_EMAIL_API": "https://verify-email-and-wallet.avantgarde.finance",
+      "MELON_KYC_FUNDS": "0x6de6308dbed669b9c682546074c301ccba70d2c3"
     }
   }
 }

@@ -1,14 +1,13 @@
 import React from 'react';
-import { FundHoldings } from '../FundHoldings/FundHoldings';
-import { NewFundPerformanceChart } from '../FundPerformanceChart/FundPerformanceChart';
-import { Grid, GridRow, GridCol } from '~/storybook/Grid/Grid';
+import { usePriceFeedUpdateQuery } from '~/components/Layout/PriceFeedUpdate.query';
+import { useFund } from '~/hooks/useFund';
+import { Grid, GridCol, GridRow } from '~/storybook/Grid/Grid';
 import { NotificationBar, NotificationContent } from '~/storybook/NotificationBar/NotificationBar';
 import { FundDiligence } from '../FundDiligence/FundDiligence';
-import { FundSharePriceMetrics } from '../FundPerformanceMetrics/FundSharePriceMetrics';
+import { FundHoldings } from '../FundHoldings/FundHoldings';
+import { NewFundPerformanceChart } from '../FundPerformanceChart/FundPerformanceChart';
 import { FundMonthlyReturnTable } from '../FundPerformanceMetrics/FundMonthlyReturnTable';
-import { useFund } from '~/hooks/useFund';
-import { differenceInCalendarDays } from 'date-fns';
-import { usePriceFeedUpdateQuery } from '~/components/Layout/PriceFeedUpdate.query';
+import { FundSharePriceMetrics } from '../FundPerformanceMetrics/FundSharePriceMetrics';
 
 export interface FundOverviewProps {
   address: string;

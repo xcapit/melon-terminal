@@ -281,7 +281,7 @@ export const FundInvest: React.FC<FundInvestProps> = ({ address }) => {
                 If you come back during the execution window (which starts at around{' '}
                 <FormattedDate timestamp={requestExecutionWindowStart} /> and ends at{' '}
                 <FormattedDate timestamp={requestExecutionWindowEnd} />
-                ), and your invesment request hasn't been automatically executed, you will see here the option to
+                ), and your investment request hasn't been automatically executed, you will see here the option to
                 execute it yourself.
               </p>
             </>

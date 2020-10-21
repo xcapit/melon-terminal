@@ -80,7 +80,7 @@ export const CheckStatus: React.FC<CheckStatsProps> = ({ address }) => {
             <p>
               Your status:
               <br />
-              {status.found ? (
+              {status?.found ? (
                 <NotificationBar kind="success">
                   <NotificationContent>
                     Email: {status?.details?.email}

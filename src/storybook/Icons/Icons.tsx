@@ -4,7 +4,7 @@ import * as S from './Icons.styles';
 
 const availableIcons = {
   ANT: React.lazy(() => import('./svg/tokens/Ant')),
-  ANTV2: React.lazy(() => import('./svg/tokens/Ant')),
+  ANTv2: React.lazy(() => import('./svg/tokens/Ant')),
   BAT: React.lazy(() => import('./svg/tokens/Bat')),
   DAI: React.lazy(() => import('./svg/tokens/Dai')),
   ENG: React.lazy(() => import('./svg/tokens/Eng')),

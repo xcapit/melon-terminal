@@ -105,6 +105,7 @@
       "WETH": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
       "MLN": "0xec67005c4e498ec7f55e092bd1d35cbc47c91892",
       "ANT": "0x960b236A07cf122663c4303350609A66A7B288C0",
+      "ANTv2": "0xa117000000f279d81a1d3cc75430faa017fa5a2e",
       "BAT": "0x0d8775f648430679a709e98d2b0cb6250d2887ef",
       "DAI": "0x6b175474e89094c44da98b954eedeac495271d0f",
       "KNC": "0xdd974d5c2e2928dea5f71b9825b8b646686bd200",
@@ -133,6 +134,11 @@
       },
       "ANT": {
         "name": "Aragon Network",
+        "decimals": 18,
+        "reserveMin": "342083875233544858929"
+      },
+      "ANTv2": {
+        "name": "Aragon Network (v2)",
         "decimals": 18,
         "reserveMin": "342083875233544858929"
       },

@@ -16,7 +16,6 @@ import { MenuListComponentProps } from 'react-select/src/components/Menu';
 import { Error, Label, useField, Wrapper } from '~/components/Form/Form';
 import { IconName, Icons } from '~/storybook/Icons/Icons';
 import * as S from './Select.styles';
-import { IndicatorContainerProps } from 'react-select/src/components/containers';
 
 export interface SelectOption<TValue = string | number> {
   value: TValue;

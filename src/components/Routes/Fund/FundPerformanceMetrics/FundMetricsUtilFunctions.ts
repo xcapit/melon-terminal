@@ -71,7 +71,7 @@ export function monthlyReturnsFromTimeline(
       ? new Array(monthsRemaining).fill(null).map((item, index: number) => {
           return { date: endOfMonth(addMonths(today, index + 1)), return: new BigNumber('NaN') } as DisplayData;
         })
-      : undefined;
+      : [];
 
   const aggregatedMonthlyReturns =
     inactiveMonthReturns && monthsRemainingInYear

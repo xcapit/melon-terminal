@@ -54,7 +54,7 @@ export const FundMonthlyReturnTable: React.FC<MonthlyReturnTableProps> = ({ addr
 
   const { data: monthlyData, error: monthlyError } = useFetchFundPricesByMonthEnd(address);
 
-  const firstDate = new Date(fundInception.getTime());
+  const firstDate = monthlyData && new Date(monthlyData.data[0].timestamp * 1000);
   const lastDate = new Date(monthlyData?.data?.[monthlyData?.data?.length - 1]?.timestamp * 1000);
 
   const monthsBeforeFund = differenceInCalendarMonths(firstDate, startOfYear(new Date(activeYears[0], 1, 1)));

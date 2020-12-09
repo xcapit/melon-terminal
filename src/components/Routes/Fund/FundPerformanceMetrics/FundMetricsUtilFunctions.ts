@@ -33,6 +33,7 @@ export function monthlyReturnsFromTimeline(
   monthsBeforeFund?: number,
   monthsRemaining?: number
 ): MonthlyReturnData {
+  console.log(monthlyReturnData);
   const activeMonthReturns: DisplayData[] = monthlyReturnData.map((item: MonthendTimelineItem) => {
     const rtrn = new BigNumber(item.monthlyReturns?.[currency]);
 
@@ -73,10 +74,20 @@ export function monthlyReturnsFromTimeline(
         })
       : [];
 
+  console.log(
+    'months this year before fund: ',
+    inactiveMonthReturns,
+    'months this year after fund: ',
+    monthsRemainingInYear,
+    'fund returns',
+    activeMonthReturns
+  );
   const aggregatedMonthlyReturns =
     inactiveMonthReturns && monthsRemainingInYear
       ? inactiveMonthReturns.concat(activeMonthReturns).concat(monthsRemainingInYear)
       : activeMonthReturns;
+
+  console.log(aggregatedMonthlyReturns);
 
   return { data: aggregatedMonthlyReturns };
 }

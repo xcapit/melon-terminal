@@ -16,7 +16,6 @@ import {
   differenceInCalendarYears,
   endOfYear,
   addMonths,
-  differenceInCalendarDays,
 } from 'date-fns';
 import { FormattedNumber } from '~/components/Common/FormattedNumber/FormattedNumber';
 import { useFund } from '~/hooks/useFund';
@@ -54,10 +53,10 @@ export const FundMonthlyReturnTable: React.FC<MonthlyReturnTableProps> = ({ addr
 
   const { data: monthlyData, error: monthlyError } = useFetchFundPricesByMonthEnd(address);
 
-  const firstDate = monthlyData && new Date(monthlyData.data[0].timestamp * 1000);
+  const firstDate = monthlyData && new Date(monthlyData.data[0].timestamp * 1000).getTime();
   const lastDate = new Date(monthlyData?.data?.[monthlyData?.data?.length - 1]?.timestamp * 1000);
 
-  const monthsBeforeFund = differenceInCalendarMonths(firstDate, startOfYear(new Date(activeYears[0], 1, 1)));
+  const monthsBeforeFund = differenceInCalendarMonths(firstDate, startOfYear(new Date(activeYears[0], 1, 1)).getTime());
 
   const monthsRemaining = differenceInCalendarMonths(endOfYear(today), lastDate);
   const activeMonths = fund && differenceInCalendarMonths(lastDate, firstDate) + 1;
